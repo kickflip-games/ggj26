@@ -11,6 +11,9 @@ extends CharacterBody3D
 @export var roam_radius := 12.0
 @export var roam_min_distance := 3.0
 @export var roam_target_timeout := 8.0
+@export var roam_unreachable_retry_delay := 0.75
+@export var debug_nav_logs := false
+@export_range(0.05, 5.0, 0.05) var debug_nav_log_interval_sec := 0.5
 @export var step_distance := 1.4
 @export var footstep_stream: AudioStream
 @export var footstep_volume_db := -10.0
@@ -44,7 +47,9 @@ var _nav_safe_velocity_valid := false
 var _roam_target := Vector3.ZERO
 var _roam_has_target := false
 var _roam_time_left := 0.0
+var _roam_unreachable_elapsed := 0.0
 var _rng := RandomNumberGenerator.new()
+var _next_nav_debug_time_ms := 0
 
 func _ready() -> void:
 	_spawn_transform = global_transform
@@ -71,6 +76,7 @@ func reset_patrol() -> void:
 	_stop_navigation_velocity()
 	_roam_has_target = false
 	_roam_time_left = 0.0
+	_roam_unreachable_elapsed = 0.0
 
 func _physics_process(delta: float) -> void:
 	if freeze_when_mask_on and _mask_manager != null and _mask_manager.mask_on:
@@ -128,6 +134,7 @@ func _physics_process(delta: float) -> void:
 
 	_try_play_footsteps(prev_pos)
 	_sync_animation(true)
+	_debug_nav_state(delta, target)
 	_debug_log("moving: vel=%.2f target=%s current=%s" % [Vector2(velocity.x, velocity.z).length(), String(_desired_anim_name(true)), _anim_name()])
 
 	if velocity.length_squared() > 0.001:
@@ -191,15 +198,33 @@ func _get_current_target(delta: float) -> Vector3:
 		return _resolved_points[_patrol_index].global_position
 
 	_pick_roam_target_if_needed(false)
-	if use_navmesh and _nav_agent != null and _nav_agent.has_method("is_target_reachable") and not _nav_agent.is_target_reachable():
-		_roam_has_target = false
-		_pick_roam_target_if_needed(false)
+	_track_roam_reachability(delta)
 	_roam_time_left -= delta
 	if _roam_time_left <= 0.0:
 		_roam_has_target = false
 		_pick_roam_target_if_needed(false)
 
 	return _roam_target
+
+func _track_roam_reachability(delta: float) -> void:
+	if not use_navmesh or _nav_agent == null:
+		return
+	if not _nav_agent.has_method("is_target_reachable"):
+		return
+	if not _roam_has_target:
+		return
+
+	if _nav_agent.is_target_reachable():
+		_roam_unreachable_elapsed = 0.0
+		return
+
+	_roam_unreachable_elapsed += delta
+	if _roam_unreachable_elapsed < roam_unreachable_retry_delay:
+		return
+
+	_roam_has_target = false
+	_roam_unreachable_elapsed = 0.0
+	_pick_roam_target_if_needed(false)
 
 func _pick_roam_target_if_needed(force: bool) -> void:
 	if not force and _roam_has_target:
@@ -217,9 +242,61 @@ func _pick_roam_target_if_needed(force: bool) -> void:
 	_roam_target = target
 	_roam_has_target = true
 	_roam_time_left = maxf(roam_target_timeout, 0.1)
+	_roam_unreachable_elapsed = 0.0
 
 	if use_navmesh and _nav_agent != null:
 		_nav_agent.target_position = _roam_target
+
+func _debug_nav_state(delta: float, target: Vector3) -> void:
+	if not (debug_nav_logs or (_debug_manager != null and _debug_manager.show_monsters)):
+		return
+	var now := Time.get_ticks_msec()
+	if now < _next_nav_debug_time_ms:
+		return
+	_next_nav_debug_time_ms = now + int(debug_nav_log_interval_sec * 1000.0)
+
+	var mode := "Patrol" if movement_mode == 0 else "Roam"
+	var to_target := target - global_position
+	to_target.y = 0.0
+	var dist_target := to_target.length()
+
+	var next_pos := Vector3.ZERO
+	var dist_next := -1.0
+	var reachable_txt := "?"
+	var finished_txt := "?"
+	var path_len := -1
+	var path_idx := -1
+
+	if _nav_agent != null:
+		next_pos = _nav_agent.get_next_path_position()
+		var to_next := next_pos - global_position
+		to_next.y = 0.0
+		dist_next = to_next.length()
+		if _nav_agent.has_method("is_target_reachable"):
+			reachable_txt = "Y" if _nav_agent.is_target_reachable() else "N"
+		if _nav_agent.has_method("is_navigation_finished"):
+			finished_txt = "Y" if _nav_agent.is_navigation_finished() else "N"
+		if _nav_agent.has_method("get_current_navigation_path"):
+			var p: PackedVector3Array = _nav_agent.get_current_navigation_path()
+			path_len = p.size()
+		if _nav_agent.has_method("get_current_navigation_path_index"):
+			path_idx = int(_nav_agent.get_current_navigation_path_index())
+
+	print("[Monster:%s] nav mode=%s vel=%.2f dist_target=%.2f dist_next=%s reachable=%s finished=%s path=%s idx=%s roam_t=%.2f unreach=%.2f target=%s next=%s" % [
+		str(get_instance_id()),
+		mode,
+		Vector2(velocity.x, velocity.z).length(),
+		dist_target,
+		"?" if dist_next < 0.0 else "%.2f" % dist_next,
+		reachable_txt,
+		finished_txt,
+		"?" if path_len < 0 else str(path_len),
+			"?" if path_idx < 0 else str(path_idx),
+			_roam_time_left,
+			_roam_unreachable_elapsed,
+			str(target),
+			str(next_pos)
+		])
 
 func _pick_random_nav_point(origin: Vector3, radius: float) -> Vector3:
 	var r := maxf(radius, 0.1)
