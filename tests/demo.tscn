@@ -55,6 +55,9 @@ size = Vector3(18, 6, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_InternalWide"]
 size = Vector3(18, 6, 1)
 
+[sub_resource type="NavigationMesh" id="NavigationMesh_w2qn0"]
+geometry_parsed_geometry_type = 1
+
 [node name="Room" type="Node3D" unique_id=1073300846]
 script = ExtResource("5_xyn1g")
 
@@ -101,12 +104,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, 1, 10.5)
 model_scale = Vector3(0.05, 0.05, 0.05)
 
 [node name="ExitDoor" parent="." unique_id=1200769351 instance=ExtResource("4_s0uxu")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 14, 1.7, 0)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 29.694885, 1.7, 0)
 requires_key = true
 
 [node name="RoomGeometry" type="Node3D" parent="." unique_id=105294922]
 
 [node name="Floor" type="StaticBody3D" parent="RoomGeometry" unique_id=1600686020]
+transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, 0, 0, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RoomGeometry/Floor" unique_id=1808723537]
 mesh = SubResource("BoxMesh_Floor")
@@ -115,7 +119,7 @@ mesh = SubResource("BoxMesh_Floor")
 shape = SubResource("BoxShape3D_Floor")
 
 [node name="WallNorth" type="StaticBody3D" parent="RoomGeometry" unique_id=189157321]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, -14.5)
+transform = Transform3D(2.18, 0, 0, 0, 2.18, 0, 0, 0, 2.18, 0, 3.5, -30.81186)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RoomGeometry/WallNorth" unique_id=2117073946]
 mesh = SubResource("BoxMesh_WallLong")
@@ -124,7 +128,7 @@ mesh = SubResource("BoxMesh_WallLong")
 shape = SubResource("BoxShape3D_WallLong")
 
 [node name="WallSouth" type="StaticBody3D" parent="RoomGeometry" unique_id=2057470218]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 14.5)
+transform = Transform3D(2.18, 0, 0, 0, 2.18, 0, 0, 0, 2.18, 0, 3.5, 29.217003)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RoomGeometry/WallSouth" unique_id=1920681394]
 mesh = SubResource("BoxMesh_WallLong")
@@ -133,7 +137,7 @@ mesh = SubResource("BoxMesh_WallLong")
 shape = SubResource("BoxShape3D_WallLong")
 
 [node name="WallEast" type="StaticBody3D" parent="RoomGeometry" unique_id=673463373]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.5, 3.5, 0)
+transform = Transform3D(2.18, 0, 0, 0, 2.18, 0, 0, 0, 2.18, 30.937847, 3.5, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RoomGeometry/WallEast" unique_id=1590726655]
 mesh = SubResource("BoxMesh_WallShort")
@@ -142,7 +146,7 @@ mesh = SubResource("BoxMesh_WallShort")
 shape = SubResource("BoxShape3D_WallShort")
 
 [node name="WallWest" type="StaticBody3D" parent="RoomGeometry" unique_id=1133050784]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5, 3.5, 0)
+transform = Transform3D(2.18, 0, 0, 0, 2.18, 0, 0, 0, 2.18, -30.282183, 3.5, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RoomGeometry/WallWest" unique_id=165368286]
 mesh = SubResource("BoxMesh_WallShort")
@@ -151,7 +155,7 @@ mesh = SubResource("BoxMesh_WallShort")
 shape = SubResource("BoxShape3D_WallShort")
 
 [node name="InternalWallA" type="StaticBody3D" parent="RoomGeometry" unique_id=1260658078]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6841593, 3.0993576, -0.72560406)
+transform = Transform3D(2.62, 0, 0, 0, 2.62, 0, 0, 0, 2.62, -6.6841593, 3.0993576, -0.72560406)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RoomGeometry/InternalWallA" unique_id=1492926685]
 mesh = SubResource("BoxMesh_InternalLong")
@@ -160,7 +164,7 @@ mesh = SubResource("BoxMesh_InternalLong")
 shape = SubResource("BoxShape3D_InternalLong")
 
 [node name="InternalWallB" type="StaticBody3D" parent="RoomGeometry" unique_id=65953903]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 3.5, -4)
+transform = Transform3D(1.44, 0, 0, 0, 1.44, 0, 0, 0, 1.44, 15.354042, 3.5, -4)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RoomGeometry/InternalWallB" unique_id=210765452]
 mesh = SubResource("BoxMesh_InternalWide")
@@ -169,7 +173,7 @@ mesh = SubResource("BoxMesh_InternalWide")
 shape = SubResource("BoxShape3D_InternalWide")
 
 [node name="InternalWallC" type="StaticBody3D" parent="RoomGeometry" unique_id=824755730]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 3.5, 6)
+transform = Transform3D(1.44, 0, 0, 0, 1.44, 0, 0, 0, 1.44, 15.354042, 3.5, 6)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RoomGeometry/InternalWallC" unique_id=821192360]
 mesh = SubResource("BoxMesh_InternalWide")
@@ -178,13 +182,16 @@ mesh = SubResource("BoxMesh_InternalWide")
 shape = SubResource("BoxShape3D_InternalWide")
 
 [node name="Ceiling" type="StaticBody3D" parent="RoomGeometry" unique_id=854271541]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0)
+transform = Transform3D(2.36, 0, 0, 0, 2.36, 0, 0, 0, 2.36, 0, 11.405556, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RoomGeometry/Ceiling" unique_id=1361276119]
 mesh = SubResource("BoxMesh_Floor")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RoomGeometry/Ceiling" unique_id=647929799]
 shape = SubResource("BoxShape3D_Floor")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="RoomGeometry" unique_id=1138181983]
+navigation_mesh = SubResource("NavigationMesh_w2qn0")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=443048895]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.798996, 6.076931, -1.7321396)
@@ -199,7 +206,7 @@ light_energy = 1.6
 omni_range = 10.0
 
 [node name="DoorLight" type="OmniLight3D" parent="." unique_id=1503056633]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.2, 3.2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.351406, 3.2, 0)
 light_color = Color(0.9, 0.65, 0.45, 1)
 light_energy = 1.4
 omni_range = 31.543066

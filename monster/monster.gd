@@ -5,6 +5,8 @@ extends CharacterBody3D
 @export var arrival_distance := 0.25
 @export var wait_time := 0.0
 @export var patrol_points: Array[NodePath] = []
+@export var use_navmesh := true
+@export var nav_avoidance_enabled := false
 @export var step_distance := 1.4
 @export var footstep_stream: AudioStream
 @export var footstep_volume_db := -10.0
@@ -26,16 +28,20 @@ var _debug_setup_summary := ""
 
 @onready var _footsteps: AudioStreamPlayer3D = get_node_or_null("Footsteps")
 @onready var _visual: Node = get_node_or_null("Visual")
+@onready var _nav_agent: NavigationAgent3D = get_node_or_null("NavigationAgent3D")
 @onready var _mask_manager: Node = get_node_or_null("/root/MaskManager")
 @onready var _debug_manager: Node = get_node_or_null("/root/DebugManager")
 
 var _anim_player: AnimationPlayer
 var _idle_anim: StringName = &""
 var _walk_anim: StringName = &""
+var _nav_safe_velocity := Vector3.ZERO
+var _nav_safe_velocity_valid := false
 
 func _ready() -> void:
 	_spawn_transform = global_transform
 	_resolve_patrol_points()
+	_setup_navigation()
 	_setup_animations()
 	_sync_animation(false)
 	_debug_log_force("ready: mask_on=%s debug_show=%s" % [_mask_manager != null and _mask_manager.mask_on, _debug_manager != null and _debug_manager.show_monsters])
@@ -53,16 +59,19 @@ func reset_patrol() -> void:
 	_wait_remaining = 0.0
 	velocity = Vector3.ZERO
 	_step_accum = 0.0
+	_stop_navigation_velocity()
 
 func _physics_process(delta: float) -> void:
 	if freeze_when_mask_on and _mask_manager != null and _mask_manager.mask_on:
 		velocity = Vector3.ZERO
+		_stop_navigation_velocity()
 		_sync_animation(false)
 		_debug_log("frozen_by_mask: anim=%s" % [_anim_name()])
 		return
 
 	if _resolved_points.size() < 2:
 		velocity = Vector3.ZERO
+		_stop_navigation_velocity()
 		_sync_animation(false)
 		_debug_log("no_patrol_points: anim=%s" % [_anim_name()])
 		return
@@ -70,6 +79,7 @@ func _physics_process(delta: float) -> void:
 	if _wait_remaining > 0.0:
 		_wait_remaining -= delta
 		velocity = Vector3.ZERO
+		_stop_navigation_velocity()
 		_sync_animation(false)
 		_debug_log("waiting: remaining=%.2f anim=%s" % [_wait_remaining, _anim_name()])
 		return
@@ -84,12 +94,19 @@ func _physics_process(delta: float) -> void:
 		_patrol_index = (_patrol_index + 1) % _resolved_points.size()
 		_wait_remaining = wait_time
 		velocity = Vector3.ZERO
+		_stop_navigation_velocity()
 		_sync_animation(false)
 		_debug_log("arrived: next_index=%d anim=%s" % [_patrol_index, _anim_name()])
 		return
 
-	var dir := to_target.normalized()
-	velocity = dir * speed
+	var dir := _get_nav_direction(target, to_target)
+	var desired_velocity := dir * speed
+	if nav_avoidance_enabled and _nav_agent != null and _nav_agent.has_method("set_velocity"):
+		_nav_safe_velocity_valid = false
+		_nav_agent.set_velocity(desired_velocity)
+		velocity = _nav_safe_velocity if _nav_safe_velocity_valid else desired_velocity
+	else:
+		velocity = desired_velocity
 	move_and_slide()
 
 	_try_play_footsteps(prev_pos)
@@ -117,6 +134,40 @@ func _on_debug_show_monsters_changed(_show: bool) -> void:
 	_debug_log_force("debug_show_monsters_changed: %s" % [_debug_manager != null and _debug_manager.show_monsters])
 	if _debug_manager != null and _debug_manager.show_monsters and _debug_setup_summary != "":
 		print("[Monster:%s] %s" % [str(get_instance_id()), _debug_setup_summary])
+
+func _setup_navigation() -> void:
+	if _nav_agent == null:
+		return
+
+	_nav_agent.path_desired_distance = arrival_distance
+	_nav_agent.target_desired_distance = arrival_distance
+	_nav_agent.avoidance_enabled = nav_avoidance_enabled
+
+	if nav_avoidance_enabled and not _nav_agent.velocity_computed.is_connected(_on_nav_velocity_computed):
+		_nav_agent.velocity_computed.connect(_on_nav_velocity_computed)
+
+func _on_nav_velocity_computed(safe_velocity: Vector3) -> void:
+	_nav_safe_velocity = safe_velocity
+	_nav_safe_velocity_valid = true
+
+func _stop_navigation_velocity() -> void:
+	if _nav_agent == null:
+		return
+	if nav_avoidance_enabled and _nav_agent.has_method("set_velocity"):
+		_nav_agent.set_velocity(Vector3.ZERO)
+
+func _get_nav_direction(target: Vector3, to_target_flat: Vector3) -> Vector3:
+	if not use_navmesh or _nav_agent == null:
+		return to_target_flat.normalized()
+
+	_nav_agent.target_position = target
+	var next_pos := _nav_agent.get_next_path_position()
+	var to_next := next_pos - global_position
+	to_next.y = 0.0
+
+	if to_next.length_squared() > 0.0001:
+		return to_next.normalized()
+	return to_target_flat.normalized()
 
 func _update_visibility() -> void:
 	var mask_on := false
