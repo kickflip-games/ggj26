@@ -22,6 +22,11 @@ ambient_light_color = Color(0.07, 0.08, 0.1, 1)
 ambient_light_sky_contribution = 0.06
 ambient_light_energy = 0.35
 tonemap_mode = 2
+glow_enabled = true
+glow_intensity = 0.4
+glow_strength = 0.5
+glow_blend_mode = 0
+glow_hdr_threshold = 0.8
 fog_enabled = true
 fog_light_color = Color(0.07, 0.075, 0.09, 1)
 fog_light_energy = 0.42
@@ -32,11 +37,6 @@ adjustment_enabled = true
 adjustment_brightness = 0.92
 adjustment_contrast = 1.18
 adjustment_saturation = 0.86
-glow_enabled = true
-glow_intensity = 0.4
-glow_strength = 0.5
-glow_blend_mode = 0
-glow_hdr_threshold = 0.8
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_w2qn0"]
 vertices = PackedVector3Array(-32.539997, 11.71, -32.539997, -32.539997, 11.71, 32.460003, 32.460003, 11.71, 32.460003, 32.460003, 11.71, -32.539997, -30.539997, 1.46, -29.039997, -30.539997, 1.46, 27.460003, -29.789997, 1.46, 27.460003, -29.789997, 1.46, -29.039997, -8.039997, 1.46, -8.789997, -6.789997, 1.46, -9.039997, -6.789997, 1.46, -29.039997, -28.539997, 1.46, -29.039997, -28.539997, 1.46, -6.789997, -8.039997, 1.46, -6.789997, 28.710003, 1.46, -5.289997, 28.960003, 1.46, -4.039997, 29.210003, 1.46, -4.039997, 29.210003, 1.46, -29.039997, -5.289997, 1.46, -4.039997, 1.7100029, 1.46, -4.039997, 1.9600029, 1.46, -5.289997, -5.289997, 1.46, -8.789997, -28.539997, 1.46, 5.460003, -8.039997, 1.46, 5.460003, -5.289997, 1.46, 6.210003, 1.7100029, 1.46, 6.210003, 1.9600029, 1.46, 4.710003, 1.9600029, 1.46, -2.539997, 3.710003, 1.46, 4.710003, 3.710003, 1.46, -2.539997, 28.710003, 1.46, -2.539997, 28.710003, 1.46, 4.710003, 28.960003, 1.46, 6.210003, 29.210003, 1.46, 6.210003, -6.789997, 1.46, 27.460003, -6.789997, 1.46, 7.710003, -8.039997, 1.46, 7.460003, -28.539997, 1.46, 27.460003, 1.9600029, 1.46, 7.460003, -5.539997, 1.46, 7.710003, 3.960003, 1.46, 7.460003, 3.960003, 1.46, 27.460003, 28.710003, 1.46, 7.460003, 29.210003, 1.46, 27.460003, -28.539997, 1.46, 28.710003, -28.539997, 1.46, 29.710003, 29.210003, 1.46, 29.710003, 29.210003, 1.46, 28.710003)
@@ -89,14 +89,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 2.1, -9)
 
 [node name="Monster" parent="." unique_id=1566011579 instance=ExtResource("2_6p0mx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 2.1, -2)
-movement_mode = 2
 roam_radius = 18.0
 hunt_start_distance = 14.0
 hunt_stop_distance = 22.0
 
 [node name="Monster2" parent="." unique_id=1033080376 instance=ExtResource("2_6p0mx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 2.1, 6)
-movement_mode = 2
 roam_radius = 18.0
 hunt_start_distance = 14.0
 hunt_stop_distance = 22.0
@@ -178,6 +176,7 @@ shape = SubResource("BoxShape3D_InternalLong")
 transform = Transform3D(1.68, 0, 0, 0, 1.68, 0, 0, 0, 0.86335367, -21.967918, 3.0993576, 23.858482)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RoomGeometry/InternalWallA2" unique_id=1873966814]
+transform = Transform3D(0.9999998, 0, 0, 0, 0.9999998, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("BoxMesh_InternalLong")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RoomGeometry/InternalWallA2" unique_id=1376168521]
@@ -214,7 +213,6 @@ shape = SubResource("BoxShape3D_Floor")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.5973536, -2.798996, 6.076931, -1.7321396)
 light_color = Color(0.55, 0.65, 0.9, 1)
 light_energy = 0.45
-shadow_enabled = false
 
 [node name="KeyLight" type="OmniLight3D" parent="." unique_id=1607924883]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, 3.2, 10.5)

@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://k6mxdei4xyda" path="res://monster/monster.gd" id="1_okp8s"]
 [ext_resource type="AudioStream" uid="uid://ddvmuf20qg307" path="res://monster/footstep.mp3" id="2_1j2q6"]
 [ext_resource type="PackedScene" uid="uid://vp0opn6w4uy3" path="res://monster/mixamo_slender.tscn" id="3_2k2s0"]
+[ext_resource type="AudioStream" uid="uid://cbwjdhunw81ag" path="res://player/footstep.mp3" id="4_j7lgj"]
+[ext_resource type="Script" uid="uid://dkb8ltjc6067n" path="res://addons/raytraced_audio/raytraced_audio_player_3d.gd" id="5_23j4v"]
 
 [sub_resource type="Resource" id="Resource_gsx7y"]
 metadata/__load_path__ = "res://monster/anim/Idle.fbx"
@@ -27,7 +29,7 @@ emission_energy_multiplier = 3.0
 
 [node name="Monster" type="CharacterBody3D" unique_id=1989861381]
 script = ExtResource("1_okp8s")
-speed = 6.0
+speed = 4.0
 nav_avoidance_enabled = true
 movement_mode = 2
 debug_nav_logs = true
@@ -54,6 +56,7 @@ volume_db = -10.0
 [node name="mixamo_slender" parent="." unique_id=909947585 instance=ExtResource("3_2k2s0")]
 transform = Transform3D(-18.32, 0, -2.7662431e-06, 0, 18.32, 0, 2.7662431e-06, 0, -18.32, 0, -1.621, 0)
 
+<<<<<<< HEAD
 [node name="EyesAttachment" type="BoneAttachment3D" parent="mixamo_slender/Armature/Skeleton3D" unique_id=2217052267]
 bone_name = "mixamorig:Head"
 
@@ -69,3 +72,13 @@ material/0 = SubResource("StandardMaterial3D_eyes")
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0.15, 0, 0)
 mesh = SubResource("SphereMesh_eyes")
 material/0 = SubResource("StandardMaterial3D_eyes")
+=======
+[node name="RaytracedAudioPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=1153584655]
+stream = ExtResource("4_j7lgj")
+volume_db = -11.901
+unit_size = 5.87
+autoplay = true
+parameters/looping = true
+script = ExtResource("5_23j4v")
+metadata/_custom_type_script = "uid://dkb8ltjc6067n"
+>>>>>>> 1895fab83ccc2bce676ca7965102b3cb5c99db07
