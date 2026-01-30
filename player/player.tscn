@@ -1,0 +1,109 @@
+[gd_scene format=3 uid="uid://cbhmkywwi6kca"]
+
+[ext_resource type="Script" uid="uid://b6suav25os447" path="res://player/player.gd" id="1_oul6g"]
+[ext_resource type="Script" path="res://player/camera_rig.gd" id="1_w4b2p"]
+[ext_resource type="Script" path="res://ui/mask_meter.gd" id="2_8vgyb"]
+[ext_resource type="Script" path="res://ui/mask_overlay.gd" id="3_0k6v2"]
+[ext_resource type="Script" path="res://ui/hud.gd" id="4_r0rve"]
+[ext_resource type="Shader" path="res://ui/mask_effect.gdshader" id="5_yi6qj"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_oul6g"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_oul6g"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mask"]
+shader = ExtResource("5_yi6qj")
+
+[node name="Player" type="CharacterBody3D" unique_id=1197631855]
+script = ExtResource("1_oul6g")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=656022287]
+shape = SubResource("CapsuleShape3D_oul6g")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=996220031]
+mesh = SubResource("CapsuleMesh_oul6g")
+
+[node name="CameraRig" type="Node3D" parent="." unique_id=1533754200]
+script = ExtResource("1_w4b2p")
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig" unique_id=2078924707]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.74056655, 0.3860973)
+
+[node name="MaskUI" type="CanvasLayer" parent="." unique_id=1203414419]
+
+[node name="MaskOverlay" type="ColorRect" parent="MaskUI" unique_id=1083436622]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 0.0
+offset_bottom = 0.0
+mouse_filter = 2
+material = SubResource("ShaderMaterial_mask")
+color = Color(1, 1, 1, 1)
+script = ExtResource("3_0k6v2")
+
+[node name="HUD" type="Control" parent="MaskUI" unique_id=1324031936]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 0.0
+offset_bottom = 0.0
+script = ExtResource("4_r0rve")
+
+[node name="KeyLabel" type="Label" parent="MaskUI/HUD" unique_id=1183460876]
+anchors_preset = 3
+anchor_left = 0.0
+anchor_top = 1.0
+anchor_right = 0.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -50.0
+offset_right = 120.0
+offset_bottom = -26.0
+text = "KEY"
+
+[node name="InteractLabel" type="Label" parent="MaskUI/HUD" unique_id=2020025395]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -180.0
+offset_top = -60.0
+offset_right = 180.0
+offset_bottom = -36.0
+horizontal_alignment = 1
+
+[node name="MessageLabel" type="Label" parent="MaskUI/HUD" unique_id=1997255123]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -180.0
+offset_top = -92.0
+offset_right = 180.0
+offset_bottom = -68.0
+horizontal_alignment = 1
+
+[node name="MaskMeter" type="Control" parent="MaskUI" unique_id=1386476395]
+anchors_preset = 1
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 216.0
+offset_bottom = 40.0
+script = ExtResource("2_8vgyb")
+
+[node name="ProgressBar" type="ProgressBar" parent="MaskUI/MaskMeter" unique_id=1974463109]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+show_percentage = false

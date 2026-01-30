@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://b6m0gpkke23gb"]
+
+[ext_resource type="Script" uid="uid://ctwfuupatgsej" path="res://environment/key/key.gd" id="1_twuu8"]
+[ext_resource type="PackedScene" uid="uid://cg34q74eugkl6" path="res://environment/key/Key.glb" id="2_u3koc"]
+[ext_resource type="AudioStream" uid="uid://dx2fhlcoajfas" path="res://environment/key/key_pickup.mp3" id="3_w6vsn"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_1"]
+radius = 0.35
+
+[node name="Key" type="Node3D" unique_id=1830089682]
+script = ExtResource("1_twuu8")
+model_offset = null
+model_rotation_degrees = null
+model_scale = null
+pickup_stream = ExtResource("3_w6vsn")
+pickup_volume_db = null
+
+[node name="Model" parent="." unique_id=829977327 instance=ExtResource("2_u3koc")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.31, 0, 0, 0)
+
+[node name="PickupArea" type="Area3D" parent="." unique_id=201271884]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickupArea" unique_id=2039230527]
+shape = SubResource("SphereShape3D_1")
+
+[node name="SfxPickup" type="AudioStreamPlayer3D" parent="." unique_id=1651757895]
+stream = ExtResource("3_w6vsn")
+volume_db = -6.0

@@ -1,36 +1,27 @@
-# Horror game prototype
+# Horror Prototype
 
-## Rooms / Level Flow
+A Godot 4 horror game prototype featuring atmospheric gameplay with monster encounters, key-based progression, and a mask mechanic system.
 
-- Put your room scenes in `res://rooms/` named like `room1.tscn`, `room2.tscn`, ...
-- Doors automatically advance to the next room (alphabetical + numeric order) when `ExitDoor.next_scene_path` is empty.
-- Configure scanning via the `LevelManager` autoload (`rooms_dir`, `room_prefix`, `loop_after_last`).
+## Project Structure
 
+- **player/** - Player character controller and camera system
+- **monster/** - Monster AI and behavior
+- **environment/** - Level elements (rooms, doors, keys)
+- **managers/** - Game systems (GameManager, LevelManager, DebugManager, MaskManager)
+- **ui/** - User interface elements and HUD
 
+## Features
 
-## Some inspirations
+- First-person camera system
+- Monster AI and footstep audio
+- Key pickup and door mechanics
+- Mask meter and visual effects
+- Debug manager for testing
 
-Exit 8 
-https://www.youtube.com/watch?v=IUipTJmIH6Q
+## Requirements
 
-Dead secret
-https://www.youtube.com/watch?v=pnjgZEneHtk
+- Godot 4.x
 
-Kiaro
-https://www.youtube.com/watch?v=s2_-Jplg6Co
+## Getting Started
 
-
-Slender: The Eight Pages
-https://www.youtube.com/watch?v=gBxcXVX0jDQ
-
-
-Dont Scream
-https://www.youtube.com/watch?v=ARXUjakdjVo
-
-Fibrilation
-https://www.youtube.com/watch?v=zoma6f_xroM
-
-
-Stairs 
-https://www.youtube.com/watch?v=9Rem6ylM1uI
-# ggj26
+Open `project.godot` in Godot 4 to run the project.
