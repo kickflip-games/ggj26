@@ -15,12 +15,25 @@ run/main_scene="res://ui/main_menu.tscn"
 config/features=PackedStringArray("4.6")
 config/icon="res://icon.svg"
 
+[audio]
+
+buses/default_bus_layout="uid://cuyb0t172iaxb"
+
 [autoload]
 
 MaskManager="*res://managers/mask_manager.gd"
 GameManager="*res://managers/game_manager.gd"
 DebugManager="*res://managers/debug_manager.gd"
 LevelManager="*res://managers/level_manager.gd"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/raytraced_audio/plugin.cfg")
+
+[raytraced_audio]
+
+reverb_bus=&"RaytracedReverb"
+ambient_bus=&"RaytracedAmbient"
 
 [rendering]
 
