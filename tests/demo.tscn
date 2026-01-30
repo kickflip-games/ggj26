@@ -20,17 +20,17 @@ background_mode = 2
 sky = SubResource("Sky_qvmrs")
 ambient_light_color = Color(0.07, 0.08, 0.1, 1)
 ambient_light_sky_contribution = 0.06
-ambient_light_energy = 0.04
+ambient_light_energy = 0.35
 tonemap_mode = 2
 fog_enabled = true
-fog_density = 0.03
 fog_light_color = Color(0.07, 0.075, 0.09, 1)
 fog_light_energy = 0.42
-fog_height_density = -0.1
 fog_sun_scatter = 0.02
+fog_density = 0.03
+fog_height_density = -0.1
 adjustment_enabled = true
-adjustment_brightness = 0.72
-adjustment_contrast = 1.28
+adjustment_brightness = 0.92
+adjustment_contrast = 1.18
 adjustment_saturation = 0.86
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_w2qn0"]
@@ -198,7 +198,6 @@ shape = SubResource("BoxShape3D_InternalWide")
 
 [node name="Ceiling" type="StaticBody3D" parent="RoomGeometry" unique_id=854271541]
 transform = Transform3D(2.36, 0, 0, 0, 2.36, 0, 0, 0, 2.36, 0, 10.045132, 0)
-visible = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RoomGeometry/Ceiling" unique_id=1361276119]
 mesh = SubResource("BoxMesh_Floor")
@@ -209,14 +208,13 @@ shape = SubResource("BoxShape3D_Floor")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=443048895]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.5973536, -2.798996, 6.076931, -1.7321396)
 light_color = Color(0.55, 0.65, 0.9, 1)
-light_energy = 0.22
-shadow_enabled = true
-shadow_opacity = 0.65
+light_energy = 0.45
+shadow_enabled = false
 
 [node name="KeyLight" type="OmniLight3D" parent="." unique_id=1607924883]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, 3.2, 10.5)
-light_color = Color(0.55, 0.7, 0.9, 1)
-light_energy = 1.4
+light_color = Color(0.85, 0.82, 0.75, 1)
+light_energy = 0.9
 omni_range = 7.0
 
 [node name="DoorLight" type="OmniLight3D" parent="." unique_id=1503056633]
@@ -228,5 +226,5 @@ omni_range = 12.0
 [node name="FillLight" type="OmniLight3D" parent="." unique_id=1301095908]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2, 0)
 light_color = Color(0.55, 0.65, 0.8, 1)
-light_energy = 0.08
-omni_range = 14.0
+light_energy = 0.25
+omni_range = 18.0

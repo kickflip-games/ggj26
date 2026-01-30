@@ -20,10 +20,10 @@ shader_parameter/border_mask = 2.0
 shader_parameter/strength = 10.0
 shader_parameter/tint = Color(0.55, 0.8, 1, 1)
 shader_parameter/tint_strength = 0.14
-shader_parameter/brightness = 1.02
-shader_parameter/contrast = 1.08
-shader_parameter/saturation = 1.1
-shader_parameter/gamma = 1.05
+shader_parameter/brightness = 3.2
+shader_parameter/contrast = 1.35
+shader_parameter/saturation = 0.8
+shader_parameter/gamma = 0.5
 shader_parameter/curvature = 0.14
 shader_parameter/corner_soften = 0.06
 shader_parameter/vignette = 0.38
@@ -60,12 +60,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.74056655, 0.3860973)
 
 [node name="Flashlight" type="SpotLight3D" parent="CameraRig/Camera3D"]
 light_color = Color(1, 0.96, 0.88, 1)
-light_energy = 5.8
-spot_angle = 38.0
-spot_angle_attenuation = 0.45
-spot_attenuation = 1.0
-spot_range = 22.0
+light_energy = 2.2
+light_indirect_energy = 0.0
+spot_angle = 42.0
+spot_angle_attenuation = 0.7
+spot_attenuation = 1.2
+spot_range = 20.0
 shadow_enabled = true
+shadow_opacity = 0.5
 
 [node name="Footsteps" type="AudioStreamPlayer3D" parent="." unique_id=2090808189]
 stream = ExtResource("6_foot")
