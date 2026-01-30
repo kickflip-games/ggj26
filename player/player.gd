@@ -5,6 +5,9 @@ extends CharacterBody3D
 @export var jump_velocity := 4.5
 @export var mouse_sensitivity := 0.002
 @export_range(0.0, 1.0, 0.01) var mask_speed_multiplier := 0.15
+@export var acceleration := 24.0
+@export var deceleration := 28.0
+@export var air_acceleration := 10.0
 
 var gravity := 9.8
 
@@ -13,6 +16,10 @@ var gravity := 9.8
 
 var pitch := 0.0
 var _mask_on := true
+var _cam_input_dir := Vector2.ZERO
+var _cam_current_speed := 0.0
+var _cam_velocity := Vector3.ZERO
+var _cam_grounded := false
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -20,6 +27,10 @@ func _ready():
 	if mask_manager != null:
 		mask_manager.mask_toggled.connect(_on_mask_toggled)
 		_on_mask_toggled(mask_manager.mask_on)
+
+func _process(delta: float) -> void:
+	if camera_rig != null:
+		camera_rig.update_motion(delta, pitch, _cam_input_dir, _cam_current_speed, _cam_velocity, _cam_grounded)
 
 func _input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -70,16 +81,17 @@ func _physics_process(delta):
 	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	var current_speed := speed if not _mask_on else (speed * mask_speed_multiplier)
 
-	if direction:
-		velocity.x = direction.x * current_speed
-		velocity.z = direction.z * current_speed
-	else:
-		velocity.x = move_toward(velocity.x, 0, current_speed)
-		velocity.z = move_toward(velocity.z, 0, current_speed)
+	var target_velocity := Vector3(direction.x * current_speed, velocity.y, direction.z * current_speed)
+	var accel := acceleration if is_on_floor() else air_acceleration
+	var decel := deceleration if is_on_floor() else air_acceleration
+	velocity.x = move_toward(velocity.x, target_velocity.x, (accel if absf(target_velocity.x) > absf(velocity.x) else decel) * delta)
+	velocity.z = move_toward(velocity.z, target_velocity.z, (accel if absf(target_velocity.z) > absf(velocity.z) else decel) * delta)
 
 	move_and_slide()
-	if camera_rig != null:
-		camera_rig.update_motion(delta, pitch, input_dir, current_speed, velocity, is_on_floor())
+	_cam_input_dir = input_dir
+	_cam_current_speed = current_speed
+	_cam_velocity = velocity
+	_cam_grounded = is_on_floor()
 
 	for i in get_slide_collision_count():
 		var collider := get_slide_collision(i).get_collider()
