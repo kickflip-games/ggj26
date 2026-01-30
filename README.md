@@ -1,6 +1,7 @@
 # Horror Prototype
 
-A Godot 4 horror game prototype featuring atmospheric gameplay with monster encounters, key-based progression, and a mask mechanic system.
+
+A Godot 4 horror game prototype
 
 ## Project Structure
 
@@ -10,7 +11,7 @@ A Godot 4 horror game prototype featuring atmospheric gameplay with monster enco
 - **managers/** - Game systems (GameManager, LevelManager, DebugManager, MaskManager)
 - **ui/** - User interface elements and HUD
 
-## Features
+## What do we have 
 
 - First-person camera system
 - Monster AI and footstep audio
@@ -20,7 +21,7 @@ A Godot 4 horror game prototype featuring atmospheric gameplay with monster enco
 
 ## Requirements
 
-- Godot 4.x
+- Godot 4.6
 
 ## Getting Started
 
