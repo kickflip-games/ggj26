@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://bptm0ymljxvyv"]
+
+[ext_resource type="PackedScene" uid="uid://b1ft02v3oswbj" path="res://assets/Boombox.glb" id="1_6nvv8"]
+[ext_resource type="AudioStream" uid="uid://b714t3vtj5ij4" path="res://assets/SFX/LADY GAGA - BLOODY MARY  Skibidi Dop Yes Yes Yes  TikTok Speed Up  Wednesday Addams  Dance Scene.mp3" id="2_2g04j"]
+[ext_resource type="Script" uid="uid://dkb8ltjc6067n" path="res://addons/raytraced_audio/raytraced_audio_player_3d.gd" id="3_qe1gg"]
+
+[node name="Speaker" type="Node3D" unique_id=150167892]
+
+[node name="Boombox" parent="." unique_id=141462936 instance=ExtResource("1_6nvv8")]
+transform = Transform3D(0.032038808, 0, 0.9994866, 0, 1, 0, -0.9994866, 0, 0.032038808, 0.34212685, 0, -0.07572368)
+
+[node name="RaytracedAudioPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=524387071]
+stream = ExtResource("2_2g04j")
+autoplay = true
+parameters/looping = true
+script = ExtResource("3_qe1gg")
+audibility_threshold_db = -29.915
+metadata/_custom_type_script = "uid://dkb8ltjc6067n"
