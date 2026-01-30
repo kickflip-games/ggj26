@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://b5ys74eft8no6" path="res://environment/exit_door/exit_door.tscn" id="4_s0uxu"]
 [ext_resource type="Script" uid="uid://0bhok2vqbms0" path="res://environment/room/room.gd" id="5_xyn1g"]
 [ext_resource type="PackedScene" uid="uid://bptm0ymljxvyv" path="res://environment/speakers/speaker.tscn" id="6_bypgt"]
+[ext_resource type="Texture2D" uid="uid://b564ngrksn611" path="res://assets/rac.jpg" id="6_r7p3m"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xys38"]
 sky_horizon_color = Color(0.03, 0.03, 0.04, 1)
@@ -32,6 +33,9 @@ polygons = [PackedInt32Array(1, 0, 2), PackedInt32Array(2, 0, 5), PackedInt32Arr
 geometry_parsed_geometry_type = 1
 geometry_source_geometry_mode = 1
 geometry_source_group_name = &"RoomGeometry"
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cmhah"]
+albedo_texture = ExtResource("6_r7p3m")
 
 [sub_resource type="BoxMesh" id="BoxMesh_Floor"]
 size = Vector3(28, 1, 28)
@@ -117,6 +121,7 @@ transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 29.694885, 1.7, 0)
 requires_key = true
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1138181983]
+visible = false
 navigation_mesh = SubResource("NavigationMesh_w2qn0")
 
 [node name="RoomGeometry" type="Node3D" parent="." unique_id=105294922]
@@ -125,6 +130,7 @@ navigation_mesh = SubResource("NavigationMesh_w2qn0")
 transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, 0, 0, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RoomGeometry/Floor" unique_id=1808723537]
+material_override = SubResource("StandardMaterial3D_cmhah")
 mesh = SubResource("BoxMesh_Floor")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RoomGeometry/Floor" unique_id=868899140]
@@ -167,25 +173,29 @@ mesh = SubResource("BoxMesh_WallShort")
 shape = SubResource("BoxShape3D_WallShort")
 
 [node name="InternalWallA" type="StaticBody3D" parent="RoomGeometry" unique_id=1260658078 groups=["RoomGeometry"]]
-transform = Transform3D(1.68, 0, 0, 0, 1.68, 0, 0, 0, 0.86335367, -6.6841593, 3.0993576, -0.72560406)
+transform = Transform3D(1.68, 0, 0, 0, 1.68, 0, 0, 0, 0.86335367, -6.5988035, 4.587178, -0.72560406)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RoomGeometry/InternalWallA" unique_id=1492926685]
+transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 1, 0.5593951, 0.008605838, -0.3421979)
 mesh = SubResource("BoxMesh_InternalLong")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RoomGeometry/InternalWallA" unique_id=1214632233]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5593951, 0.008605838, -0.3421979)
 shape = SubResource("BoxShape3D_InternalLong")
 
 [node name="InternalWallB" type="StaticBody3D" parent="RoomGeometry" unique_id=65953903 groups=["RoomGeometry"]]
-transform = Transform3D(1.44, 0, 0, 0, 1.44, 0, 0, 0, 1.44, 15.354042, 3.5, -4)
+transform = Transform3D(1.44, 0, 0, 0, 1.4408686, 0, 0, 0, 1.44, 15.520245, 5.448106, -4)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RoomGeometry/InternalWallB" unique_id=210765452]
+transform = Transform3D(1.0975438, 0, 0, 0, 1.3318696, 0, 0, 0, 1, 2.51363, 0, 0)
 mesh = SubResource("BoxMesh_InternalWide")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RoomGeometry/InternalWallB" unique_id=1545165222]
+transform = Transform3D(1.44, 0, 0, 0, 1.4408686, 0, 0, 0, 1.44, 15.520245, 5.448106, -4)
 shape = SubResource("BoxShape3D_InternalWide")
 
 [node name="InternalWallC" type="StaticBody3D" parent="RoomGeometry" unique_id=824755730 groups=["RoomGeometry"]]
-transform = Transform3D(1.44, 0, 0, 0, 1.44, 0, 0, 0, 1.44, 15.354042, 3.5, 6)
+transform = Transform3D(0.95477337, 0, 0, 0, 2.0344262, 0, 0, 0, 2.016, 21.335613, 5.3946924, 9.80097)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RoomGeometry/InternalWallC" unique_id=821192360]
 mesh = SubResource("BoxMesh_InternalWide")
@@ -195,9 +205,9 @@ shape = SubResource("BoxShape3D_InternalWide")
 
 [node name="Ceiling" type="StaticBody3D" parent="RoomGeometry" unique_id=854271541]
 transform = Transform3D(2.36, 0, 0, 0, 2.36, 0, 0, 0, 2.36, 0, 10.045132, 0)
-visible = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RoomGeometry/Ceiling" unique_id=1361276119]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0026217964, -0.012350559, 0.006522971)
 mesh = SubResource("BoxMesh_Floor")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RoomGeometry/Ceiling" unique_id=647929799]
@@ -228,10 +238,14 @@ light_energy = 0.95
 omni_range = 45.60828
 
 [node name="Speaker" parent="." unique_id=150167892 instance=ExtResource("6_bypgt")]
-transform = Transform3D(-0.049153235, 0, -1.4317856, 0, 1.3073269, 0, 1.1645018, 0, -0.060435202, 14.380251, 1.5731804, -29.216742)
+transform = Transform3D(-0.61860716, 0, -1.2145613, 0, 1.3073268, 0, 0.9878287, 0, -0.7605939, 28.185417, 1.1007054, -29.056213)
 
 [node name="DoorLight2" type="OmniLight3D" parent="." unique_id=1947249322]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.1152, 6.0301285, -29.937958)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.743208, 7.1399617, -28.243273)
 light_color = Color(0.9, 0.65, 0.45, 1)
 light_energy = 1.4
 omni_range = 31.543066
+
+[node name="Sprite3D" type="Sprite3D" parent="." unique_id=366829114]
+transform = Transform3D(0.575, 0, 0, 0, 0.575, 0, 0, 0, 0.575, 27.036613, 4.7216578, -29.536789)
+texture = ExtResource("6_r7p3m")

@@ -30,6 +30,10 @@ LevelManager="*res://managers/level_manager.gd"
 
 enabled=PackedStringArray("res://addons/raytraced_audio/plugin.cfg")
 
+[filesystem]
+
+import/blender/enabled=false
+
 [raytraced_audio]
 
 reverb_bus=&"RaytracedReverb"
