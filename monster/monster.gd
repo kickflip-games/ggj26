@@ -7,6 +7,10 @@ extends CharacterBody3D
 @export var patrol_points: Array[NodePath] = []
 @export var use_navmesh := true
 @export var nav_avoidance_enabled := false
+@export_enum("Patrol", "Roam") var movement_mode := 0
+@export var roam_radius := 12.0
+@export var roam_min_distance := 3.0
+@export var roam_target_timeout := 8.0
 @export var step_distance := 1.4
 @export var footstep_stream: AudioStream
 @export var footstep_volume_db := -10.0
@@ -37,13 +41,19 @@ var _idle_anim: StringName = &""
 var _walk_anim: StringName = &""
 var _nav_safe_velocity := Vector3.ZERO
 var _nav_safe_velocity_valid := false
+var _roam_target := Vector3.ZERO
+var _roam_has_target := false
+var _roam_time_left := 0.0
+var _rng := RandomNumberGenerator.new()
 
 func _ready() -> void:
 	_spawn_transform = global_transform
+	_rng.seed = int(Time.get_ticks_usec()) ^ int(get_instance_id())
 	_resolve_patrol_points()
 	_setup_navigation()
 	_setup_animations()
 	_sync_animation(false)
+	_pick_roam_target_if_needed(true)
 	_debug_log_force("ready: mask_on=%s debug_show=%s" % [_mask_manager != null and _mask_manager.mask_on, _debug_manager != null and _debug_manager.show_monsters])
 
 	if _mask_manager != null:
@@ -60,6 +70,8 @@ func reset_patrol() -> void:
 	velocity = Vector3.ZERO
 	_step_accum = 0.0
 	_stop_navigation_velocity()
+	_roam_has_target = false
+	_roam_time_left = 0.0
 
 func _physics_process(delta: float) -> void:
 	if freeze_when_mask_on and _mask_manager != null and _mask_manager.mask_on:
@@ -69,7 +81,7 @@ func _physics_process(delta: float) -> void:
 		_debug_log("frozen_by_mask: anim=%s" % [_anim_name()])
 		return
 
-	if _resolved_points.size() < 2:
+	if movement_mode == 0 and _resolved_points.size() < 2:
 		velocity = Vector3.ZERO
 		_stop_navigation_velocity()
 		_sync_animation(false)
@@ -86,17 +98,23 @@ func _physics_process(delta: float) -> void:
 
 	var prev_pos := global_position
 
-	var target := _resolved_points[_patrol_index].global_position
+	var target := _get_current_target(delta)
 	var to_target := target - global_position
 	to_target.y = 0.0
 
 	if to_target.length() <= arrival_distance:
-		_patrol_index = (_patrol_index + 1) % _resolved_points.size()
+		if movement_mode == 0:
+			_patrol_index = (_patrol_index + 1) % _resolved_points.size()
+		else:
+			_roam_has_target = false
 		_wait_remaining = wait_time
 		velocity = Vector3.ZERO
 		_stop_navigation_velocity()
 		_sync_animation(false)
-		_debug_log("arrived: next_index=%d anim=%s" % [_patrol_index, _anim_name()])
+		if movement_mode == 0:
+			_debug_log("arrived: next_index=%d anim=%s" % [_patrol_index, _anim_name()])
+		else:
+			_debug_log("arrived: roam_pick_next anim=%s" % [_anim_name()])
 		return
 
 	var dir := _get_nav_direction(target, to_target)
@@ -168,6 +186,65 @@ func _get_nav_direction(target: Vector3, to_target_flat: Vector3) -> Vector3:
 	if to_next.length_squared() > 0.0001:
 		return to_next.normalized()
 	return to_target_flat.normalized()
+
+func _get_current_target(delta: float) -> Vector3:
+	if movement_mode == 0:
+		return _resolved_points[_patrol_index].global_position
+
+	_pick_roam_target_if_needed(false)
+	if use_navmesh and _nav_agent != null and _nav_agent.has_method("is_target_reachable") and not _nav_agent.is_target_reachable():
+		_roam_has_target = false
+		_pick_roam_target_if_needed(false)
+	_roam_time_left -= delta
+	if _roam_time_left <= 0.0:
+		_roam_has_target = false
+		_pick_roam_target_if_needed(false)
+
+	return _roam_target
+
+func _pick_roam_target_if_needed(force: bool) -> void:
+	if not force and _roam_has_target:
+		return
+	if movement_mode != 1:
+		return
+
+	var origin := global_position
+	var target := _pick_random_nav_point(origin, roam_radius)
+	for _i in range(8):
+		if (target - origin).length() >= roam_min_distance:
+			break
+		target = _pick_random_nav_point(origin, roam_radius)
+
+	_roam_target = target
+	_roam_has_target = true
+	_roam_time_left = maxf(roam_target_timeout, 0.1)
+
+	if use_navmesh and _nav_agent != null:
+		_nav_agent.target_position = _roam_target
+
+func _pick_random_nav_point(origin: Vector3, radius: float) -> Vector3:
+	var r := maxf(radius, 0.1)
+	var angle := _rng.randf() * TAU
+	var dist := sqrt(_rng.randf()) * r
+	var candidate := origin + Vector3(cos(angle) * dist, 0.0, sin(angle) * dist)
+	candidate.y = origin.y
+
+	var map_rid := RID()
+	var world := get_world_3d()
+	if world != null:
+		var maybe := world.get("navigation_map")
+		if typeof(maybe) == TYPE_RID:
+			map_rid = maybe
+		elif world.has_method("get_navigation_map"):
+			map_rid = world.get_navigation_map()
+
+	if map_rid.is_valid() and NavigationServer3D.has_method("map_get_closest_point"):
+		var cp := NavigationServer3D.map_get_closest_point(map_rid, candidate)
+		if typeof(cp) == TYPE_VECTOR3:
+			cp.y = origin.y
+			return cp
+
+	return candidate
 
 func _update_visibility() -> void:
 	var mask_on := false

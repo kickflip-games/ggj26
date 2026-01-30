@@ -2,7 +2,7 @@ class_name CameraRig
 extends Node3D
 
 @export var headbob_enabled := true
-@export var headbob_freq_hz := 1.8
+@export var headbob_freq_hz := 0.4
 @export var headbob_amp_x := 0.03
 @export var headbob_amp_y := 0.06
 @export var headbob_pitch_deg := 0.6
