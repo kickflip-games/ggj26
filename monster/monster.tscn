@@ -1,9 +1,13 @@
 [gd_scene format=3 uid="uid://dbeam8duw66fa"]
 
-[ext_resource type="Script" path="res://monster/monster.gd" id="1_okp8s"]
-[ext_resource type="AudioStream" path="res://monster/footstep.mp3" id="2_1j2q6"]
-[ext_resource type="PackedScene" path="res://monster/anim/Idle.fbx" id="3_86wqv"]
-[ext_resource type="PackedScene" path="res://monster/anim/Walk.fbx" id="4_j1g04"]
+[ext_resource type="Script" uid="uid://k6mxdei4xyda" path="res://monster/monster.gd" id="1_okp8s"]
+[ext_resource type="AudioStream" uid="uid://ddvmuf20qg307" path="res://monster/footstep.mp3" id="2_1j2q6"]
+
+[sub_resource type="Resource" id="Resource_gsx7y"]
+metadata/__load_path__ = "res://monster/anim/Idle.fbx"
+
+[sub_resource type="Resource" id="Resource_2k2s0"]
+metadata/__load_path__ = "res://monster/anim/Walk.fbx"
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_0g571"]
 
@@ -12,17 +16,13 @@
 [node name="Monster" type="CharacterBody3D" unique_id=1989861381]
 script = ExtResource("1_okp8s")
 footstep_stream = ExtResource("2_1j2q6")
-footstep_volume_db = -10.0
-idle_source_scene = ExtResource("3_86wqv")
-walk_source_scene = ExtResource("4_j1g04")
+idle_source_scene = SubResource("Resource_gsx7y")
+walk_source_scene = SubResource("Resource_2k2s0")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2021433740]
 shape = SubResource("CapsuleShape3D_0g571")
 
-[node name="Visual" parent="." unique_id=1270029970 instance=ExtResource("3_86wqv")]
-
 [node name="DebugMesh" type="MeshInstance3D" parent="." unique_id=1221168234]
-visible = false
 mesh = SubResource("CapsuleMesh_okp8s")
 
 [node name="Footsteps" type="AudioStreamPlayer3D" parent="." unique_id=1371398713]
