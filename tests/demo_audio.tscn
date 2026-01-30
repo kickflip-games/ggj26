@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://cg1lr0277kwew"]
+[gd_scene format=3 uid="uid://c15mdcsi58gyj"]
 
 [ext_resource type="PackedScene" uid="uid://cbhmkywwi6kca" path="res://player/player.tscn" id="1_xys38"]
 [ext_resource type="PackedScene" uid="uid://b6m0gpkke23gb" path="res://environment/key/key.tscn" id="3_4ejh5"]
@@ -7,6 +7,8 @@
 [ext_resource type="Script" uid="uid://0bhok2vqbms0" path="res://environment/room/room.gd" id="5_xyn1g"]
 [ext_resource type="PackedScene" uid="uid://bptm0ymljxvyv" path="res://environment/speakers/speaker.tscn" id="6_bypgt"]
 [ext_resource type="Texture2D" uid="uid://b564ngrksn611" path="res://assets/rac.jpg" id="6_r7p3m"]
+[ext_resource type="PackedScene" uid="uid://c6dbu5v4q1g6u" path="res://environment/hammer/hammer_pickup.tscn" id="8_cmhah"]
+[ext_resource type="PackedScene" uid="uid://8sb6hkh0h5gf" path="res://environment/barricade/barricade.tscn" id="9_q7jyk"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xys38"]
 sky_horizon_color = Color(0.03, 0.03, 0.04, 1)
@@ -67,6 +69,12 @@ size = Vector3(18, 6, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_InternalWide"]
 size = Vector3(18, 6, 1)
 
+[sub_resource type="BoxMesh" id="BoxMesh_dxsrw"]
+size = Vector3(1, 6, 18)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jhol8"]
+size = Vector3(1, 6, 18)
+
 [node name="Room" type="Node3D" unique_id=1073300846]
 script = ExtResource("5_xyn1g")
 
@@ -114,6 +122,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 2.1, 4)
 
 [node name="Key" parent="." unique_id=1076477365 instance=ExtResource("3_4ejh5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, 1, 10.5)
+visible = false
 model_scale = Vector3(0.05, 0.05, 0.05)
 
 [node name="ExitDoor" parent="." unique_id=1200769351 instance=ExtResource("4_s0uxu")]
@@ -213,6 +222,16 @@ mesh = SubResource("BoxMesh_Floor")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RoomGeometry/Ceiling" unique_id=647929799]
 shape = SubResource("BoxShape3D_Floor")
 
+[node name="InternalWallA2" type="StaticBody3D" parent="RoomGeometry" unique_id=1925319364]
+transform = Transform3D(1.68, 0, 0, 0, 2.0897882, 0, 0, 0, 0.86335367, -17.095861, 3.530359, 28.185308)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RoomGeometry/InternalWallA2" unique_id=1755883380]
+transform = Transform3D(0.9999998, 0, 0, 0, 0.9999998, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("BoxMesh_dxsrw")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RoomGeometry/InternalWallA2" unique_id=995723661]
+shape = SubResource("BoxShape3D_jhol8")
+
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=443048895]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.5973536, -2.798996, 6.076931, -1.7321396)
 light_energy = 0.25
@@ -249,3 +268,19 @@ omni_range = 31.543066
 [node name="Sprite3D" type="Sprite3D" parent="." unique_id=366829114]
 transform = Transform3D(0.575, 0, 0, 0, 0.575, 0, 0, 0, 0.575, 27.036613, 4.7216578, -29.536789)
 texture = ExtResource("6_r7p3m")
+
+[node name="Hammer" parent="." unique_id=2098841717 instance=ExtResource("8_cmhah")]
+transform = Transform3D(-0.08473252, -1.0707116, -0.8156372, -0.5219599, 0.7016564, -1.0248059, 1.0386811, 0.26525202, -0.5815249, 28.300846, 1.1306002, -21.517076)
+
+[node name="Barricade" parent="." unique_id=583132380 instance=ExtResource("9_q7jyk")]
+transform = Transform3D(0, 0, -1.7669195, 0, 1.3638759, 0, 1.1459246, 0, 0, -22.328701, 2.885626, 20.18917)
+
+[node name="DoorLight3" type="OmniLight3D" parent="." unique_id=1214314730]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.858747, -6.1600337, 16.573431)
+light_color = Color(0.9, 0.65, 0.45, 1)
+light_energy = 1.4
+omni_range = 31.543066
+
+[node name="Key2" parent="." unique_id=1830089682 instance=ExtResource("3_4ejh5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.736332, 2.701073, 23.522326)
+model_scale = Vector3(0.5, 0.5, 0.5)

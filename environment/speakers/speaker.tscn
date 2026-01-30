@@ -11,8 +11,8 @@ transform = Transform3D(0.032038808, 0, 0.9994866, 0, 1, 0, -0.9994866, 0, 0.032
 
 [node name="RaytracedAudioPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=524387071]
 stream = ExtResource("2_2g04j")
-volume_db = -11.901
-unit_size = 9.17
+volume_db = -10.579
+unit_size = 10.82
 max_db = 2.504
 autoplay = true
 parameters/looping = true

@@ -47,6 +47,7 @@ shader_parameter/glow_strength = 0.25
 shader_parameter/glow_threshold = 0.65
 
 [node name="Player" type="CharacterBody3D" unique_id=1197631855]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.052408814, 0.2758888, 0)
 script = ExtResource("1_oul6g")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=656022287]
@@ -75,7 +76,7 @@ spot_angle_attenuation = 0.7
 [node name="Footsteps2" type="AudioStreamPlayer3D" parent="." unique_id=2090808189]
 visible = false
 stream = ExtResource("6_foot")
-volume_db = -12.0
+volume_db = -13.322
 
 [node name="MaskUI" type="CanvasLayer" parent="." unique_id=1203414419]
 
@@ -147,9 +148,9 @@ show_percentage = false
 
 [node name="Footsteps" type="AudioStreamPlayer3D" parent="." unique_id=350833035]
 stream = ExtResource("8_hg6s5")
-volume_db = -23.802
+volume_db = -40.993
 unit_size = 2.57
-max_db = -6.222
+max_db = -15.643
 pitch_scale = 1.76
 script = ExtResource("9_8t03j")
 metadata/_custom_type_script = "uid://dkb8ltjc6067n"
