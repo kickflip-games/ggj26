@@ -14,6 +14,17 @@ metadata/__load_path__ = "res://monster/anim/Walk.fbx"
 radius = 1.3266602
 height = 2.6533203
 
+[sub_resource type="SphereMesh" id="SphereMesh_eyes"]
+radius = 0.15
+height = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eyes"]
+emission_enabled = true
+emission = Color(1.0, 0.0, 0.0, 1.0)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="BoneMap" id="BoneMap_1"]
+
 [node name="Monster" type="CharacterBody3D" unique_id=1989861381]
 script = ExtResource("1_okp8s")
 speed = 6.0
@@ -42,3 +53,19 @@ volume_db = -10.0
 
 [node name="mixamo_slender" parent="." unique_id=909947585 instance=ExtResource("3_2k2s0")]
 transform = Transform3D(-18.32, 0, -2.7662431e-06, 0, 18.32, 0, 2.7662431e-06, 0, -18.32, 0, -1.621, 0)
+
+[node name="EyesAttachment" type="BoneAttachment3D" parent="mixamo_slender/Armature/Skeleton3D" unique_id=2217052267]
+bone_name = "mixamorig:Head"
+
+[node name="Eyes" type="Node3D" parent="mixamo_slender/Armature/Skeleton3D/EyesAttachment" unique_id=1850469426]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -0.3)
+
+[node name="LeftEye" type="MeshInstance3D" parent="mixamo_slender/Armature/Skeleton3D/EyesAttachment/Eyes" unique_id=2085961088]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, -0.15, 0, 0)
+mesh = SubResource("SphereMesh_eyes")
+material/0 = SubResource("StandardMaterial3D_eyes")
+
+[node name="RightEye" type="MeshInstance3D" parent="mixamo_slender/Armature/Skeleton3D/EyesAttachment/Eyes" unique_id=1950519919]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0.15, 0, 0)
+mesh = SubResource("SphereMesh_eyes")
+material/0 = SubResource("StandardMaterial3D_eyes")

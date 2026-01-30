@@ -26,6 +26,8 @@ extends CharacterBody3D
 @export var walk_animation_name: StringName = &""
 @export var freeze_when_mask_on := true
 @export var freeze_when_seen := true
+@export var eyes_bone_name: StringName = &""
+@export var eyes_bone_hint := "head"
 @export_range(1.0, 179.0, 1.0) var seen_angle_deg := 45.0
 @export_range(1.0, 179.0, 1.0) var seen_release_angle_deg := 55.0
 @export var seen_max_distance := 40.0
@@ -69,6 +71,8 @@ var _hunt_repath_left := 0.0
 var _hunt_target := Vector3.ZERO
 var _rng := RandomNumberGenerator.new()
 var _next_nav_debug_time_ms := 0
+var _eyes: Node3D
+var _eyes_attachment: BoneAttachment3D
 
 func _ready() -> void:
 	_spawn_transform = global_transform
@@ -76,6 +80,7 @@ func _ready() -> void:
 	_resolve_patrol_points()
 	_setup_navigation()
 	_setup_animations()
+	_setup_eyes_attachment()
 	_reduce_material_shininess()
 	_sync_animation(false)
 	_debug_log_force("ready: mask_on=%s debug_show=%s" % [_mask_manager != null and _mask_manager.mask_on, _debug_manager != null and _debug_manager.show_monsters])
@@ -514,6 +519,12 @@ func _update_visibility() -> void:
 
 	visible = mask_on or debug_show
 
+	# Update eyes visibility (only show when mask is on)
+	if _eyes == null:
+		_eyes = _find_eyes_node()
+	if _eyes != null:
+		_eyes.visible = mask_on
+
 	if not visible:
 		return
 	if mask_on:
@@ -670,6 +681,91 @@ func _setup_animations() -> void:
 		var invalid_examples := _invalid_track_examples(_anim_player.get_animation(_walk_anim), base_anim_root, 5)
 		_debug_log_force("setup: walk='%s' track_count=%d invalid_tracks=%d" % [String(_walk_anim), track_count, invalid])
 		_debug_setup_summary += " | walk='%s' tracks=%d invalid=%d %s" % [String(_walk_anim), track_count, invalid, invalid_examples]
+
+func _setup_eyes_attachment() -> void:
+	_eyes = _find_eyes_node()
+	if _eyes == null:
+		return
+
+	var skeleton := _find_eyes_skeleton()
+	if skeleton == null:
+		return
+
+	var resolved_bone := _resolve_eyes_bone(skeleton)
+	if resolved_bone == &"":
+		_debug_log("eyes: no head bone found, leaving attachment unchanged")
+		return
+
+	var attachment := skeleton.get_node_or_null("EyesAttachment") as BoneAttachment3D
+	if attachment == null:
+		attachment = BoneAttachment3D.new()
+		attachment.name = "EyesAttachment"
+		skeleton.add_child(attachment)
+	_eyes_attachment = attachment
+	attachment.bone_name = resolved_bone
+
+	if _eyes.get_parent() != attachment:
+		_reparent_keep_global(_eyes, attachment)
+
+func _find_eyes_node() -> Node3D:
+	var eyes := get_node_or_null("mixamo_slender/Armature/Eyes") as Node3D
+	if eyes == null and _visual != null:
+		eyes = _visual.find_child("Eyes", true, false) as Node3D
+	if eyes == null:
+		eyes = find_child("Eyes", true, false) as Node3D
+	return eyes
+
+func _find_eyes_skeleton() -> Skeleton3D:
+	var skeleton: Skeleton3D = null
+	if _visual != null:
+		skeleton = _find_skeleton(_visual)
+	if skeleton == null:
+		var base_visual := get_node_or_null("mixamo_slender")
+		skeleton = _find_skeleton(base_visual)
+	if skeleton == null:
+		skeleton = _find_skeleton(self)
+	return skeleton
+
+func _resolve_eyes_bone(skeleton: Skeleton3D) -> StringName:
+	if skeleton == null:
+		return &""
+
+	if eyes_bone_name != &"":
+		var idx := skeleton.find_bone(String(eyes_bone_name))
+		if idx != -1:
+			return skeleton.get_bone_name(idx)
+
+	var hint := eyes_bone_hint.strip_edges()
+	if hint == "":
+		hint = "head"
+	var hint_lower := hint.to_lower()
+
+	for i in range(skeleton.get_bone_count()):
+		var name := String(skeleton.get_bone_name(i))
+		if name.to_lower() == hint_lower:
+			return skeleton.get_bone_name(i)
+
+	for i in range(skeleton.get_bone_count()):
+		var name := String(skeleton.get_bone_name(i))
+		if name.to_lower().contains(hint_lower):
+			return skeleton.get_bone_name(i)
+
+	for i in range(skeleton.get_bone_count()):
+		var name := String(skeleton.get_bone_name(i))
+		if name.to_lower().contains("head"):
+			return skeleton.get_bone_name(i)
+
+	return &""
+
+func _reparent_keep_global(node: Node3D, new_parent: Node) -> void:
+	if node == null or new_parent == null:
+		return
+	var prev_global := node.global_transform
+	var parent := node.get_parent()
+	if parent != null:
+		parent.remove_child(node)
+	new_parent.add_child(node)
+	node.global_transform = prev_global
 
 func _find_animation_player(root: Node) -> AnimationPlayer:
 	if root == null:
