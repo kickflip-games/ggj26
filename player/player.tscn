@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://dfox5aak4tnpu" path="res://ui/mask_overlay.gd" id="3_0k6v2"]
 [ext_resource type="Script" uid="uid://duocm2fldhbwn" path="res://ui/hud.gd" id="4_r0rve"]
 [ext_resource type="Shader" uid="uid://b3ymesv0uanxp" path="res://ui/mask_effect.gdshader" id="5_yi6qj"]
+[ext_resource type="AudioStream" uid="uid://ddvmuf20qg307" path="res://monster/footstep.mp3" id="6_foot"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_oul6g"]
 
@@ -56,6 +57,10 @@ script = ExtResource("1_w4b2p")
 
 [node name="Camera3D" type="Camera3D" parent="CameraRig" unique_id=2078924707]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.74056655, 0.3860973)
+
+[node name="Footsteps" type="AudioStreamPlayer3D" parent="." unique_id=2090808189]
+stream = ExtResource("6_foot")
+volume_db = -12.0
 
 [node name="MaskUI" type="CanvasLayer" parent="." unique_id=1203414419]
 

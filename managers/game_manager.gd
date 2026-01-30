@@ -3,6 +3,9 @@ extends Node
 signal room_registered(room: Node)
 signal room_reset()
 signal key_changed(has_key: bool)
+signal hammer_changed(has_hammer: bool)
+signal game_over()
+signal game_won()
 
 var current_room: Node = null
 var player: Player = null
@@ -13,16 +16,36 @@ var has_key: bool:
 	set(value):
 		if _has_key == value:
 			return
-		_has_key = value
-		key_changed.emit(_has_key)
+			_has_key = value
+			key_changed.emit(_has_key)
+
+var _has_hammer := false
+var has_hammer: bool:
+	get:
+		return _has_hammer
+	set(value):
+		if _has_hammer == value:
+			return
+		_has_hammer = value
+		hammer_changed.emit(_has_hammer)
 
 var _player_spawn: Transform3D
 var _monster_spawns_by_id: Dictionary = {}
 var _keys_by_id: Dictionary = {}
 
+enum GameState { PLAYING, GAME_OVER, WON }
+var state: GameState = GameState.PLAYING
+
+var _end_screen_scene: PackedScene = preload("res://ui/end_screen.tscn")
+var _end_screen: EndScreen = null
+var _pending_next_scene_path := ""
+var _pending_use_level_manager := false
+
 func register_room(room: Node) -> void:
 	current_room = room
 	has_key = false
+	has_hammer = false
+	state = GameState.PLAYING
 	var mask_manager := get_node_or_null("/root/MaskManager")
 	if mask_manager != null and mask_manager.has_method("refill_energy"):
 		mask_manager.refill_energy()
@@ -34,6 +57,8 @@ func register_room(room: Node) -> void:
 func reset_room() -> void:
 	if current_room == null:
 		return
+	if state != GameState.PLAYING:
+		_resume_playing()
 
 	var mask_manager := get_node_or_null("/root/MaskManager")
 	if mask_manager != null:
@@ -42,10 +67,13 @@ func reset_room() -> void:
 		mask_manager.mask_on = false
 
 	has_key = false
+	has_hammer = false
 
 	if player != null:
 		player.global_transform = _player_spawn
 		player.velocity = Vector3.ZERO
+		if player.has_method("unequip_hammer"):
+			player.unequip_hammer()
 
 	for instance_id in _monster_spawns_by_id.keys():
 		var monster := instance_from_id(instance_id)
@@ -72,7 +100,109 @@ func reset_room() -> void:
 	room_reset.emit()
 
 func player_caught() -> void:
+	if state != GameState.PLAYING:
+		return
+	_show_game_over()
+
+func player_won(next_scene_path: String = "") -> void:
+	if state != GameState.PLAYING:
+		return
+	_show_win(next_scene_path)
+
+func _show_game_over() -> void:
+	state = GameState.GAME_OVER
+	game_over.emit()
+	_pause_and_show_end_screen(
+		"GAME OVER",
+		"You were caught.",
+		"Retry",
+		"Quit",
+		true
+	)
+	if _end_screen != null:
+		_end_screen.primary_action.connect(_on_game_over_retry, Object.CONNECT_ONE_SHOT)
+		_end_screen.secondary_action.connect(_on_game_over_quit, Object.CONNECT_ONE_SHOT)
+
+func _show_win(next_scene_path: String) -> void:
+	state = GameState.WON
+	game_won.emit()
+	_pending_next_scene_path = next_scene_path
+	_pending_use_level_manager = next_scene_path.is_empty()
+
+	_pause_and_show_end_screen(
+		"YOU ESCAPED",
+		"Press Enter to continue.",
+		"Continue",
+		"Restart",
+		true
+	)
+	if _end_screen != null:
+		_end_screen.primary_action.connect(_on_win_continue, Object.CONNECT_ONE_SHOT)
+		_end_screen.secondary_action.connect(_on_win_restart, Object.CONNECT_ONE_SHOT)
+
+func _pause_and_show_end_screen(title: String, subtitle: String, primary: String, secondary: String, show_secondary: bool) -> void:
+	_clear_end_screen()
+	if _end_screen_scene == null:
+		return
+
+	get_tree().paused = true
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+
+	var instance := _end_screen_scene.instantiate()
+	_end_screen = instance as EndScreen
+	if _end_screen == null:
+		instance.free()
+		return
+
+	_end_screen.title_text = title
+	_end_screen.subtitle_text = subtitle
+	_end_screen.primary_text = primary
+	_end_screen.secondary_text = secondary
+	_end_screen.show_secondary = show_secondary
+
+	get_tree().root.add_child(_end_screen)
+
+func _clear_end_screen() -> void:
+	if _end_screen != null:
+		_end_screen.queue_free()
+		_end_screen = null
+
+func _resume_playing() -> void:
+	get_tree().paused = false
+	_clear_end_screen()
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	state = GameState.PLAYING
+
+func _on_game_over_retry() -> void:
+	_resume_playing()
 	reset_room()
+
+func _on_game_over_quit() -> void:
+	get_tree().paused = false
+	_clear_end_screen()
+	get_tree().quit()
+
+func _on_win_restart() -> void:
+	_resume_playing()
+	reset_room()
+
+func _on_win_continue() -> void:
+	get_tree().paused = false
+	_clear_end_screen()
+	state = GameState.PLAYING
+
+	if not _pending_next_scene_path.is_empty():
+		get_tree().change_scene_to_file(_pending_next_scene_path)
+		return
+
+	if _pending_use_level_manager:
+		var level_manager := get_node_or_null("/root/LevelManager")
+		if level_manager != null and level_manager.has_method("load_next"):
+			var ok: bool = level_manager.load_next()
+			if ok:
+				return
+
+	get_tree().quit()
 
 func _cache_room_state(room: Node) -> void:
 	player = null
