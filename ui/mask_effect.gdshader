@@ -23,7 +23,8 @@ uniform float gamma : hint_range(0.2, 3.0) = 1.05;
 // --- CRT geometry / lens ---
 uniform float curvature : hint_range(0.0, 0.40) = 0.14;
 uniform float corner_soften : hint_range(0.0, 0.20) = 0.06;
-uniform float vignette : hint_range(0.0, 1.00) = 0.38;
+uniform float vignette_off : hint_range(0.0, 1.00) = 0.55; // Vignette when mask is OFF
+uniform float vignette_on : hint_range(0.0, 1.00) = 0.05;  // Vignette when mask is ON
 
 // --- Scanlines / phosphor ---
 uniform float scanline_strength : hint_range(0.0, 2.0) = 0.95;
@@ -171,10 +172,11 @@ void fragment() {
 	vec3 glow = max(blur - vec3(glow_threshold), vec3(0.0));
 	col += glow * glow_strength * (0.5 + 0.5 * br);
 
-	// --- Vignette ---
+	// --- Vignette (interpolate between off/on modes) ---
 	vec2 v = cuv - 0.5;
 	float vig = smoothstep(0.9, 0.2, dot(v, v) * 2.2);
-	col *= mix(1.0 - vignette, 1.0, vig);
+	float current_vignette = mix(vignette_off, vignette_on, alpha);
+	col *= mix(1.0 - current_vignette, 1.0, vig);
 
 	// --- Shadow mask triads ---
 	vec3 m = triad_mask(FRAGCOORD.xy);
