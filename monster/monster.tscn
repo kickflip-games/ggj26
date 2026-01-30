@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://k6mxdei4xyda" path="res://monster/monster.gd" id="1_okp8s"]
 [ext_resource type="AudioStream" uid="uid://ddvmuf20qg307" path="res://monster/footstep.mp3" id="2_1j2q6"]
+[ext_resource type="PackedScene" uid="uid://dc84lk73p6d11" path="res://monster/SlenderMan.glb" id="3_2k2s0"]
 
 [sub_resource type="Resource" id="Resource_gsx7y"]
 metadata/__load_path__ = "res://monster/anim/Idle.fbx"
@@ -11,13 +12,13 @@ metadata/__load_path__ = "res://monster/anim/Walk.fbx"
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_0g571"]
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_okp8s"]
-
 [node name="Monster" type="CharacterBody3D" unique_id=1989861381]
 script = ExtResource("1_okp8s")
 footstep_stream = ExtResource("2_1j2q6")
 idle_source_scene = SubResource("Resource_gsx7y")
 walk_source_scene = SubResource("Resource_2k2s0")
+
+[node name="Slenderman" parent="." unique_id=1646160974 instance=ExtResource("3_2k2s0")]
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="." unique_id=366045026]
 path_desired_distance = 0.25
@@ -25,9 +26,6 @@ target_desired_distance = 0.25
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2021433740]
 shape = SubResource("CapsuleShape3D_0g571")
-
-[node name="DebugMesh" type="MeshInstance3D" parent="." unique_id=1221168234]
-mesh = SubResource("CapsuleMesh_okp8s")
 
 [node name="Footsteps" type="AudioStreamPlayer3D" parent="." unique_id=1371398713]
 stream = ExtResource("2_1j2q6")
