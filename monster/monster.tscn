@@ -38,34 +38,8 @@ debug_enabled = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0014648438, 0)
 shape = SubResource("CapsuleShape3D_0g571")
 
-<<<<<<< HEAD
-[node name="DebugMesh" type="MeshInstance3D" parent="." unique_id=1221168234]
-visible = false
-mesh = SubResource("CapsuleMesh_okp8s")
-
-=======
->>>>>>> origin/main
 [node name="Footsteps" type="AudioStreamPlayer3D" parent="." unique_id=1371398713]
-visible = false
 stream = ExtResource("2_1j2q6")
-<<<<<<< HEAD
-volume_db = -2.066
-unit_size = 6.7
-
-[node name="RaytracedAudioPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=1717821248]
-stream = ExtResource("2_1j2q6")
-volume_db = -21.156
-unit_size = 6.7
-pitch_scale = 1.14
-autoplay = true
-doppler_tracking = 2
-parameters/looping = true
-script = ExtResource("3_2k2s0")
-metadata/_custom_type_script = "uid://dkb8ltjc6067n"
-
-[node name="Zombie Neck Bite" parent="." unique_id=670899318 instance=ExtResource("4_ck3l0")]
-transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0.19335175, -0.7793187, 0.20913875)
-=======
 volume_db = -10.0
 
 [node name="mixamo_slender" parent="." unique_id=909947585 instance=ExtResource("3_2k2s0")]
@@ -79,4 +53,3 @@ autoplay = true
 parameters/looping = true
 script = ExtResource("5_23j4v")
 metadata/_custom_type_script = "uid://dkb8ltjc6067n"
->>>>>>> origin/main
