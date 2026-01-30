@@ -13,7 +13,7 @@ dest_files=["res://.godot/imported/crawl.fbx-c478cda0b85693549e85368a93fae007.sc
 
 [params]
 
-nodes/root_type=""
+nodes/root_type="AnimationPlayer"
 nodes/root_name=""
 nodes/root_script=null
 nodes/apply_root_scale=true
