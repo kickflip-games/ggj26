@@ -16,8 +16,8 @@ var has_key: bool:
 	set(value):
 		if _has_key == value:
 			return
-			_has_key = value
-			key_changed.emit(_has_key)
+		_has_key = value
+		key_changed.emit(_has_key)
 
 var _has_hammer := false
 var has_hammer: bool:
@@ -37,7 +37,7 @@ enum GameState { PLAYING, GAME_OVER, WON }
 var state: GameState = GameState.PLAYING
 
 var _end_screen_scene: PackedScene = preload("res://ui/end_screen.tscn")
-var _end_screen: EndScreen = null
+var _end_screen: CanvasLayer = null
 var _pending_next_scene_path := ""
 var _pending_use_level_manager := false
 
@@ -119,9 +119,7 @@ func _show_game_over() -> void:
 		"Quit",
 		true
 	)
-	if _end_screen != null:
-		_end_screen.primary_action.connect(_on_game_over_retry, Object.CONNECT_ONE_SHOT)
-		_end_screen.secondary_action.connect(_on_game_over_quit, Object.CONNECT_ONE_SHOT)
+	_connect_end_screen_actions(_on_game_over_retry, _on_game_over_quit)
 
 func _show_win(next_scene_path: String) -> void:
 	state = GameState.WON
@@ -136,9 +134,7 @@ func _show_win(next_scene_path: String) -> void:
 		"Restart",
 		true
 	)
-	if _end_screen != null:
-		_end_screen.primary_action.connect(_on_win_continue, Object.CONNECT_ONE_SHOT)
-		_end_screen.secondary_action.connect(_on_win_restart, Object.CONNECT_ONE_SHOT)
+	_connect_end_screen_actions(_on_win_continue, _on_win_restart)
 
 func _pause_and_show_end_screen(title: String, subtitle: String, primary: String, secondary: String, show_secondary: bool) -> void:
 	_clear_end_screen()
@@ -149,16 +145,16 @@ func _pause_and_show_end_screen(title: String, subtitle: String, primary: String
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 	var instance := _end_screen_scene.instantiate()
-	_end_screen = instance as EndScreen
+	_end_screen = instance as CanvasLayer
 	if _end_screen == null:
 		instance.free()
 		return
 
-	_end_screen.title_text = title
-	_end_screen.subtitle_text = subtitle
-	_end_screen.primary_text = primary
-	_end_screen.secondary_text = secondary
-	_end_screen.show_secondary = show_secondary
+	_end_screen.set("title_text", title)
+	_end_screen.set("subtitle_text", subtitle)
+	_end_screen.set("primary_text", primary)
+	_end_screen.set("secondary_text", secondary)
+	_end_screen.set("show_secondary", show_secondary)
 
 	get_tree().root.add_child(_end_screen)
 
@@ -172,6 +168,14 @@ func _resume_playing() -> void:
 	_clear_end_screen()
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	state = GameState.PLAYING
+
+func _connect_end_screen_actions(primary: Callable, secondary: Callable) -> void:
+	if _end_screen == null:
+		return
+	if _end_screen.has_signal("primary_action"):
+		_end_screen.connect("primary_action", primary, Object.CONNECT_ONE_SHOT)
+	if _end_screen.has_signal("secondary_action"):
+		_end_screen.connect("secondary_action", secondary, Object.CONNECT_ONE_SHOT)
 
 func _on_game_over_retry() -> void:
 	_resume_playing()
