@@ -8,11 +8,22 @@ extends CharacterBody3D
 @export var acceleration := 24.0
 @export var deceleration := 28.0
 @export var air_acceleration := 10.0
+@export var footstep_stream: AudioStream
+@export var footstep_volume_db := -12.0
+@export_range(0.0, 10.0, 0.05) var footstep_min_speed := 0.2
+@export_range(0.1, 2.0, 0.05) var footstep_pitch_min := 0.8
+@export_range(0.1, 2.0, 0.05) var footstep_pitch_max := 1.2
+@export var stop_footsteps_when_idle := true
+@export var hammer_held_scene: PackedScene = preload("res://environment/hammer/hammer_held.tscn")
+@export var hammer_swing_range := 2.0
+@export var hammer_swing_cooldown_sec := 0.35
 
 var gravity := 9.8
 
 @onready var camera_rig: CameraRig = $CameraRig
+@onready var _camera: Camera3D = $CameraRig/Camera3D
 @onready var hud: Control = $MaskUI/HUD
+@onready var _footsteps: AudioStreamPlayer3D = get_node_or_null("Footsteps")
 
 var pitch := 0.0
 var _mask_on := true
@@ -20,9 +31,13 @@ var _cam_input_dir := Vector2.ZERO
 var _cam_current_speed := 0.0
 var _cam_velocity := Vector3.ZERO
 var _cam_grounded := false
+var _rng := RandomNumberGenerator.new()
+var _held_hammer: Node3D = null
+var _hammer_cooldown := 0.0
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	_rng.seed = int(Time.get_ticks_usec()) ^ int(get_instance_id())
 	var mask_manager := get_node_or_null("/root/MaskManager")
 	if mask_manager != null:
 		mask_manager.mask_toggled.connect(_on_mask_toggled)
@@ -34,7 +49,10 @@ func _process(delta: float) -> void:
 
 func _input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		elif GameManager != null and GameManager.has_hammer:
+			_use_hammer()
 
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		# Yaw (left/right)
@@ -62,6 +80,9 @@ func _input(event):
 			flash_message("DEBUG: Monsters %s" % ("visible" if debug_manager.show_monsters else "hidden"))
 
 func _physics_process(delta):
+	var prev_pos := global_position
+	_hammer_cooldown = maxf(0.0, _hammer_cooldown - delta)
+
 	# Gravity
 	if not is_on_floor():
 		velocity.y -= gravity * delta
@@ -88,6 +109,7 @@ func _physics_process(delta):
 	velocity.z = move_toward(velocity.z, target_velocity.z, (accel if absf(target_velocity.z) > absf(velocity.z) else decel) * delta)
 
 	move_and_slide()
+	_try_play_footsteps(prev_pos)
 	_cam_input_dir = input_dir
 	_cam_current_speed = current_speed
 	_cam_velocity = velocity
@@ -100,6 +122,94 @@ func _physics_process(delta):
 
 func _on_mask_toggled(mask_on: bool) -> void:
 	_mask_on = mask_on
+
+func equip_hammer() -> void:
+	if _held_hammer != null:
+		return
+	if hammer_held_scene == null:
+		return
+	var instance := hammer_held_scene.instantiate()
+	_held_hammer = instance as Node3D
+	if _held_hammer == null:
+		instance.free()
+		return
+	if camera_rig != null:
+		camera_rig.add_child(_held_hammer)
+
+func unequip_hammer() -> void:
+	if _held_hammer == null:
+		return
+	_held_hammer.queue_free()
+	_held_hammer = null
+
+func _use_hammer() -> void:
+	if _hammer_cooldown > 0.0:
+		return
+	_hammer_cooldown = maxf(hammer_swing_cooldown_sec, 0.05)
+
+	_animate_hammer_swing()
+	_try_hammer_hit()
+
+func _animate_hammer_swing() -> void:
+	if _held_hammer == null:
+		return
+	var start_rot := _held_hammer.rotation
+	var tween := create_tween()
+	tween.tween_property(_held_hammer, "rotation", start_rot + Vector3(deg_to_rad(-65.0), deg_to_rad(10.0), 0.0), 0.08)
+	tween.tween_property(_held_hammer, "rotation", start_rot, 0.12)
+
+func _try_hammer_hit() -> void:
+	if _camera == null:
+		return
+
+	var world := get_world_3d()
+	if world == null:
+		return
+	var space_state: PhysicsDirectSpaceState3D = world.direct_space_state
+
+	var from := _camera.global_position
+	var to := from + (-_camera.global_transform.basis.z).normalized() * maxf(hammer_swing_range, 0.1)
+	var query := PhysicsRayQueryParameters3D.create(from, to)
+	query.collide_with_areas = true
+	query.collide_with_bodies = true
+	query.exclude = [self]
+
+	var hit: Dictionary = space_state.intersect_ray(query)
+	if hit.is_empty():
+		return
+	var collider: Object = hit.get("collider") as Object
+	if collider == null:
+		return
+
+	if collider.has_method("break_with_hammer"):
+		collider.call("break_with_hammer", hit)
+		return
+	if collider.has_method("on_hit_by_hammer"):
+		collider.call("on_hit_by_hammer", hit)
+		return
+
+func _try_play_footsteps(prev_pos: Vector3) -> void:
+	if _footsteps == null:
+		return
+	if footstep_stream != null:
+		_footsteps.stream = footstep_stream
+	_footsteps.volume_db = footstep_volume_db
+
+	var horiz_speed := Vector2(velocity.x, velocity.z).length()
+	var moved := (global_position - prev_pos).length() > 0.0005
+	var moving := is_on_floor() and moved and horiz_speed > footstep_min_speed
+
+	if not moving:
+		if stop_footsteps_when_idle and _footsteps.playing:
+			_footsteps.stop()
+		return
+
+	if _footsteps.stream == null:
+		return
+
+	if not _footsteps.playing:
+		_footsteps.pitch_scale = _rng.randf_range(footstep_pitch_min, footstep_pitch_max)
+		_footsteps.play()
 
 func set_interact_prompt(text: String) -> void:
 	if hud != null and hud.has_method("set_interact_prompt"):

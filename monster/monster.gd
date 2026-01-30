@@ -7,11 +7,14 @@ extends CharacterBody3D
 @export var patrol_points: Array[NodePath] = []
 @export var use_navmesh := true
 @export var nav_avoidance_enabled := false
-@export_enum("Patrol", "Roam") var movement_mode := 0
+@export_enum("Patrol", "Roam", "Hunt") var movement_mode := 0
 @export var roam_radius := 12.0
 @export var roam_min_distance := 3.0
 @export var roam_target_timeout := 8.0
 @export var roam_unreachable_retry_delay := 0.75
+@export var hunt_start_distance := 12.0
+@export var hunt_stop_distance := 18.0
+@export var hunt_repath_interval_sec := 0.25
 @export var debug_nav_logs := false
 @export_range(0.05, 5.0, 0.05) var debug_nav_log_interval_sec := 0.5
 @export var step_distance := 1.4
@@ -22,6 +25,14 @@ extends CharacterBody3D
 @export var idle_animation_name: StringName = &""
 @export var walk_animation_name: StringName = &""
 @export var freeze_when_mask_on := true
+@export var freeze_when_seen := true
+@export_range(1.0, 179.0, 1.0) var seen_angle_deg := 45.0
+@export_range(1.0, 179.0, 1.0) var seen_release_angle_deg := 55.0
+@export var seen_max_distance := 40.0
+@export var seen_require_line_of_sight := true
+@export var seen_los_collision_mask := -1
+@export var debug_seen_logs := false
+@export_range(0.05, 5.0, 0.05) var debug_seen_log_interval_sec := 0.5
 @export var debug_animation_logs := false
 @export_range(0.05, 10.0, 0.05) var debug_log_interval_sec := 1.0
 
@@ -44,10 +55,18 @@ var _idle_anim: StringName = &""
 var _walk_anim: StringName = &""
 var _nav_safe_velocity := Vector3.ZERO
 var _nav_safe_velocity_valid := false
+var _frozen_by_seen := false
+var _anim_speed_scale_before_freeze := 1.0
+var _seen_last_dot := 0.0
+var _seen_last_los := false
+var _next_seen_debug_time_ms := 0
 var _roam_target := Vector3.ZERO
 var _roam_has_target := false
 var _roam_time_left := 0.0
 var _roam_unreachable_elapsed := 0.0
+var _hunt_active := false
+var _hunt_repath_left := 0.0
+var _hunt_target := Vector3.ZERO
 var _rng := RandomNumberGenerator.new()
 var _next_nav_debug_time_ms := 0
 
@@ -77,8 +96,19 @@ func reset_patrol() -> void:
 	_roam_has_target = false
 	_roam_time_left = 0.0
 	_roam_unreachable_elapsed = 0.0
+	_hunt_active = false
+	_hunt_repath_left = 0.0
 
 func _physics_process(delta: float) -> void:
+	var should_freeze_seen := _update_seen_freeze()
+	_set_seen_frozen(should_freeze_seen)
+	_debug_seen_state()
+	if should_freeze_seen:
+		velocity = Vector3.ZERO
+		_stop_navigation_velocity()
+		_step_accum = 0.0
+		return
+
 	if freeze_when_mask_on and _mask_manager != null and _mask_manager.mask_on:
 		velocity = Vector3.ZERO
 		_stop_navigation_velocity()
@@ -107,7 +137,7 @@ func _physics_process(delta: float) -> void:
 	var to_target := target - global_position
 	to_target.y = 0.0
 
-	if to_target.length() <= arrival_distance:
+	if to_target.length() <= arrival_distance and not (movement_mode == 2 and _hunt_active):
 		if movement_mode == 0:
 			_patrol_index = (_patrol_index + 1) % _resolved_points.size()
 		else:
@@ -197,14 +227,57 @@ func _get_current_target(delta: float) -> Vector3:
 	if movement_mode == 0:
 		return _resolved_points[_patrol_index].global_position
 
+	if movement_mode == 2:
+		return _get_hunt_target(delta)
+
+	return _get_roam_target(delta)
+
+func _get_roam_target(delta: float) -> Vector3:
 	_pick_roam_target_if_needed(false)
 	_track_roam_reachability(delta)
+
 	_roam_time_left -= delta
 	if _roam_time_left <= 0.0:
 		_roam_has_target = false
 		_pick_roam_target_if_needed(false)
 
 	return _roam_target
+
+func _get_hunt_target(delta: float) -> Vector3:
+	var player: Player = null
+	if GameManager != null:
+		player = GameManager.player
+
+	if player == null:
+		_hunt_active = false
+		return _get_roam_target(delta)
+
+	var to_player := player.global_position - global_position
+	to_player.y = 0.0
+	var dist := to_player.length()
+
+	var start_dist := maxf(hunt_start_distance, 0.0)
+	var stop_dist := maxf(hunt_stop_distance, start_dist)
+
+	if _hunt_active:
+		if dist > stop_dist:
+			_hunt_active = false
+	else:
+		if dist <= start_dist:
+			_hunt_active = true
+
+	if not _hunt_active:
+		return _get_roam_target(delta)
+
+	_hunt_repath_left -= delta
+	if _hunt_repath_left <= 0.0:
+		_hunt_repath_left = maxf(hunt_repath_interval_sec, 0.05)
+		var desired: Vector3 = _project_point_to_navmesh(player.global_position) if use_navmesh else player.global_position
+		_hunt_target = desired
+		if _nav_agent != null:
+			_nav_agent.target_position = desired
+
+	return _hunt_target
 
 func _track_roam_reachability(delta: float) -> void:
 	if not use_navmesh or _nav_agent == null:
@@ -229,7 +302,7 @@ func _track_roam_reachability(delta: float) -> void:
 func _pick_roam_target_if_needed(force: bool) -> void:
 	if not force and _roam_has_target:
 		return
-	if movement_mode != 1:
+	if movement_mode == 0:
 		return
 
 	var origin := global_position
@@ -255,7 +328,7 @@ func _debug_nav_state(delta: float, target: Vector3) -> void:
 		return
 	_next_nav_debug_time_ms = now + int(debug_nav_log_interval_sec * 1000.0)
 
-	var mode := "Patrol" if movement_mode == 0 else "Roam"
+	var mode := "Patrol" if movement_mode == 0 else ("Roam" if movement_mode == 1 else "Hunt")
 	var to_target := target - global_position
 	to_target.y = 0.0
 	var dist_target := to_target.length()
@@ -282,52 +355,153 @@ func _debug_nav_state(delta: float, target: Vector3) -> void:
 		if _nav_agent.has_method("get_current_navigation_path_index"):
 			path_idx = int(_nav_agent.get_current_navigation_path_index())
 
-	print("[Monster:%s] nav mode=%s vel=%.2f dist_target=%.2f dist_next=%s reachable=%s finished=%s path=%s idx=%s roam_t=%.2f unreach=%.2f target=%s next=%s" % [
+	var hunt_txt := "Y" if _hunt_active else "N"
+	print("[Monster:%s] nav mode=%s hunt=%s repath=%.2f vel=%.2f dist_target=%.2f dist_next=%s reachable=%s finished=%s path=%s idx=%s roam_t=%.2f unreach=%.2f target=%s next=%s" % [
 		str(get_instance_id()),
 		mode,
+		hunt_txt,
+		_hunt_repath_left,
 		Vector2(velocity.x, velocity.z).length(),
 		dist_target,
 		"?" if dist_next < 0.0 else "%.2f" % dist_next,
 		reachable_txt,
 		finished_txt,
 		"?" if path_len < 0 else str(path_len),
-			"?" if path_idx < 0 else str(path_idx),
-			_roam_time_left,
-			_roam_unreachable_elapsed,
-			str(target),
-			str(next_pos)
-		])
+		"?" if path_idx < 0 else str(path_idx),
+		_roam_time_left,
+		_roam_unreachable_elapsed,
+		str(target),
+		str(next_pos)
+	])
 
 func _pick_random_nav_point(origin: Vector3, radius: float) -> Vector3:
 	var r := maxf(radius, 0.1)
 	var angle := _rng.randf() * TAU
 	var dist := sqrt(_rng.randf()) * r
 	var candidate := origin + Vector3(cos(angle) * dist, 0.0, sin(angle) * dist)
-	candidate.y = origin.y
+	return _project_point_to_navmesh(candidate)
 
+func _get_navigation_map_rid() -> RID:
 	var map_rid := RID()
-	var world := get_world_3d()
-	if world != null:
-		var maybe: Variant = world.get("navigation_map")
-		if typeof(maybe) == TYPE_RID:
-			map_rid = maybe
-		elif world.has_method("get_navigation_map"):
-			map_rid = world.get_navigation_map()
+	var world: World3D = get_world_3d()
+	if world == null:
+		return map_rid
 
-	if map_rid.is_valid() and NavigationServer3D.has_method("map_get_iteration_id"):
-		# Avoid querying the map before the first synchronization to prevent errors like:
-		# "navigation map query failed because it was made before first map synchronization."
-		var iter: int = int(NavigationServer3D.map_get_iteration_id(map_rid))
-		if iter <= 0:
-			return candidate
+	var maybe: Variant = world.get("navigation_map")
+	if typeof(maybe) == TYPE_RID:
+		map_rid = maybe
+	elif world.has_method("get_navigation_map"):
+		map_rid = world.get_navigation_map()
 
-	if map_rid.is_valid() and NavigationServer3D.has_method("map_get_closest_point"):
-		var cp := NavigationServer3D.map_get_closest_point(map_rid, candidate)
+	return map_rid
+
+func _navigation_map_ready(map_rid: RID) -> bool:
+	if not map_rid.is_valid():
+		return false
+	if NavigationServer3D.has_method("map_get_iteration_id"):
+		return int(NavigationServer3D.map_get_iteration_id(map_rid)) > 0
+	return true
+
+func _project_point_to_navmesh(point: Vector3) -> Vector3:
+	var map_rid := _get_navigation_map_rid()
+	if not _navigation_map_ready(map_rid):
+		return point
+	if NavigationServer3D.has_method("map_get_closest_point"):
+		var cp := NavigationServer3D.map_get_closest_point(map_rid, point)
 		if typeof(cp) == TYPE_VECTOR3:
-			cp.y = origin.y
 			return cp
+	return point
 
-	return candidate
+func _update_seen_freeze() -> bool:
+	_seen_last_dot = 0.0
+	_seen_last_los = false
+	if not freeze_when_seen:
+		return false
+
+	var player: Player = null
+	if GameManager != null:
+		player = GameManager.player
+	if player == null:
+		return false
+
+	var camera: Camera3D = player.get_node_or_null(^"CameraRig/Camera3D") as Camera3D
+	if camera == null:
+		var found: Node = player.find_child("Camera3D", true, false)
+		camera = found as Camera3D
+
+	var origin := camera.global_position if camera != null else player.global_position
+	var forward := (-camera.global_transform.basis.z).normalized() if camera != null else (-player.global_transform.basis.z).normalized()
+	var to_me := global_position - origin
+	var distance := to_me.length()
+	if distance <= 0.001:
+		_seen_last_dot = 1.0
+		_seen_last_los = true
+		return true
+	if distance > maxf(seen_max_distance, 0.0):
+		return false
+
+	var dir := to_me / distance
+	var dot := clampf(forward.dot(dir), -1.0, 1.0)
+	_seen_last_dot = dot
+
+	var cone_deg := seen_release_angle_deg if _frozen_by_seen else seen_angle_deg
+	var threshold := cos(deg_to_rad(clampf(cone_deg, 1.0, 179.0)))
+	if dot < threshold:
+		return false
+
+	if not seen_require_line_of_sight:
+		_seen_last_los = true
+		return true
+
+	var world: World3D = get_world_3d()
+	if world == null:
+		_seen_last_los = true
+		return true
+
+	var space_state: PhysicsDirectSpaceState3D = world.direct_space_state
+	var head := global_position + Vector3.UP * 1.0
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(origin, head, seen_los_collision_mask)
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	query.exclude = [player]
+
+	var hit: Dictionary = space_state.intersect_ray(query)
+	if hit.is_empty():
+		return false
+
+	var collider: Object = hit.get("collider") as Object
+	_seen_last_los = (collider == self)
+	return _seen_last_los
+
+func _set_seen_frozen(value: bool) -> void:
+	if _frozen_by_seen == value:
+		return
+	_frozen_by_seen = value
+
+	if _anim_player == null:
+		return
+	if _frozen_by_seen:
+		_anim_speed_scale_before_freeze = _anim_player.speed_scale
+		_anim_player.speed_scale = 0.0
+	else:
+		_anim_player.speed_scale = _anim_speed_scale_before_freeze
+
+func _debug_seen_state() -> void:
+	if not (debug_seen_logs or (_debug_manager != null and _debug_manager.show_monsters)):
+		return
+	var now := Time.get_ticks_msec()
+	if now < _next_seen_debug_time_ms:
+		return
+	_next_seen_debug_time_ms = now + int(debug_seen_log_interval_sec * 1000.0)
+
+	print("[Monster:%s] seen freeze=%s dot=%.3f los=%s anim=%s vel=%.2f" % [
+		str(get_instance_id()),
+		"Y" if _frozen_by_seen else "N",
+		_seen_last_dot,
+		"Y" if _seen_last_los else "N",
+		_anim_name(),
+		Vector2(velocity.x, velocity.z).length()
+	])
 
 func _update_visibility() -> void:
 	var mask_on := false
@@ -657,6 +831,8 @@ func _find_node_by_name_and_class(root: Node, node_name: StringName, node_class:
 
 func _sync_animation(moving: bool) -> void:
 	if _anim_player == null:
+		return
+	if _frozen_by_seen:
 		return
 
 	var target := _desired_anim_name(moving)

@@ -76,6 +76,11 @@ func _try_exit() -> void:
 	if open_delay_seconds > 0.0:
 		await get_tree().create_timer(open_delay_seconds).timeout
 
+	if GameManager != null and GameManager.has_method("player_won"):
+		GameManager.player_won(next_scene_path)
+		return
+
+	# Fallback behavior (shouldn't normally happen).
 	if next_scene_path.is_empty():
 		var level_manager := get_node_or_null("/root/LevelManager")
 		if level_manager != null and level_manager.has_method("load_next"):
