@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://c6dbu5v4q1g6u"]
+
+[ext_resource type="Script" path="res://environment/hammer/hammer_pickup.gd" id="1_m7jlk"]
+[ext_resource type="PackedScene" uid="uid://ckqswm8nrbaop" path="res://environment/hammer/hammer.glb" id="2_m9sgv"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(1.2, 1.2, 1.2)
+
+[node name="HammerPickup" type="Node3D"]
+script = ExtResource("1_m7jlk")
+
+[node name="Model" parent="." instance=ExtResource("2_m9sgv")]
+transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, -0.3, 0)
+
+[node name="PickupArea" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickupArea"]
+shape = SubResource("BoxShape3D_1")
+

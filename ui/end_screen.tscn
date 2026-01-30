@@ -1,0 +1,101 @@
+[gd_scene format=3 uid="uid://ctf5x5isv5qyx"]
+
+[ext_resource type="Script" path="res://ui/end_screen.gd" id="1_4p6y6"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1p3q1"]
+bg_color = Color(0, 0, 0, 0.75)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0q3xq"]
+bg_color = Color(0.06, 0.06, 0.075, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.12)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.6)
+shadow_size = 18
+
+[node name="EndScreen" type="CanvasLayer"]
+layer = 100
+script = ExtResource("1_4p6y6")
+
+[node name="Root" type="Control" parent="."]
+process_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+mouse_filter = 2
+
+[node name="Dim" type="ColorRect" parent="Root"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0.7)
+
+[node name="Panel" type="PanelContainer" parent="Root"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -230.0
+offset_top = -120.0
+offset_right = 230.0
+offset_bottom = 120.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_0q3xq")
+
+[node name="Content" type="VBoxContainer" parent="Root/Panel"]
+offset_left = 20.0
+offset_top = 18.0
+offset_right = 440.0
+offset_bottom = 222.0
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Root/Panel/Content"]
+layout_mode = 2
+text = "GAME OVER"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Subtitle" type="Label" parent="Root/Panel/Content"]
+layout_mode = 2
+text = ""
+horizontal_alignment = 1
+autowrap_mode = 3
+modulate = Color(1, 1, 1, 0.8)
+
+[node name="Spacer" type="Control" parent="Root/Panel/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 12)
+
+[node name="Buttons" type="HBoxContainer" parent="Root/Panel/Content"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="Primary" type="Button" parent="Root/Panel/Content/Buttons"]
+layout_mode = 2
+text = "Retry"
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(140, 40)
+
+[node name="Secondary" type="Button" parent="Root/Panel/Content/Buttons"]
+layout_mode = 2
+text = "Quit"
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(140, 40)
+
