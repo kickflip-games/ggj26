@@ -1,7 +1,7 @@
 class_name Player
 extends CharacterBody3D
 
-@export var speed := 6.0
+@export var speed := 5.0
 @export var jump_velocity := 4.5
 @export var mouse_sensitivity := 0.002
 @export_range(0.0, 1.0, 0.01) var mask_speed_multiplier := 0.15
