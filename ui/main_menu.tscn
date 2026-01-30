@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://b8m7k2p1q4r5s"]
+
+[ext_resource type="Script" path="res://ui/main_menu.gd" id="1_menu"]
+
+[node name="MainMenu" type="Node"]
+script = ExtResource("1_menu")
+game_scene_path = "res://tests/demo.tscn"

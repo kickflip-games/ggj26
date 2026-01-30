@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="horror_prototype"
-run/main_scene="uid://ducom431qypcs"
+run/main_scene="res://ui/main_menu.tscn"
 config/features=PackedStringArray("4.6")
 config/icon="res://icon.svg"
 
@@ -29,10 +29,6 @@ LevelManager="*res://managers/level_manager.gd"
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/raytraced_audio/plugin.cfg")
-
-[filesystem]
-
-import/blender/enabled=false
 
 [raytraced_audio]
 

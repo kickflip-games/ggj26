@@ -1,7 +1,7 @@
 class_name Monster
 extends CharacterBody3D
 
-@export var speed := 2.5
+@export var speed := 7.5
 @export var arrival_distance := 0.25
 @export var wait_time := 0.0
 @export var patrol_points: Array[NodePath] = []
@@ -76,6 +76,7 @@ func _ready() -> void:
 	_resolve_patrol_points()
 	_setup_navigation()
 	_setup_animations()
+	_reduce_material_shininess()
 	_sync_animation(false)
 	_debug_log_force("ready: mask_on=%s debug_show=%s" % [_mask_manager != null and _mask_manager.mask_on, _debug_manager != null and _debug_manager.show_monsters])
 
@@ -851,6 +852,31 @@ func _desired_anim_name(moving: bool) -> StringName:
 		if horiz_speed_sq > 0.01 and _walk_anim != &"":
 			target = _walk_anim
 	return target
+
+func _reduce_material_shininess() -> void:
+	# Recursively find all MeshInstance3D nodes and reduce material shininess
+	_reduce_shininess_recursive(self)
+
+func _reduce_shininess_recursive(node: Node) -> void:
+	if node is MeshInstance3D:
+		var mesh_instance := node as MeshInstance3D
+		for i in range(mesh_instance.get_surface_override_material_count()):
+			var material = mesh_instance.get_surface_override_material(i)
+			if material == null:
+				# Get the material from the mesh itself
+				var mesh = mesh_instance.mesh
+				if mesh != null and mesh.get_surface_count() > i:
+					material = mesh.surface_get_material(i)
+			
+			if material is StandardMaterial3D:
+				material = material.duplicate()
+				material.metallic = 0.0
+				material.roughness = 0.8
+				mesh_instance.set_surface_override_material(i, material)
+	
+	# Recurse to children
+	for child in node.get_children():
+		_reduce_shininess_recursive(child)
 
 func _anim_name() -> String:
 	if _anim_player == null:

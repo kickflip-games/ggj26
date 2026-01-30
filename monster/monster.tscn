@@ -2,8 +2,9 @@
 
 [ext_resource type="Script" uid="uid://k6mxdei4xyda" path="res://monster/monster.gd" id="1_okp8s"]
 [ext_resource type="AudioStream" uid="uid://ddvmuf20qg307" path="res://monster/footstep.mp3" id="2_1j2q6"]
-[ext_resource type="Script" uid="uid://dkb8ltjc6067n" path="res://addons/raytraced_audio/raytraced_audio_player_3d.gd" id="3_2k2s0"]
-[ext_resource type="PackedScene" uid="uid://bswire163hi8e" path="res://assets/Zombie Neck Bite.glb" id="4_ck3l0"]
+[ext_resource type="PackedScene" uid="uid://vp0opn6w4uy3" path="res://monster/mixamo_slender.tscn" id="3_2k2s0"]
+[ext_resource type="AudioStream" uid="uid://cbwjdhunw81ag" path="res://player/footstep.mp3" id="4_j7lgj"]
+[ext_resource type="Script" uid="uid://dkb8ltjc6067n" path="res://addons/raytraced_audio/raytraced_audio_player_3d.gd" id="5_23j4v"]
 
 [sub_resource type="Resource" id="Resource_gsx7y"]
 metadata/__load_path__ = "res://monster/anim/Idle.fbx"
@@ -12,29 +13,42 @@ metadata/__load_path__ = "res://monster/anim/Idle.fbx"
 metadata/__load_path__ = "res://monster/anim/Walk.fbx"
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_0g571"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_okp8s"]
+radius = 1.3266602
+height = 2.6533203
 
 [node name="Monster" type="CharacterBody3D" unique_id=1989861381]
 script = ExtResource("1_okp8s")
+speed = 4.0
+nav_avoidance_enabled = true
+movement_mode = 2
+debug_nav_logs = true
 footstep_stream = ExtResource("2_1j2q6")
 idle_source_scene = SubResource("Resource_gsx7y")
 walk_source_scene = SubResource("Resource_2k2s0")
+seen_require_line_of_sight = false
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="." unique_id=366045026]
 path_desired_distance = 0.25
 target_desired_distance = 0.25
+avoidance_enabled = true
+radius = 10.47
+debug_enabled = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2021433740]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0014648438, 0)
 shape = SubResource("CapsuleShape3D_0g571")
 
+<<<<<<< HEAD
 [node name="DebugMesh" type="MeshInstance3D" parent="." unique_id=1221168234]
 visible = false
 mesh = SubResource("CapsuleMesh_okp8s")
 
+=======
+>>>>>>> origin/main
 [node name="Footsteps" type="AudioStreamPlayer3D" parent="." unique_id=1371398713]
 visible = false
 stream = ExtResource("2_1j2q6")
+<<<<<<< HEAD
 volume_db = -2.066
 unit_size = 6.7
 
@@ -51,3 +65,18 @@ metadata/_custom_type_script = "uid://dkb8ltjc6067n"
 
 [node name="Zombie Neck Bite" parent="." unique_id=670899318 instance=ExtResource("4_ck3l0")]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0.19335175, -0.7793187, 0.20913875)
+=======
+volume_db = -10.0
+
+[node name="mixamo_slender" parent="." unique_id=909947585 instance=ExtResource("3_2k2s0")]
+transform = Transform3D(-18.32, 0, -2.7662431e-06, 0, 18.32, 0, 2.7662431e-06, 0, -18.32, 0, -1.621, 0)
+
+[node name="RaytracedAudioPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=1153584655]
+stream = ExtResource("4_j7lgj")
+volume_db = -11.901
+unit_size = 5.87
+autoplay = true
+parameters/looping = true
+script = ExtResource("5_23j4v")
+metadata/_custom_type_script = "uid://dkb8ltjc6067n"
+>>>>>>> origin/main
