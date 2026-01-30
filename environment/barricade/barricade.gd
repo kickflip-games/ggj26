@@ -13,10 +13,13 @@ extends Node3D
 @export var debris_spawn_spread := Vector3(0.8, 0.6, 0.3)
 @export var debris_impulse := 4.0
 @export var debris_torque := 6.0
+@export var break_stream: AudioStream
+@export var break_volume_db := -8.0
 
 @onready var trigger_area: Area3D = $TriggerArea
 @onready var model: Node3D = get_node_or_null("Model")
 @onready var blocker: StaticBody3D = get_node_or_null("Blocker")
+@onready var _sfx_break: AudioStreamPlayer3D = get_node_or_null("SfxBreak")
 
 var _broken := false
 var _player_in_trigger := false
@@ -115,6 +118,7 @@ func _try_break() -> void:
 		return
 
 	_broken = true
+	_play_break_sfx()
 	_apply_state()
 	_spawn_debris()
 
@@ -160,3 +164,13 @@ func _spawn_debris() -> void:
 			randf_range(-1.0, 1.0),
 			randf_range(-1.0, 1.0)
 		).normalized() * debris_torque * randf_range(0.6, 1.2))
+
+func _play_break_sfx() -> void:
+	if _sfx_break == null:
+		return
+	if break_stream != null:
+		_sfx_break.stream = break_stream
+	_sfx_break.volume_db = break_volume_db
+	if _sfx_break.stream == null:
+		return
+	_sfx_break.play()

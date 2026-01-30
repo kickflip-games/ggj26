@@ -18,18 +18,20 @@ sky_material = SubResource("ProceduralSkyMaterial_xys38")
 [sub_resource type="Environment" id="Environment_pntf4"]
 background_mode = 2
 sky = SubResource("Sky_qvmrs")
-ambient_light_color = Color(0.28, 0.28, 0.32, 1)
-ambient_light_sky_contribution = 0.0
-ambient_light_energy = 0.18
+ambient_light_color = Color(0.07, 0.08, 0.1, 1)
+ambient_light_sky_contribution = 0.06
+ambient_light_energy = 0.04
 tonemap_mode = 2
 fog_enabled = true
-fog_light_color = Color(0.08627451, 0.09019608, 0.101960786, 1)
-fog_light_energy = 1.33
-fog_height_density = -0.2832
+fog_density = 0.03
+fog_light_color = Color(0.07, 0.075, 0.09, 1)
+fog_light_energy = 0.42
+fog_height_density = -0.1
+fog_sun_scatter = 0.02
 adjustment_enabled = true
-adjustment_brightness = 0.9
-adjustment_contrast = 1.15
-adjustment_saturation = 0.85
+adjustment_brightness = 0.72
+adjustment_contrast = 1.28
+adjustment_saturation = 0.86
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_w2qn0"]
 vertices = PackedVector3Array(-32.539997, 11.71, -32.539997, -32.539997, 11.71, 32.460003, 32.460003, 11.71, 32.460003, 32.460003, 11.71, -32.539997, -30.539997, 1.46, -29.039997, -30.539997, 1.46, 27.460003, -29.789997, 1.46, 27.460003, -29.789997, 1.46, -29.039997, -8.039997, 1.46, -8.789997, -6.789997, 1.46, -9.039997, -6.789997, 1.46, -29.039997, -28.539997, 1.46, -29.039997, -28.539997, 1.46, -6.789997, -8.039997, 1.46, -6.789997, 28.710003, 1.46, -5.289997, 28.960003, 1.46, -4.039997, 29.210003, 1.46, -4.039997, 29.210003, 1.46, -29.039997, -5.289997, 1.46, -4.039997, 1.7100029, 1.46, -4.039997, 1.9600029, 1.46, -5.289997, -5.289997, 1.46, -8.789997, -28.539997, 1.46, 5.460003, -8.039997, 1.46, 5.460003, -5.289997, 1.46, 6.210003, 1.7100029, 1.46, 6.210003, 1.9600029, 1.46, 4.710003, 1.9600029, 1.46, -2.539997, 3.710003, 1.46, 4.710003, 3.710003, 1.46, -2.539997, 28.710003, 1.46, -2.539997, 28.710003, 1.46, 4.710003, 28.960003, 1.46, 6.210003, 29.210003, 1.46, 6.210003, -6.789997, 1.46, 27.460003, -6.789997, 1.46, 7.710003, -8.039997, 1.46, 7.460003, -28.539997, 1.46, 27.460003, 1.9600029, 1.46, 7.460003, -5.539997, 1.46, 7.710003, 3.960003, 1.46, 7.460003, 3.960003, 1.46, 27.460003, 28.710003, 1.46, 7.460003, 29.210003, 1.46, 27.460003, -28.539997, 1.46, 28.710003, -28.539997, 1.46, 29.710003, 29.210003, 1.46, 29.710003, 29.210003, 1.46, 28.710003)
@@ -206,30 +208,25 @@ shape = SubResource("BoxShape3D_Floor")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=443048895]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.5973536, -2.798996, 6.076931, -1.7321396)
-light_energy = 0.25
+light_color = Color(0.55, 0.65, 0.9, 1)
+light_energy = 0.22
 shadow_enabled = true
-shadow_opacity = 0.85
+shadow_opacity = 0.65
 
 [node name="KeyLight" type="OmniLight3D" parent="." unique_id=1607924883]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26.173534, 8.243873, 25.575836)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, 3.2, 10.5)
 light_color = Color(0.55, 0.7, 0.9, 1)
-light_energy = 1.6
-omni_range = 10.0
-
-[node name="KeyLight2" type="OmniLight3D" parent="." unique_id=1328185506]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26.173534, 8.243873, -29.498287)
-light_color = Color(0.55, 0.7, 0.9, 1)
-light_energy = 1.6
-omni_range = 10.0
+light_energy = 1.4
+omni_range = 7.0
 
 [node name="DoorLight" type="OmniLight3D" parent="." unique_id=1503056633]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.351406, 3.2, 0)
 light_color = Color(0.9, 0.65, 0.45, 1)
-light_energy = 1.4
-omni_range = 31.543066
+light_energy = 1.75
+omni_range = 12.0
 
 [node name="FillLight" type="OmniLight3D" parent="." unique_id=1301095908]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2, 0)
 light_color = Color(0.55, 0.65, 0.8, 1)
-light_energy = 0.95
-omni_range = 45.60828
+light_energy = 0.08
+omni_range = 14.0

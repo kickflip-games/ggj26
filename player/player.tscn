@@ -58,6 +58,15 @@ script = ExtResource("1_w4b2p")
 [node name="Camera3D" type="Camera3D" parent="CameraRig" unique_id=2078924707]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.74056655, 0.3860973)
 
+[node name="Flashlight" type="SpotLight3D" parent="CameraRig/Camera3D"]
+light_color = Color(1, 0.96, 0.88, 1)
+light_energy = 5.8
+spot_angle = 38.0
+spot_angle_attenuation = 0.45
+spot_attenuation = 1.0
+spot_range = 22.0
+shadow_enabled = true
+
 [node name="Footsteps" type="AudioStreamPlayer3D" parent="." unique_id=2090808189]
 stream = ExtResource("6_foot")
 volume_db = -12.0
