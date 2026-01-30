@@ -53,7 +53,6 @@ func _ready() -> void:
 	_setup_navigation()
 	_setup_animations()
 	_sync_animation(false)
-	_pick_roam_target_if_needed(true)
 	_debug_log_force("ready: mask_on=%s debug_show=%s" % [_mask_manager != null and _mask_manager.mask_on, _debug_manager != null and _debug_manager.show_monsters])
 
 	if _mask_manager != null:
@@ -232,11 +231,18 @@ func _pick_random_nav_point(origin: Vector3, radius: float) -> Vector3:
 	var map_rid := RID()
 	var world := get_world_3d()
 	if world != null:
-		var maybe := world.get("navigation_map")
+		var maybe: Variant = world.get("navigation_map")
 		if typeof(maybe) == TYPE_RID:
 			map_rid = maybe
 		elif world.has_method("get_navigation_map"):
 			map_rid = world.get_navigation_map()
+
+	if map_rid.is_valid() and NavigationServer3D.has_method("map_get_iteration_id"):
+		# Avoid querying the map before the first synchronization to prevent errors like:
+		# "navigation map query failed because it was made before first map synchronization."
+		var iter: int = int(NavigationServer3D.map_get_iteration_id(map_rid))
+		if iter <= 0:
+			return candidate
 
 	if map_rid.is_valid() and NavigationServer3D.has_method("map_get_closest_point"):
 		var cp := NavigationServer3D.map_get_closest_point(map_rid, candidate)

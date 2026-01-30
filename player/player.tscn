@@ -72,6 +72,8 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("4_r0rve")
 
 [node name="KeyLabel" type="Label" parent="MaskUI/HUD" unique_id=1183460876]
