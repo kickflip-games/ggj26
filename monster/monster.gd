@@ -708,7 +708,7 @@ func _setup_eyes_attachment() -> void:
 		_reparent_keep_global(_eyes, attachment)
 
 func _find_eyes_node() -> Node3D:
-	var eyes := get_node_or_null("mixamo_slender/Armature/Eyes") as Node3D
+	var eyes := get_node_or_null("mixamo_slender/Armature/Skeleton3D/EyesAttachment/Eyes") as Node3D
 	if eyes == null and _visual != null:
 		eyes = _visual.find_child("Eyes", true, false) as Node3D
 	if eyes == null:

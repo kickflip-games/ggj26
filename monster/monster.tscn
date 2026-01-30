@@ -36,7 +36,7 @@ debug_nav_logs = true
 footstep_stream = ExtResource("2_1j2q6")
 idle_source_scene = SubResource("Resource_gsx7y")
 walk_source_scene = SubResource("Resource_2k2s0")
-seen_require_line_of_sight = false
+seen_require_line_of_sight = true
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="." unique_id=366045026]
 path_desired_distance = 0.25
@@ -56,7 +56,6 @@ volume_db = -10.0
 [node name="mixamo_slender" parent="." unique_id=909947585 instance=ExtResource("3_2k2s0")]
 transform = Transform3D(-18.32, 0, -2.7662431e-06, 0, 18.32, 0, 2.7662431e-06, 0, -18.32, 0, -1.621, 0)
 
-<<<<<<< HEAD
 [node name="EyesAttachment" type="BoneAttachment3D" parent="mixamo_slender/Armature/Skeleton3D" unique_id=2217052267]
 bone_name = "mixamorig:Head"
 
@@ -72,7 +71,7 @@ material/0 = SubResource("StandardMaterial3D_eyes")
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0.15, 0, 0)
 mesh = SubResource("SphereMesh_eyes")
 material/0 = SubResource("StandardMaterial3D_eyes")
-=======
+
 [node name="RaytracedAudioPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=1153584655]
 stream = ExtResource("4_j7lgj")
 volume_db = -11.901
@@ -81,4 +80,4 @@ autoplay = true
 parameters/looping = true
 script = ExtResource("5_23j4v")
 metadata/_custom_type_script = "uid://dkb8ltjc6067n"
->>>>>>> 1895fab83ccc2bce676ca7965102b3cb5c99db07
+
