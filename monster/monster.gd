@@ -18,8 +18,10 @@ extends CharacterBody3D
 @export var debug_nav_logs := false
 @export_range(0.05, 5.0, 0.05) var debug_nav_log_interval_sec := 0.5
 @export var footstep_stream: AudioStream
-@export var footstep_volume_db := -10.0
-@export var footstep_dir := "res://monster/footsteps"
+@export var footstep_volume_db := -2.0
+@export var footstep_volume_far_db := 6.0
+@export var footstep_volume_far_distance := 20.0
+@export var footstep_dir := "res://monster/sounds/footsteps"
 @export_range(1, 20, 1) var footstep_count := 5
 @export var footstep_interval_min_sec := 0.5
 @export var footstep_interval_max_sec := 0.8
@@ -53,6 +55,7 @@ var _next_debug_log_time_ms := 0
 var _debug_setup_summary := ""
 
 @onready var _footsteps: AudioStreamPlayer3D = get_node_or_null("Footsteps")
+@onready var _chittering: AudioStreamPlayer3D = get_node_or_null("Chittering")
 @onready var _visual: Node = get_node_or_null("Visual")
 @onready var _nav_agent: NavigationAgent3D = get_node_or_null("NavigationAgent3D")
 @onready var _mask_manager: Node = get_node_or_null("/root/MaskManager")
@@ -585,7 +588,13 @@ func _load_footstep_streams() -> void:
 func _try_play_footsteps(prev_pos: Vector3, delta: float) -> void:
 	if _footsteps == null:
 		return
-	_footsteps.volume_db = footstep_volume_db
+	var volume_db := footstep_volume_db
+	if GameManager != null and GameManager.player != null:
+		var dist := global_position.distance_to(GameManager.player.global_position)
+		var far_dist := maxf(footstep_volume_far_distance, 0.1)
+		var t := clampf(dist / far_dist, 0.0, 1.0)
+		volume_db = lerpf(footstep_volume_db, footstep_volume_far_db, t)
+	_footsteps.volume_db = volume_db
 
 	var moved := (global_position - prev_pos).length() > 0.0005
 	var horiz_speed := Vector2(velocity.x, velocity.z).length()

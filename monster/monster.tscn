@@ -1,10 +1,11 @@
 [gd_scene format=3 uid="uid://dbeam8duw66fa"]
 
 [ext_resource type="Script" uid="uid://k6mxdei4xyda" path="res://monster/monster.gd" id="1_okp8s"]
-[ext_resource type="AudioStream" uid="uid://ddvmuf20qg307" path="res://monster/footstep.mp3" id="2_1j2q6"]
+[ext_resource type="AudioStream" uid="uid://cbwjdhunw81ag" path="res://player/footstep.mp3" id="2_1j2q6"]
 [ext_resource type="PackedScene" uid="uid://vp0opn6w4uy3" path="res://monster/mixamo_slender.tscn" id="3_2k2s0"]
 [ext_resource type="AudioStream" uid="uid://cbwjdhunw81ag" path="res://player/footstep.mp3" id="4_j7lgj"]
 [ext_resource type="Script" uid="uid://dkb8ltjc6067n" path="res://addons/raytraced_audio/raytraced_audio_player_3d.gd" id="5_23j4v"]
+[ext_resource type="AudioStream" uid="uid://d24pt1b0c8r1g" path="res://monster/sounds/chittering.mp3" id="6_chitter"]
 
 [sub_resource type="Resource" id="Resource_gsx7y"]
 metadata/__load_path__ = "res://monster/anim/Idle.fbx"
@@ -16,27 +17,15 @@ metadata/__load_path__ = "res://monster/anim/Walk.fbx"
 radius = 1.3266602
 height = 2.6533203
 
-[sub_resource type="SphereMesh" id="SphereMesh_eyes"]
-radius = 0.15
-height = 0.3
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eyes"]
-emission_enabled = true
-emission = Color(1.0, 0.0, 0.0, 1.0)
-emission_energy_multiplier = 3.0
-
-[sub_resource type="BoneMap" id="BoneMap_1"]
-
 [node name="Monster" type="CharacterBody3D" unique_id=1989861381]
 script = ExtResource("1_okp8s")
 speed = 4.0
 nav_avoidance_enabled = true
 movement_mode = 2
 debug_nav_logs = true
-footstep_stream = ExtResource("2_1j2q6")
+footstep_stream = null
 idle_source_scene = SubResource("Resource_gsx7y")
 walk_source_scene = SubResource("Resource_2k2s0")
-seen_require_line_of_sight = true
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="." unique_id=366045026]
 path_desired_distance = 0.25
@@ -51,32 +40,24 @@ shape = SubResource("CapsuleShape3D_0g571")
 
 [node name="Footsteps" type="AudioStreamPlayer3D" parent="." unique_id=1371398713]
 stream = ExtResource("2_1j2q6")
+volume_db = -2.0
+unit_size = 3.5
+max_distance = 30.0
+max_db = 3.0
+
+[node name="Chittering" type="AudioStreamPlayer3D" parent="." unique_id=1371398714]
+stream = ExtResource("6_chitter")
 volume_db = -10.0
+autoplay = false
+parameters/looping = true
 
 [node name="mixamo_slender" parent="." unique_id=909947585 instance=ExtResource("3_2k2s0")]
 transform = Transform3D(-18.32, 0, -2.7662431e-06, 0, 18.32, 0, 2.7662431e-06, 0, -18.32, 0, -1.621, 0)
-
-[node name="EyesAttachment" type="BoneAttachment3D" parent="mixamo_slender/Armature/Skeleton3D" unique_id=2217052267]
-bone_name = "mixamorig:Head"
-
-[node name="Eyes" type="Node3D" parent="mixamo_slender/Armature/Skeleton3D/EyesAttachment" unique_id=1850469426]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -0.3)
-
-[node name="LeftEye" type="MeshInstance3D" parent="mixamo_slender/Armature/Skeleton3D/EyesAttachment/Eyes" unique_id=2085961088]
-transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, -0.15, 0, 0)
-mesh = SubResource("SphereMesh_eyes")
-material/0 = SubResource("StandardMaterial3D_eyes")
-
-[node name="RightEye" type="MeshInstance3D" parent="mixamo_slender/Armature/Skeleton3D/EyesAttachment/Eyes" unique_id=1950519919]
-transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0.15, 0, 0)
-mesh = SubResource("SphereMesh_eyes")
-material/0 = SubResource("StandardMaterial3D_eyes")
 
 [node name="RaytracedAudioPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=1153584655]
 stream = ExtResource("4_j7lgj")
 volume_db = -11.901
 unit_size = 5.87
-autoplay = false
 parameters/looping = false
 script = ExtResource("5_23j4v")
 metadata/_custom_type_script = "uid://dkb8ltjc6067n"
