@@ -33,6 +33,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.009731442, 0.14567696, 0)
 shape = SubResource("BoxShape3D_sbs0w")
 
 [node name="ProximityArea" type="Area3D" parent="." index="3" unique_id=409327194]
+script = ExtResource("3_hitbox")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ProximityArea" index="0" unique_id=260998996]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.27279663)
