@@ -50,10 +50,8 @@ func _process(delta: float) -> void:
 		camera_rig.update_motion(delta, pitch, _cam_input_dir, _cam_current_speed, _cam_velocity, _cam_grounded)
 
 func _input(event):
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
-			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-		elif GameManager != null and GameManager.has_hammer:
+	if event.is_action_pressed("interact"):
+		if GameManager != null and GameManager.has_hammer:
 			_use_hammer()
 
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
@@ -149,6 +147,7 @@ func _use_hammer() -> void:
 		return
 	_hammer_cooldown = maxf(hammer_swing_cooldown_sec, 0.05)
 
+	print("[Player] Hammer swung")
 	_animate_hammer_swing()
 	_try_hammer_hit()
 
@@ -156,9 +155,37 @@ func _animate_hammer_swing() -> void:
 	if _held_hammer == null:
 		return
 	var start_rot := _held_hammer.rotation
+	var start_pos := _held_hammer.position
 	var tween := create_tween()
-	tween.tween_property(_held_hammer, "rotation", start_rot + Vector3(deg_to_rad(-65.0), deg_to_rad(10.0), 0.0), 0.08)
+	# Wind-up: pull back to the right and slightly back.
+	tween.tween_property(
+		_held_hammer,
+		"rotation",
+		start_rot + Vector3(deg_to_rad(30.0), deg_to_rad(-20.0), deg_to_rad(12.0)),
+		0.12
+	)
+	tween.tween_property(
+		_held_hammer,
+		"position",
+		start_pos + Vector3(-0.05, 0.12, 0.18),
+		0.12
+	)
+	# Swing: arc forward to the left.
+	tween.tween_property(
+		_held_hammer,
+		"rotation",
+		start_rot + Vector3(deg_to_rad(-40.0), deg_to_rad(35.0), deg_to_rad(-8.0)),
+		0.16
+	)
+	tween.tween_property(
+		_held_hammer,
+		"position",
+		start_pos + Vector3(-0.26, 0.0, -0.22),
+		0.16
+	)
+	# Return to rest.
 	tween.tween_property(_held_hammer, "rotation", start_rot, 0.12)
+	tween.tween_property(_held_hammer, "position", start_pos, 0.12)
 
 func _try_hammer_hit() -> void:
 	if _camera == null:
