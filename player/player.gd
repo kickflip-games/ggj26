@@ -38,6 +38,8 @@ var _hammer_cooldown := 0.0
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	_rng.seed = int(Time.get_ticks_usec()) ^ int(get_instance_id())
+	if GameManager != null and GameManager.player == null:
+		GameManager.player = self
 	var mask_manager := get_node_or_null("/root/MaskManager")
 	if mask_manager != null:
 		mask_manager.mask_toggled.connect(_on_mask_toggled)

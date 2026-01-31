@@ -20,7 +20,6 @@ height = 2.6533203
 script = ExtResource("1_okp8s")
 speed = 4.0
 nav_avoidance_enabled = true
-movement_mode = 2
 debug_nav_logs = true
 footstep_stream = ExtResource("2_1j2q6")
 idle_source_scene = SubResource("Resource_gsx7y")

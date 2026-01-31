@@ -87,9 +87,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.325388, 2.1, 16.06126)
 
 [node name="Monster" parent="." unique_id=1989861381 instance=ExtResource("2_5jdw0")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 2.1, -2)
-patrol_points = Array[NodePath]([NodePath("../PatrolA"), NodePath("../PatrolB"), NodePath("../PatrolC"), NodePath("../PatrolD")])
-movement_mode = 1
-roam_radius = 18.0
 
 [node name="PatrolA" type="Marker3D" parent="." unique_id=847017838]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 2.1, -9)
@@ -105,9 +102,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 2.1, -9)
 
 [node name="Monster2" parent="." unique_id=1066157043 instance=ExtResource("2_5jdw0")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 2.1, 6)
-patrol_points = Array[NodePath]([NodePath("../Patrol2A"), NodePath("../Patrol2B"), NodePath("../Patrol2C")])
-movement_mode = 1
-roam_radius = 18.0
 
 [node name="Patrol2A" type="Marker3D" parent="." unique_id=328668868]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 2.1, 11)
