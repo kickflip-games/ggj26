@@ -76,8 +76,7 @@ material/0 = SubResource("StandardMaterial3D_eyes")
 stream = ExtResource("4_j7lgj")
 volume_db = -11.901
 unit_size = 5.87
-autoplay = true
-parameters/looping = true
+autoplay = false
+parameters/looping = false
 script = ExtResource("5_23j4v")
 metadata/_custom_type_script = "uid://dkb8ltjc6067n"
-
