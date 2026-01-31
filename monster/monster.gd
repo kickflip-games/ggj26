@@ -37,11 +37,11 @@ extends CharacterBody3D
 var _step_accum := 0.0
 var _footstep_time_left := 0.0
 var _footstep_streams: Array[AudioStream] = []
+var _rng := RandomNumberGenerator.new()
 var _next_debug_log_time_ms := 0
 var _debug_setup_summary := ""
 
 @onready var _footsteps: AudioStreamPlayer3D = get_node_or_null("Footsteps")
-@onready var _chittering: AudioStreamPlayer3D = get_node_or_null("Chittering")
 @onready var _visual: Node = get_node_or_null("Visual")
 @onready var _nav_agent: NavigationAgent3D = get_node_or_null("NavigationAgent3D")
 @onready var _mask_manager: Node = get_node_or_null("/root/MaskManager")
@@ -63,6 +63,8 @@ var _eyes: Node3D
 var _eyes_attachment: BoneAttachment3D
 
 func _ready() -> void:
+	_rng.seed = int(Time.get_ticks_usec()) ^ int(get_instance_id())
+	_load_footstep_streams()
 	_setup_navigation()
 	_setup_animations()
 	_setup_eyes_attachment()
@@ -103,44 +105,11 @@ func _physics_process(delta: float) -> void:
 		_debug_log("frozen_by_mask: anim=%s" % [_anim_name()])
 		return
 
-	if movement_mode == 0 and _resolved_points.size() < 2:
-		velocity = Vector3.ZERO
-		_stop_navigation_velocity()
-		_sync_animation(false)
-		_stop_footsteps()
-		_debug_log("no_patrol_points: anim=%s" % [_anim_name()])
-		return
-
-	if _wait_remaining > 0.0:
-		_wait_remaining -= delta
-		velocity = Vector3.ZERO
-		_stop_navigation_velocity()
-		_sync_animation(false)
-		_stop_footsteps()
-		_debug_log("waiting: remaining=%.2f anim=%s" % [_wait_remaining, _anim_name()])
-		return
-
 	var prev_pos := global_position
 
-	var target := _get_current_target(delta)
+	var target := _get_hunt_target(delta)
 	var to_target := target - global_position
 	to_target.y = 0.0
-
-	if to_target.length() <= arrival_distance and not (movement_mode == 2 and _hunt_active):
-		if movement_mode == 0:
-			_patrol_index = (_patrol_index + 1) % _resolved_points.size()
-		else:
-			_roam_has_target = false
-		_wait_remaining = wait_time
-		velocity = Vector3.ZERO
-		_stop_navigation_velocity()
-		_sync_animation(false)
-		_stop_footsteps()
-		if movement_mode == 0:
-			_debug_log("arrived: next_index=%d anim=%s" % [_patrol_index, _anim_name()])
-		else:
-			_debug_log("arrived: roam_pick_next anim=%s" % [_anim_name()])
-		return
 
 	var dir := _get_nav_direction(target, to_target)
 	var desired_velocity := dir * speed
@@ -213,9 +182,6 @@ func _get_nav_direction(target: Vector3, to_target_flat: Vector3) -> Vector3:
 	if to_next.length_squared() > 0.0001:
 		return to_next.normalized()
 	return to_target_flat.normalized()
-
-func _get_current_target(delta: float) -> Vector3:
-	return _get_hunt_target(delta)
 
 func _get_hunt_target(delta: float) -> Vector3:
 	var player: Player = null
@@ -439,7 +405,8 @@ func _set_geometry_transparency(amount: float) -> void:
 		for child: Node in node.get_children():
 			stack.append(child)
 
-func _try_play_footsteps(prev_pos: Vector3) -> void:
+func _stop_footsteps() -> void:
+	_footstep_time_left = 0.0
 	if _footsteps == null:
 		return
 	if _footsteps.playing:
