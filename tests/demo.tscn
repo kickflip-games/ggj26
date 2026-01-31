@@ -88,13 +88,13 @@ environment = SubResource("Environment_pntf4")
 
 [node name="AmbientCreak" type="AudioStreamPlayer" parent="." unique_id=1593693403]
 stream = ExtResource("8_creak")
-volume_db = -23.861
+volume_db = -20.0
 autoplay = true
 parameters/looping = true
 
 [node name="AmbientListen" type="AudioStreamPlayer" parent="." unique_id=1593693404]
 stream = ExtResource("9_ambient")
-volume_db = -42.225
+volume_db = -25.0
 autoplay = true
 parameters/looping = true
 
