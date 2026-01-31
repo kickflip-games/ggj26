@@ -4,6 +4,9 @@
 [ext_resource type="Material" uid="uid://buirva7llswpm" path="res://environment/props/tvs_n_items/scenes/materials/computer_screen.tres" id="2_6dwcw"]
 [ext_resource type="Script" uid="uid://c8qj0ijkqe4l8" path="res://environment/props/tvs_n_items/scenes/computer_screen.gd" id="2_ooa6p"]
 [ext_resource type="Script" path="res://environment/props/tvs_n_items/scenes/computer_hitbox.gd" id="3_hitbox"]
+[ext_resource type="AudioStream" uid="uid://c48u4prcoll3y" path="res://environment/props/tvs_n_items/scenes/static-noise.mp3" id="5_ck011"]
+[ext_resource type="AudioStream" uid="uid://dhoqljo8xmtlf" path="res://assets/SFX/tv-static.mp3" id="6_imeg0"]
+[ext_resource type="Script" uid="uid://dkb8ltjc6067n" path="res://addons/raytraced_audio/raytraced_audio_player_3d.gd" id="7_3nvn1"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_sbs0w"]
 size = Vector3(0.379, 0.30773047, 0.182)
@@ -21,7 +24,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1480416, -0.008789659)
 spot_range = 0.43562707
 spot_angle = 64.815254
 
-[node name="computerScreen" parent="." index="1" unique_id=1876904394]
+[node name="computerScreen" parent="." index="1" unique_id=768812830]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18432105, 0, 0)
 surface_material_override/1 = ExtResource("2_6dwcw")
 
@@ -38,7 +41,18 @@ shape = SubResource("BoxShape3D_sbs0w")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.27279663)
 shape = SubResource("BoxShape3D_vcu2v")
 
-[node name="StaticNoisePlayer" type="AudioStreamPlayer3D" parent="." index="4" unique_id=1234567890]
+[node name="StaticNoisePlayer_old" type="AudioStreamPlayer3D" parent="." index="4" unique_id=1234567890]
+visible = false
+stream = ExtResource("5_ck011")
 
 [node name="KeySpawn" type="Node3D" parent="." index="5" unique_id=1685778345]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.12, -0.12)
+
+[node name="StaticNoisePlayer" type="AudioStreamPlayer3D" parent="." index="6" unique_id=1469925311]
+stream = ExtResource("6_imeg0")
+volume_db = -19.844
+unit_size = 4.22
+max_db = -12.624
+max_distance = 4.0
+script = ExtResource("7_3nvn1")
+metadata/_custom_type_script = "uid://dkb8ltjc6067n"
