@@ -93,7 +93,6 @@ visible = false
 stream = ExtResource("5_ck011")
 
 [node name="KeySpawn" type="Node3D" parent="." index="5" unique_id=1685778345]
-<<<<<<< HEAD
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.12, -0.12)
 
 [node name="StaticNoisePlayer" type="AudioStreamPlayer3D" parent="." index="6" unique_id=1469925311]
@@ -104,6 +103,3 @@ max_db = -12.624
 max_distance = 7.0
 script = ExtResource("7_3nvn1")
 metadata/_custom_type_script = "uid://dkb8ltjc6067n"
-=======
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.004882112, 0.12, -0.35695744)
->>>>>>> 2ec3d14e3bc88e6e082b00ffb2406bfacfa1008a
