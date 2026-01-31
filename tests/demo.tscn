@@ -7,6 +7,8 @@
 [ext_resource type="Script" uid="uid://0bhok2vqbms0" path="res://environment/room/room.gd" id="5_xyn1g"]
 [ext_resource type="PackedScene" uid="uid://c6dbu5v4q1g6u" path="res://environment/hammer/hammer_pickup.tscn" id="6_9s2p0"]
 [ext_resource type="PackedScene" uid="uid://8sb6hkh0h5gf" path="res://environment/barricade/barricade.tscn" id="7_bar"]
+[ext_resource type="AudioStream" uid="uid://b3n6u72q56e7h" path="res://assets/SFX/creaking.mp3" id="8_creak"]
+[ext_resource type="AudioStream" uid="uid://dx0slj2xif3d0" path="res://assets/SFX/00 - Jeremy Blake - Listen for their Coming.mp3" id="9_ambient"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xys38"]
 sky_horizon_color = Color(0.03, 0.03, 0.04, 1)
@@ -83,6 +85,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 2.1, -9)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=272683890]
 environment = SubResource("Environment_pntf4")
+
+[node name="AmbientCreak" type="AudioStreamPlayer" parent="." unique_id=1593693403]
+stream = ExtResource("8_creak")
+volume_db = 10.657
+autoplay = true
+parameters/looping = true
+
+[node name="AmbientListen" type="AudioStreamPlayer" parent="." unique_id=1593693404]
+stream = ExtResource("9_ambient")
+volume_db = -25.0
+autoplay = true
+parameters/looping = true
 
 [node name="Player" parent="." unique_id=1197631855 instance=ExtResource("1_xys38")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 2.1, -9)

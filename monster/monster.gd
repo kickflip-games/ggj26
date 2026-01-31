@@ -7,9 +7,15 @@ extends CharacterBody3D
 @export var nav_avoidance_enabled := false
 @export var debug_nav_logs := false
 @export_range(0.05, 5.0, 0.05) var debug_nav_log_interval_sec := 0.5
-@export var step_distance := 1.4
 @export var footstep_stream: AudioStream
-@export var footstep_volume_db := -10.0
+@export var footstep_volume_db := -2.0
+@export var footstep_volume_far_db := 6.0
+@export var footstep_volume_far_distance := 20.0
+@export var footstep_dir := "res://monster/sounds/footsteps"
+@export_range(1, 20, 1) var footstep_count := 5
+@export var footstep_interval_min_sec := 0.5
+@export var footstep_interval_max_sec := 0.8
+@export_range(0.0, 5.0, 0.05) var footstep_min_speed := 0.3
 @export var idle_source_scene: PackedScene
 @export var walk_source_scene: PackedScene
 @export var idle_animation_name: StringName = &""
@@ -29,6 +35,9 @@ extends CharacterBody3D
 @export_range(0.05, 10.0, 0.05) var debug_log_interval_sec := 1.0
 
 var _step_accum := 0.0
+var _footstep_time_left := 0.0
+var _footstep_streams: Array[AudioStream] = []
+var _rng := RandomNumberGenerator.new()
 var _next_debug_log_time_ms := 0
 var _debug_setup_summary := ""
 
@@ -54,6 +63,8 @@ var _eyes: Node3D
 var _eyes_attachment: BoneAttachment3D
 
 func _ready() -> void:
+	_rng.seed = int(Time.get_ticks_usec()) ^ int(get_instance_id())
+	_load_footstep_streams()
 	_setup_navigation()
 	_setup_animations()
 	_setup_eyes_attachment()
@@ -83,18 +94,20 @@ func _physics_process(delta: float) -> void:
 		velocity = Vector3.ZERO
 		_stop_navigation_velocity()
 		_step_accum = 0.0
+		_stop_footsteps()
 		return
 
 	if freeze_when_mask_on and _mask_manager != null and _mask_manager.mask_on:
 		velocity = Vector3.ZERO
 		_stop_navigation_velocity()
 		_sync_animation(false)
+		_stop_footsteps()
 		_debug_log("frozen_by_mask: anim=%s" % [_anim_name()])
 		return
 
 	var prev_pos := global_position
 
-	var target := _get_current_target(delta)
+	var target := _get_hunt_target(delta)
 	var to_target := target - global_position
 	to_target.y = 0.0
 
@@ -108,7 +121,7 @@ func _physics_process(delta: float) -> void:
 		velocity = desired_velocity
 	move_and_slide()
 
-	_try_play_footsteps(prev_pos)
+	_try_play_footsteps(prev_pos, delta)
 	_sync_animation(true)
 	_debug_nav_state(delta, target)
 	_debug_log("moving: vel=%.2f target=%s current=%s" % [Vector2(velocity.x, velocity.z).length(), String(_desired_anim_name(true)), _anim_name()])
@@ -127,6 +140,7 @@ func _on_mask_toggled(mask_on: bool) -> void:
 		velocity = Vector3.ZERO
 		_step_accum = 0.0
 		_sync_animation(false)
+		_stop_footsteps()
 	_debug_log_force("mask_toggled: %s anim=%s" % [mask_on, _anim_name()])
 
 func _on_debug_show_monsters_changed(_show: bool) -> void:
@@ -168,9 +182,6 @@ func _get_nav_direction(target: Vector3, to_target_flat: Vector3) -> Vector3:
 	if to_next.length_squared() > 0.0001:
 		return to_next.normalized()
 	return to_target_flat.normalized()
-
-func _get_current_target(delta: float) -> Vector3:
-	return _get_hunt_target(delta)
 
 func _get_hunt_target(delta: float) -> Vector3:
 	var player: Player = null
@@ -394,21 +405,55 @@ func _set_geometry_transparency(amount: float) -> void:
 		for child: Node in node.get_children():
 			stack.append(child)
 
-func _try_play_footsteps(prev_pos: Vector3) -> void:
+func _stop_footsteps() -> void:
+	_footstep_time_left = 0.0
 	if _footsteps == null:
 		return
-	if footstep_stream != null:
-		_footsteps.stream = footstep_stream
-	_footsteps.volume_db = footstep_volume_db
+	if _footsteps.playing:
+		_footsteps.stop()
 
-	var delta_dist := (global_position - prev_pos).length()
-	if delta_dist <= 0.0001:
+func _load_footstep_streams() -> void:
+	_footstep_streams.clear()
+	for i in range(1, footstep_count + 1):
+		var path := "%s/%d.mp3" % [footstep_dir, i]
+		var stream := load(path)
+		if stream is AudioStream:
+			_footstep_streams.append(stream)
+	if _footstep_streams.is_empty() and footstep_stream != null:
+		_footstep_streams.append(footstep_stream)
+	if _footstep_streams.is_empty():
+		push_warning("Monster: no footstep streams found in '%s' (1-%d)" % [footstep_dir, footstep_count])
+
+func _try_play_footsteps(prev_pos: Vector3, delta: float) -> void:
+	if _footsteps == null:
+		return
+	var volume_db := footstep_volume_db
+	if GameManager != null and GameManager.player != null:
+		var dist := global_position.distance_to(GameManager.player.global_position)
+		var far_dist := maxf(footstep_volume_far_distance, 0.1)
+		var t := clampf(dist / far_dist, 0.0, 1.0)
+		volume_db = lerpf(footstep_volume_db, footstep_volume_far_db, t)
+	_footsteps.volume_db = volume_db
+
+	var moved := (global_position - prev_pos).length() > 0.0005
+	var horiz_speed := Vector2(velocity.x, velocity.z).length()
+	var moving := moved and horiz_speed > footstep_min_speed
+	if not moving:
+		_stop_footsteps()
 		return
 
-	_step_accum += delta_dist
-	if _step_accum < step_distance:
+	_footstep_time_left -= delta
+	if _footstep_time_left > 0.0:
 		return
-	_step_accum = fmod(_step_accum, step_distance)
+
+	if _footstep_streams.is_empty():
+		return
+
+	var min_interval := minf(footstep_interval_min_sec, footstep_interval_max_sec)
+	var max_interval := maxf(footstep_interval_min_sec, footstep_interval_max_sec)
+	_footstep_time_left = _rng.randf_range(maxf(min_interval, 0.05), maxf(max_interval, 0.05))
+	var idx := _rng.randi_range(0, _footstep_streams.size() - 1)
+	_footsteps.stream = _footstep_streams[idx]
 	_footsteps.play()
 
 func _setup_animations() -> void:

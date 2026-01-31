@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://dfox5aak4tnpu" path="res://ui/mask_overlay.gd" id="3_0k6v2"]
 [ext_resource type="Script" uid="uid://duocm2fldhbwn" path="res://ui/hud.gd" id="4_r0rve"]
 [ext_resource type="Shader" uid="uid://b3ymesv0uanxp" path="res://ui/mask_effect.gdshader" id="5_yi6qj"]
-[ext_resource type="AudioStream" uid="uid://ddvmuf20qg307" path="res://monster/footstep.mp3" id="6_foot"]
+[ext_resource type="AudioStream" uid="uid://cbwjdhunw81ag" path="res://player/footstep.mp3" id="6_foot"]
 [ext_resource type="AudioStream" uid="uid://cbwjdhunw81ag" path="res://player/footstep.mp3" id="8_hg6s5"]
 [ext_resource type="Script" uid="uid://dkb8ltjc6067n" path="res://addons/raytraced_audio/raytraced_audio_player_3d.gd" id="9_8t03j"]
 
