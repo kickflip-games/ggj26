@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://erparsmqgpmr"]
+
+[ext_resource type="PackedScene" path="res://environment/decals/Sticker3D.tscn" id="1_m6stb"]
+[ext_resource type="Texture2D" uid="uid://lw3efxjwtmk6" path="res://environment/decals/imgs/decal_key.png" id="2_agvkq"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_agvkq"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n5tnh"]
+albedo_color = Color(0, 0, 0, 1)
+
+[node name="TestDecal" type="Node3D" unique_id=3933651]
+
+[node name="CSGBox3D" type="MeshInstance3D" parent="." unique_id=1543512134]
+transform = Transform3D(6.2179246, 0, 0, 0, 1, 0, 0, 0, 2.5378957, 1.5497437, 0, 1.1265259)
+mesh = SubResource("BoxMesh_agvkq")
+surface_material_override/0 = SubResource("StandardMaterial3D_n5tnh")
+
+[node name="Sticker3D" parent="." unique_id=282936165 instance=ExtResource("1_m6stb")]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.123921044, 0.5026384, 1.1165149)
+texture = ExtResource("2_agvkq")
+mode = "FLOOR"
+emissive = true
+emission_color = Color(0.390048, 1, 1, 1)
+emission_energy = 0.1
