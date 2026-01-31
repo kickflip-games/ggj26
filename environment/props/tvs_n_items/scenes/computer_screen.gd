@@ -13,6 +13,7 @@ const USE_IMAGE_PARAM := "use_image_texture"
 @export var key_scene: PackedScene = preload("res://environment/key/key.tscn")
 @export var key_spawn_path: NodePath
 @export var key_spawn_offset := Vector3(0.0, 0.18, 0.0)
+@export var has_key := false
 
 @export var break_fx_scene: PackedScene
 @export var break_fx_count := 18
@@ -20,11 +21,18 @@ const USE_IMAGE_PARAM := "use_image_texture"
 @export var break_fx_speed := 1.8
 @export var break_fx_spread := Vector3(0.12, 0.08, 0.12)
 @export var break_fx_color := Color(0.9, 0.95, 1.0, 1.0)
+@export var interaction_action := "interact"
+@export var prompt_with_hammer := "Smash monitor"
+@export var prompt_without_hammer := "Need a hammer"
 
 var screen_mat: StandardMaterial3D
+var screen_shader: ShaderMaterial
 var uses_shader := false
 var _broken := false
 var _spawned_key: Node3D = null
+var _player_in_trigger := false
+var _player: Player = null
+var _screen_surface := SCREEN_SURFACE
 @onready var screen_mesh := $computerScreen as MeshInstance3D
 @onready var screen_light := get_node_or_null(light_path) as Light3D
 @onready var proximity_area := $ProximityArea as Area3D
@@ -32,10 +40,15 @@ var _spawned_key: Node3D = null
 @onready var _key_spawn := get_node_or_null(key_spawn_path) as Node3D
 
 func _ready() -> void:
-	var mat := screen_mesh.get_active_material(SCREEN_SURFACE)
+	var mat := _get_screen_material()
 	if mat is ShaderMaterial:
 		uses_shader = true
-		screen_mesh.set_instance_shader_parameter("static_intensity", static_intensity)
+		# Duplicate shader material so each monitor is independent.
+		screen_shader = mat.duplicate() as ShaderMaterial
+		if screen_shader == null:
+			screen_shader = mat
+		screen_mesh.set_surface_override_material(_screen_surface, screen_shader)
+		screen_shader.set_shader_parameter("static_intensity", static_intensity)
 		_apply_key_texture()
 	else:
 		# Duplicate standard material so each monitor is independent.
@@ -43,7 +56,7 @@ func _ready() -> void:
 			screen_mat = mat.duplicate() as StandardMaterial3D
 		else:
 			screen_mat = StandardMaterial3D.new()
-		screen_mesh.set_surface_override_material(SCREEN_SURFACE, screen_mat)
+		screen_mesh.set_surface_override_material(_screen_surface, screen_mat)
 		screen_mat.emission_enabled = true
 	turn_off()
 	
@@ -60,7 +73,8 @@ func turn_on() -> void:
 	if _broken:
 		return
 	if uses_shader:
-		screen_mesh.set_instance_shader_parameter("power", on_energy)
+		if screen_shader != null:
+			screen_shader.set_shader_parameter("power", on_energy)
 	else:
 		screen_mat.emission_energy_multiplier = on_energy
 	if screen_light:
@@ -70,7 +84,8 @@ func turn_on() -> void:
 
 func turn_off() -> void:
 	if uses_shader:
-		screen_mesh.set_instance_shader_parameter("power", off_energy)
+		if screen_shader != null:
+			screen_shader.set_shader_parameter("power", off_energy)
 	else:
 		screen_mat.emission_energy_multiplier = off_energy
 	if screen_light:
@@ -82,10 +97,19 @@ func turn_off() -> void:
 func _on_proximity_body_entered(body: Node3D) -> void:
 	if _broken:
 		return
+	if body is Player:
+		_player_in_trigger = true
+		_player = body as Player
+		_update_prompt()
 	turn_on()
 
 
 func _on_proximity_body_exited(body: Node3D) -> void:
+	if body is Player:
+		_player_in_trigger = false
+		if _player != null:
+			_player.clear_interact_prompt()
+		_player = null
 	turn_off()
 
 func break_with_hammer(_hit: Dictionary = {}) -> void:
@@ -96,6 +120,10 @@ func reset_pickup() -> void:
 	if _spawned_key != null:
 		_spawned_key.queue_free()
 		_spawned_key = null
+	_player_in_trigger = false
+	if _player != null:
+		_player.clear_interact_prompt()
+	_player = null
 	if proximity_area != null:
 		proximity_area.set_deferred("monitoring", true)
 	turn_off()
@@ -103,32 +131,93 @@ func reset_pickup() -> void:
 func _try_break() -> void:
 	if _broken:
 		return
+	if not GameManager.has_hammer:
+		if _player != null:
+			_player.flash_message(prompt_without_hammer)
+		return
 	_broken = true
 	turn_off()
 	if uses_shader:
-		screen_mesh.set_instance_shader_parameter(USE_IMAGE_PARAM, false)
+		if screen_shader != null:
+			screen_shader.set_shader_parameter(USE_IMAGE_PARAM, false)
 	if proximity_area != null:
 		proximity_area.set_deferred("monitoring", false)
 	_spawn_break_fx()
 	_drop_key()
+	_update_prompt()
 
 func _on_mask_toggled(mask_on: bool) -> void:
 	if not uses_shader:
+		if screen_mat == null:
+			return
+		if _broken:
+			screen_mat.albedo_texture = null
+			screen_mat.emission_texture = null
+			return
+		if mask_on and has_key and key_image != null:
+			screen_mat.albedo_texture = key_image
+			screen_mat.emission_texture = key_image
+		else:
+			screen_mat.albedo_texture = null
+			screen_mat.emission_texture = null
 		return
 	if _broken:
-		screen_mesh.set_instance_shader_parameter(USE_IMAGE_PARAM, false)
+		if screen_shader != null:
+			screen_shader.set_shader_parameter(USE_IMAGE_PARAM, false)
 		return
 	_apply_key_texture()
-	screen_mesh.set_instance_shader_parameter(USE_IMAGE_PARAM, mask_on and key_image != null)
+	if screen_shader != null:
+		screen_shader.set_shader_parameter(USE_IMAGE_PARAM, mask_on and has_key and key_image != null)
+
+func _process(_delta: float) -> void:
+	if _broken:
+		return
+	if not _player_in_trigger or _player == null:
+		return
+	_update_prompt()
+	if not Input.is_action_just_pressed(interaction_action):
+		return
+	_try_break()
+
+func _update_prompt() -> void:
+	if _player == null:
+		return
+	if _broken or not _player_in_trigger:
+		_player.clear_interact_prompt()
+		return
+	if not GameManager.has_hammer:
+		_player.set_interact_prompt("%s (E)" % prompt_without_hammer)
+	else:
+		_player.set_interact_prompt("%s (E)" % prompt_with_hammer)
 
 func _apply_key_texture() -> void:
 	if not uses_shader:
 		return
 	if key_image == null:
 		return
-	screen_mesh.set_instance_shader_parameter(IMAGE_TEXTURE_PARAM, key_image)
+	if screen_shader != null:
+		screen_shader.set_shader_parameter(IMAGE_TEXTURE_PARAM, key_image)
+
+func _get_screen_material() -> Material:
+	_screen_surface = SCREEN_SURFACE
+	if screen_mesh == null:
+		return null
+	var direct := screen_mesh.get_active_material(_screen_surface)
+	if direct != null:
+		return direct
+	var mesh := screen_mesh.mesh
+	if mesh == null:
+		return null
+	for i in range(mesh.get_surface_count()):
+		var candidate := screen_mesh.get_active_material(i)
+		if candidate is ShaderMaterial or candidate is StandardMaterial3D:
+			_screen_surface = i
+			return candidate
+	return null
 
 func _drop_key() -> void:
+	if not has_key:
+		return
 	if key_scene == null:
 		return
 	if _spawned_key != null:
@@ -149,8 +238,12 @@ func _get_key_spawn_transform() -> Transform3D:
 	return global_transform.translated_local(key_spawn_offset)
 
 func _spawn_break_fx() -> void:
+	if not is_inside_tree():
+		return
 	var parent_node := get_parent() if get_parent() != null else get_tree().root
-	var origin := screen_mesh.global_position if screen_mesh != null else global_position
+	var origin := global_position
+	if screen_mesh != null and screen_mesh.is_inside_tree():
+		origin = screen_mesh.global_position
 
 	if break_fx_scene != null:
 		var instance := break_fx_scene.instantiate()

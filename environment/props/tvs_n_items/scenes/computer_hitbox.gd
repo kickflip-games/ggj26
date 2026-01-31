@@ -1,4 +1,4 @@
-extends StaticBody3D
+extends Node
 
 @export var target_path: NodePath
 

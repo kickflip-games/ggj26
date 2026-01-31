@@ -40,10 +40,9 @@ materials/extract_path=""
 _subresources={
 "nodes": {
 "PATH:RootNode": {
-"node/node_type": "StaticBody3D"
+"node/node_type": "Node3D"
 },
 "PATH:RootNode/ComputerDesk1": {
-"generate/physics": true,
 "physics/shape_type": 3
 }
 }

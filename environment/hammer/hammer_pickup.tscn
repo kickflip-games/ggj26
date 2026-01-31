@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://ckqswm8nrbaop" path="res://environment/hammer/hammer.glb" id="2_m9sgv"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
-size = Vector3(1.2, 1.2, 1.2)
+size = Vector3(1.7166259, 1.2, 2.7401366)
 
 [node name="HammerPickup" type="Node3D" unique_id=100480726]
 script = ExtResource("1_m7jlk")
