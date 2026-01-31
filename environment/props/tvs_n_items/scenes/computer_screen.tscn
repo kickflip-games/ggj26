@@ -53,6 +53,6 @@ stream = ExtResource("6_imeg0")
 volume_db = -19.844
 unit_size = 4.22
 max_db = -12.624
-max_distance = 4.0
+max_distance = 7.0
 script = ExtResource("7_3nvn1")
 metadata/_custom_type_script = "uid://dkb8ltjc6067n"
