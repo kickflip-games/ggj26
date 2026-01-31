@@ -3,7 +3,38 @@
 [ext_resource type="PackedScene" uid="uid://cj3q3keil0jet" path="res://environment/props/tvs_n_items/models/Computer Screen.glb" id="1_sbs0w"]
 [ext_resource type="Material" uid="uid://buirva7llswpm" path="res://environment/props/tvs_n_items/scenes/materials/computer_screen.tres" id="2_6dwcw"]
 [ext_resource type="Script" uid="uid://c8qj0ijkqe4l8" path="res://environment/props/tvs_n_items/scenes/computer_screen.gd" id="2_ooa6p"]
-[ext_resource type="Script" path="res://environment/props/tvs_n_items/scenes/computer_hitbox.gd" id="3_hitbox"]
+[ext_resource type="Script" uid="uid://dq71beffnsjon" path="res://environment/props/tvs_n_items/scenes/computer_hitbox.gd" id="3_hitbox"]
+[ext_resource type="Texture2D" uid="uid://cdq7cqeralkcq" path="res://environment/props/tvs_n_items/scenes/key_image.jpg" id="4_key_img"]
+[ext_resource type="Shader" uid="uid://c14ymroqotv8b" path="res://environment/props/tvs_n_items/scenes/materials/computer_screen_crt.gdshader" id="4_r7kus"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_r7kus"]
+render_priority = 0
+shader = ExtResource("4_r7kus")
+shader_parameter/static_intensity = 0.3
+shader_parameter/power = 0.0
+shader_parameter/scanline_count = 400.0
+shader_parameter/flicker_speed = 10.0
+shader_parameter/use_image_texture = false
+shader_parameter/image_texture = ExtResource("4_key_img")
+shader_parameter/use_screen_texture = false
+shader_parameter/base_color = Color(0.07, 0.07, 0.07, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_key"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_texture = ExtResource("4_key_img")
+
+[sub_resource type="QuadMesh" id="QuadMesh_key"]
+size = Vector2(0.38, 0.24)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_key_backplate"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0, 0, 0, 0.65)
+
+[sub_resource type="QuadMesh" id="QuadMesh_key_backplate"]
+size = Vector2(0.41, 0.27)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_sbs0w"]
 size = Vector3(0.379, 0.30773047, 0.182)
@@ -18,12 +49,26 @@ key_spawn_path = NodePath("KeySpawn")
 
 [node name="ScreenLight" type="SpotLight3D" parent="." index="0" unique_id=564516568]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1480416, -0.008789659)
+visible = false
 spot_range = 0.43562707
 spot_angle = 64.815254
 
 [node name="computerScreen" parent="." index="1" unique_id=1876904394]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18432105, 0, 0)
-surface_material_override/1 = ExtResource("2_6dwcw")
+surface_material_override/0 = ExtResource("2_6dwcw")
+surface_material_override/1 = SubResource("ShaderMaterial_r7kus")
+
+[node name="KeyImagePlane" type="MeshInstance3D" parent="computerScreen" index="0" unique_id=1340179176]
+transform = Transform3D(-0.9945441, -0.00013397541, -0.10431739, -0.016114915, 0.9881923, 0.15236783, 0.10306526, 0.15321758, -0.98280317, -0.20449157, 0.18385656, 0.030386006)
+visible = false
+material_override = SubResource("StandardMaterial3D_key")
+mesh = SubResource("QuadMesh_key")
+
+[node name="KeyImageBackplate" type="MeshInstance3D" parent="computerScreen" index="1" unique_id=459846346]
+transform = Transform3D(-0.9945441, -0.00013397541, -0.10431739, -0.016114915, 0.9881923, 0.15236783, 0.10306526, 0.15321758, -0.98280317, -0.20256862, 0.18104786, 0.046502676)
+visible = false
+material_override = SubResource("StandardMaterial3D_key_backplate")
+mesh = SubResource("QuadMesh_key_backplate")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." index="2" unique_id=1890848570]
 script = ExtResource("3_hitbox")
@@ -42,4 +87,4 @@ shape = SubResource("BoxShape3D_vcu2v")
 [node name="StaticNoisePlayer" type="AudioStreamPlayer3D" parent="." index="4" unique_id=1234567890]
 
 [node name="KeySpawn" type="Node3D" parent="." index="5" unique_id=1685778345]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.12, -0.12)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.004882112, 0.12, -0.35695744)
