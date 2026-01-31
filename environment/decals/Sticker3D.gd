@@ -14,6 +14,7 @@ var _double_sided := true
 var _emissive := false
 var _emission_color := Color(1, 1, 1)
 var _emission_energy := 2.0
+var _visible_only_when_mask_on := true
 var _editor_show_preview := true
 var _editor_preview_color := Color(0.2, 0.9, 1.0, 0.9)
 var _editor_preview_size := 0.12
@@ -96,6 +97,13 @@ var _editor_snap_to_surface := false
 	get:
 		return _emission_energy
 
+@export var visible_only_when_mask_on := true:
+	set(value):
+		_visible_only_when_mask_on = value
+		_update_mask_visibility(_mask_on)
+	get:
+		return _visible_only_when_mask_on
+
 @export var editor_show_preview := true:
 	set(value):
 		_editor_show_preview = value
@@ -133,11 +141,13 @@ var _pending_rebuild := false
 var _preview_mesh_instance: MeshInstance3D
 var _preview_mesh: ImmediateMesh
 var _preview_material: StandardMaterial3D
+var _mask_on := true
 
 
 func _ready() -> void:
 	_ensure_mesh_instance()
 	_rebuild()
+	_connect_mask_manager()
 
 
 func apply_to_surface(global_surface_normal: Vector3) -> void:
@@ -171,6 +181,7 @@ func _rebuild() -> void:
 	_configure_material()
 	_apply_mode_orientation()
 	_apply_offset_local(LOCAL_FRONT)
+	_update_mask_visibility(_mask_on)
 	_update_preview()
 
 
@@ -227,7 +238,8 @@ func _apply_mode_orientation() -> void:
 	match mode:
 		"FLOOR":
 			# Rotate so the QuadMesh front (+Z) faces up (+Y).
-			rotation_degrees = Vector3(-90.0, 0.0, 0.0)
+			var yaw := rotation_degrees.y
+			rotation_degrees = Vector3(-90.0, yaw, 0.0)
 		"WALL":
 			# Rotate so the QuadMesh front (+Z) faces forward (-Z).
 			rotation_degrees = Vector3(0.0, 180.0, 0.0)
@@ -240,6 +252,30 @@ func _apply_offset_local(local_normal: Vector3) -> void:
 	if _mesh_instance == null:
 		return
 	_mesh_instance.position = local_normal.normalized() * max(0.0, offset_meters)
+
+
+func _connect_mask_manager() -> void:
+	if Engine.is_editor_hint():
+		return
+	var mask_manager := get_node_or_null("/root/MaskManager")
+	if mask_manager != null and mask_manager.has_signal("mask_toggled"):
+		mask_manager.mask_toggled.connect(_on_mask_toggled)
+		if mask_manager.has_method("get"):
+			_on_mask_toggled(mask_manager.mask_on)
+
+
+func _on_mask_toggled(mask_on: bool) -> void:
+	_mask_on = mask_on
+	_update_mask_visibility(mask_on)
+
+
+func _update_mask_visibility(mask_on: bool) -> void:
+	if _mesh_instance == null:
+		return
+	if _visible_only_when_mask_on:
+		_mesh_instance.visible = mask_on
+	else:
+		_mesh_instance.visible = true
 
 
 func _ensure_preview() -> void:
