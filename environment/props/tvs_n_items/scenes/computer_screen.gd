@@ -35,9 +35,11 @@ var _broken := false
 var _spawned_key: Node3D = null
 var _player_in_trigger := false
 var _player: Player = null
+var _monsters_in_trigger := 0
 var _screen_surface := SCREEN_SURFACE
 var _key_plane: MeshInstance3D
 var _force_no_shader := false
+var _base_static_intensity := 0.0
 var screen_mesh: MeshInstance3D
 @onready var screen_light := get_node_or_null(light_path) as Light3D
 @onready var proximity_area := $ProximityArea as Area3D
@@ -49,6 +51,7 @@ func _ready() -> void:
 	if screen_mesh == null:
 		return
 	_key_plane = get_node_or_null(key_plane_path) as MeshInstance3D
+	_base_static_intensity = static_intensity
 	var mat := _get_screen_material()
 	if has_key and mat is ShaderMaterial:
 		_force_no_shader = true
@@ -61,7 +64,7 @@ func _ready() -> void:
 		if screen_shader == null:
 			screen_shader = mat
 		screen_mesh.set_surface_override_material(_screen_surface, screen_shader)
-		screen_shader.set_shader_parameter("static_intensity", static_intensity)
+		screen_shader.set_shader_parameter("static_intensity", 0.0)
 		_apply_key_texture()
 	else:
 		# Duplicate standard material so each monitor is independent.
@@ -98,6 +101,7 @@ func turn_on() -> void:
 	if uses_shader and not _force_no_shader:
 		if screen_shader != null:
 			screen_shader.set_shader_parameter("power", on_energy)
+			screen_shader.set_shader_parameter("static_intensity", _base_static_intensity)
 	else:
 		screen_mat.emission_energy_multiplier = on_energy
 	if screen_light:
@@ -109,6 +113,7 @@ func turn_off() -> void:
 	if uses_shader and not _force_no_shader:
 		if screen_shader != null:
 			screen_shader.set_shader_parameter("power", off_energy)
+			screen_shader.set_shader_parameter("static_intensity", 0.0)
 	else:
 		screen_mat.emission_energy_multiplier = off_energy
 	if screen_light:
@@ -124,7 +129,11 @@ func _on_proximity_body_entered(body: Node3D) -> void:
 		_player_in_trigger = true
 		_player = body as Player
 		_update_prompt()
-	turn_on()
+		return
+	if body is Monster:
+		_monsters_in_trigger += 1
+		if _monsters_in_trigger > 0:
+			turn_on()
 
 
 func _on_proximity_body_exited(body: Node3D) -> void:
@@ -133,7 +142,11 @@ func _on_proximity_body_exited(body: Node3D) -> void:
 		if _player != null:
 			_player.clear_interact_prompt()
 		_player = null
-	turn_off()
+		return
+	if body is Monster:
+		_monsters_in_trigger = max(0, _monsters_in_trigger - 1)
+		if _monsters_in_trigger == 0:
+			turn_off()
 
 func break_with_hammer(_hit: Dictionary = {}) -> void:
 	_try_break()
@@ -147,6 +160,7 @@ func reset_pickup() -> void:
 	if _player != null:
 		_player.clear_interact_prompt()
 	_player = null
+	_monsters_in_trigger = 0
 	if proximity_area != null:
 		proximity_area.set_deferred("monitoring", true)
 	turn_off()
