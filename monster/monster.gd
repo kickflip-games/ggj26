@@ -77,8 +77,6 @@ func _ready() -> void:
 	if _debug_manager != null:
 		_debug_manager.show_monsters_changed.connect(_on_debug_show_monsters_changed)
 	_update_visibility()
-	if not _debug_enabled():
-		print("[Monster:%s] debug disabled (set debug_animation_logs=true or press '=' to toggle DebugManager.show_monsters)" % [str(get_instance_id())])
 
 func reset_patrol() -> void:
 	velocity = Vector3.ZERO
@@ -146,9 +144,6 @@ func _on_mask_toggled(mask_on: bool) -> void:
 
 func _on_debug_show_monsters_changed(_show: bool) -> void:
 	_update_visibility()
-	_debug_log_force("debug_show_monsters_changed: %s" % [_debug_manager != null and _debug_manager.show_monsters])
-	if _debug_manager != null and _debug_manager.show_monsters and _debug_setup_summary != "":
-		print("[Monster:%s] %s" % [str(get_instance_id()), _debug_setup_summary])
 
 func _setup_navigation() -> void:
 	if _nav_agent == null:
@@ -236,19 +231,7 @@ func _debug_nav_state(delta: float, target: Vector3) -> void:
 		if _nav_agent.has_method("get_current_navigation_path_index"):
 			path_idx = int(_nav_agent.get_current_navigation_path_index())
 
-	print("[Monster:%s] nav mode=%s vel=%.2f dist_target=%.2f dist_next=%s reachable=%s finished=%s path=%s idx=%s target=%s next=%s" % [
-		str(get_instance_id()),
-		mode,
-		Vector2(velocity.x, velocity.z).length(),
-		dist_target,
-		"?" if dist_next < 0.0 else "%.2f" % dist_next,
-		reachable_txt,
-		finished_txt,
-		"?" if path_len < 0 else str(path_len),
-		"?" if path_idx < 0 else str(path_idx),
-		str(target),
-		str(next_pos)
-	])
+	pass
 
 func _get_navigation_map_rid() -> RID:
 	var map_rid := RID()
@@ -396,14 +379,7 @@ func _debug_seen_state() -> void:
 		return
 	_next_seen_debug_time_ms = now + int(debug_seen_log_interval_sec * 1000.0)
 
-	print("[Monster:%s] seen freeze=%s dot=%.3f los=%s anim=%s vel=%.2f" % [
-		str(get_instance_id()),
-		"Y" if _frozen_by_seen else "N",
-		_seen_last_dot,
-		"Y" if _seen_last_los else "N",
-		_anim_name(),
-		Vector2(velocity.x, velocity.z).length()
-	])
+	pass
 
 func _update_visibility() -> void:
 	var mask_on := false
@@ -456,7 +432,7 @@ func _load_footstep_streams() -> void:
 	if _footstep_streams.is_empty() and footstep_stream != null:
 		_footstep_streams.append(footstep_stream)
 	if _footstep_streams.is_empty():
-		push_warning("Monster: no footstep streams found in '%s' (1-%d)" % [footstep_dir, footstep_count])
+		pass
 
 func _try_play_footsteps(prev_pos: Vector3, delta: float) -> void:
 	if _footsteps == null:
@@ -500,29 +476,17 @@ func _setup_animations() -> void:
 	var visual_root: Node = _visual if _visual != null else self
 	_anim_player = _find_animation_player(visual_root)
 	if _anim_player == null:
-		push_warning("Monster: no AnimationPlayer found under %s" % visual_root.name)
-		_debug_log_force("setup: no AnimationPlayer under %s" % visual_root.name)
 		return
 	var base_anim_root := _get_anim_root(_anim_player)
 
 	var available := _get_animation_full_names(_anim_player)
 	if available.is_empty():
-		push_warning("Monster: no animations found on AnimationPlayer")
-		_debug_log_force("setup: AnimationPlayer has no animations")
 		return
 
 	_idle_anim = idle_animation_name if idle_animation_name != &"" else _pick_animation_name(_anim_player, "idle")
 	if _idle_anim == &"":
-		push_warning("Monster: couldn't pick an idle animation")
-		_debug_log_force("setup: couldn't pick idle; available=%s" % [_format_names(available)])
 		return
 	if not _anim_player.has_animation(_idle_anim):
-		var available_strings: Array[String] = []
-		available_strings.resize(available.size())
-		for i in range(available.size()):
-			available_strings[i] = String(available[i])
-		var available_text := ", ".join(available_strings)
-		push_warning("Monster: idle animation '%s' not found; available: %s" % [String(_idle_anim), available_text])
 		_idle_anim = _pick_animation_name(_anim_player, "idle")
 		if _idle_anim == &"":
 			return
@@ -595,9 +559,7 @@ func _setup_animations() -> void:
 	walk_scene_root.free()
 
 	if _walk_anim == &"" or not _anim_player.has_animation(_walk_anim):
-		push_warning("Monster: walk animation not available; movement will use idle")
-		_debug_log_force("setup: walk missing after add; walk='%s' available=%s" % [String(_walk_anim), _format_names(_get_animation_full_names(_anim_player))])
-		_debug_setup_summary += " | walk=missing"
+		pass
 	else:
 		var track_count := _anim_player.get_animation(_walk_anim).get_track_count() if _anim_player.get_animation(_walk_anim) != null else -1
 		var invalid := _count_invalid_tracks(_anim_player.get_animation(_walk_anim), base_anim_root)
@@ -910,18 +872,10 @@ func _format_names(names: Array[StringName]) -> String:
 	return "[" + ", ".join(out) + "]"
 
 func _debug_log(message: String) -> void:
-	if not _debug_enabled():
-		return
-	var now := Time.get_ticks_msec()
-	if now < _next_debug_log_time_ms:
-		return
-	_next_debug_log_time_ms = now + int(debug_log_interval_sec * 1000.0)
-	print("[Monster:%s] %s" % [str(get_instance_id()), message])
+	pass
 
 func _debug_log_force(message: String) -> void:
-	if not _debug_enabled():
-		return
-	print("[Monster:%s] %s" % [str(get_instance_id()), message])
+	pass
 
 func _debug_enabled() -> bool:
 	if debug_animation_logs:

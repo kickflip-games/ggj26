@@ -30,6 +30,10 @@ func _on_body_entered(body: Node) -> void:
 	GameManager.has_hammer = true
 	if body.has_method("equip_hammer"):
 		body.equip_hammer()
+	
+	# Display pickup message
+	if body.has_method("flash_message_hud"):
+		body.flash_message_hud("Hammer picked up. You can now smash monitors")
 
 	visible = false
 	pickup_area.set_deferred("monitoring", false)
