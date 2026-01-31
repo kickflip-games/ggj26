@@ -423,8 +423,8 @@ func _spawn_break_fx() -> void:
 
 	var fx_root := Node3D.new()
 	fx_root.name = "BreakFx"
-	fx_root.global_position = origin
 	parent_node.add_child(fx_root)
+	fx_root.global_position = origin
 
 	var particles := GPUParticles3D.new()
 	particles.amount = break_fx_count
