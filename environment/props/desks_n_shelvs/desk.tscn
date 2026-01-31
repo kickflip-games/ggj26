@@ -2,4 +2,16 @@
 
 [ext_resource type="PackedScene" uid="uid://unveoaxubsmg" path="res://environment/props/desks_n_shelvs/Computer Desk.glb" id="1_ehpxr"]
 
-[node name="Desk" unique_id=1320336902 instance=ExtResource("1_ehpxr")]
+[sub_resource type="BoxShape3D" id="BoxShape3D_ehpxr"]
+size = Vector3(5.777178, 2.95625, 1.97)
+
+[node name="Desk" unique_id=108216595 instance=ExtResource("1_ehpxr")]
+
+[node name="RootNode" parent="." index="0" unique_id=356018134]
+transform = Transform3D(3.125, 0, 0, 0, 3, 0, 0, 0, 2.015, 0, 0, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." index="1" unique_id=2022908454]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" index="0" unique_id=1006364365]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.72208476, 0.44687498, 0)
+shape = SubResource("BoxShape3D_ehpxr")

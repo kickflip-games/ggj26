@@ -40,4 +40,3 @@ func _apply_model_transform() -> void:
 	model.position = model_offset
 	model.rotation_degrees = model_rotation_degrees
 	model.scale = model_scale
-
