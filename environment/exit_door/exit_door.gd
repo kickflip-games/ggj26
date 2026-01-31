@@ -30,15 +30,6 @@ func _ready() -> void:
 	_apply_model_transform()
 	_apply_audio()
 
-	var mask_manager := get_node_or_null("/root/MaskManager")
-	if mask_manager != null:
-		mask_manager.mask_toggled.connect(_on_mask_toggled)
-		_on_mask_toggled(mask_manager.mask_on)
-
-func _on_mask_toggled(mask_on: bool) -> void:
-	visible = mask_on
-	_update_prompt()
-
 func _on_body_entered(body: Node) -> void:
 	if not (body is Player):
 		return
@@ -61,10 +52,6 @@ func _process(_delta: float) -> void:
 	_try_exit()
 
 func _try_exit() -> void:
-	var mask_manager := get_node_or_null("/root/MaskManager")
-	if mask_manager == null or not mask_manager.mask_on:
-		return
-
 	if requires_key and not GameManager.has_key:
 		if _player != null:
 			_play_locked_sfx()
@@ -95,10 +82,6 @@ func _try_exit() -> void:
 
 func _update_prompt() -> void:
 	if _player == null:
-		return
-	var mask_manager := get_node_or_null("/root/MaskManager")
-	if mask_manager == null or not mask_manager.mask_on:
-		_player.clear_interact_prompt()
 		return
 	if not _player_in_trigger:
 		_player.clear_interact_prompt()
