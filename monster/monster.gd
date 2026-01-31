@@ -85,7 +85,8 @@ func _physics_process(delta: float) -> void:
 		_step_accum = 0.0
 		return
 
-	if freeze_when_mask_on and _mask_manager != null and _mask_manager.mask_on:
+	var mask_on: bool = _mask_manager != null and _mask_manager.mask_on
+	if freeze_when_mask_on and mask_on and _has_player_mask_line_of_sight():
 		velocity = Vector3.ZERO
 		_stop_navigation_velocity()
 		_sync_animation(false)
@@ -123,7 +124,7 @@ func _physics_process(delta: float) -> void:
 
 func _on_mask_toggled(mask_on: bool) -> void:
 	_update_visibility()
-	if freeze_when_mask_on and mask_on:
+	if freeze_when_mask_on and mask_on and _has_player_mask_line_of_sight():
 		velocity = Vector3.ZERO
 		_step_accum = 0.0
 		_sync_animation(false)
@@ -281,10 +282,7 @@ func _update_seen_freeze() -> bool:
 	if player == null:
 		return false
 
-	var camera: Camera3D = player.get_node_or_null(^"CameraRig/Camera3D") as Camera3D
-	if camera == null:
-		var found: Node = player.find_child("Camera3D", true, false)
-		camera = found as Camera3D
+	var camera: Camera3D = _get_player_camera(player)
 
 	var origin := camera.global_position if camera != null else player.global_position
 	var forward := (-camera.global_transform.basis.z).normalized() if camera != null else (-player.global_transform.basis.z).normalized()
@@ -329,6 +327,42 @@ func _update_seen_freeze() -> bool:
 	var collider: Object = hit.get("collider") as Object
 	_seen_last_los = (collider == self)
 	return _seen_last_los
+
+func _get_player_camera(player: Player) -> Camera3D:
+	if player == null:
+		return null
+	var camera: Camera3D = player.get_node_or_null(^"CameraRig/Camera3D") as Camera3D
+	if camera == null:
+		var found: Node = player.find_child("Camera3D", true, false)
+		camera = found as Camera3D
+	return camera
+
+func _has_player_mask_line_of_sight() -> bool:
+	var player: Player = null
+	if GameManager != null:
+		player = GameManager.player
+	if player == null:
+		return true
+
+	var camera: Camera3D = _get_player_camera(player)
+	var origin := camera.global_position if camera != null else player.global_position
+
+	var world: World3D = get_world_3d()
+	if world == null:
+		return true
+
+	var space_state: PhysicsDirectSpaceState3D = world.direct_space_state
+	var head := global_position + Vector3.UP * 1.0
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(origin, head, seen_los_collision_mask)
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	query.exclude = [player]
+
+	var hit: Dictionary = space_state.intersect_ray(query)
+	if hit.is_empty():
+		return false
+	var collider: Object = hit.get("collider") as Object
+	return collider == self
 
 func _set_seen_frozen(value: bool) -> void:
 	if _frozen_by_seen == value:
