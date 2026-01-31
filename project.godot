@@ -28,7 +28,7 @@ LevelManager="*res://managers/level_manager.gd"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/raytraced_audio/plugin.cfg")
+enabled=PackedStringArray("res://addons/mixamo_animation_retargeter/plugin.cfg", "res://addons/raytraced_audio/plugin.cfg")
 
 [raytraced_audio]
 

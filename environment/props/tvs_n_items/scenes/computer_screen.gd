@@ -23,6 +23,9 @@ const USE_IMAGE_PARAM := "use_image_texture"
 @export var break_fx_speed := 1.8
 @export var break_fx_spread := Vector3(0.12, 0.08, 0.12)
 @export var break_fx_color := Color(0.9, 0.95, 1.0, 1.0)
+@export var break_sfx: AudioStream = preload("res://environment/props/tvs_n_items/scenes/break.mp3")
+@export var break_sfx_volume_db := 0.0
+@export var break_sfx_cooldown := 0.1
 @export var interaction_action := "interact"
 @export var prompt_with_hammer := "Smash monitor"
 @export var prompt_without_hammer := "Need a hammer"
@@ -45,6 +48,9 @@ var screen_mesh: MeshInstance3D
 @onready var proximity_area := $ProximityArea as Area3D
 @onready var static_noise := $StaticNoisePlayer as AudioStreamPlayer3D
 @onready var _key_spawn := get_node_or_null(key_spawn_path) as Node3D
+
+# Static variable to prevent overlapping break sounds
+static var _last_break_sound_time := 0.0
 
 func _ready() -> void:
 	_resolve_screen_mesh()
@@ -176,6 +182,7 @@ func _try_break() -> void:
 	turn_off()
 	if uses_shader:
 		if screen_shader != null:
+			play_break_sound()
 			screen_shader.set_shader_parameter(USE_IMAGE_PARAM, false)
 	if proximity_area != null:
 		proximity_area.set_deferred("monitoring", false)
@@ -374,6 +381,27 @@ func _get_key_spawn_transform() -> Transform3D:
 	if _key_spawn != null:
 		return _key_spawn.global_transform
 	return global_transform.translated_local(key_spawn_offset)
+
+func play_break_sound() -> void:
+	if break_sfx == null:
+		return
+	var current_time := Time.get_ticks_msec() / 1000.0
+	# Only play if enough time has passed since last break sound
+	if current_time - _last_break_sound_time < break_sfx_cooldown:
+		return
+	_last_break_sound_time = current_time
+	
+	var player := AudioStreamPlayer3D.new()
+	player.stream = break_sfx
+	player.volume_db = break_sfx_volume_db
+	player.autoplay = true
+	
+	var parent_node := get_parent() if get_parent() != null else get_tree().root
+	parent_node.add_child(player)
+	player.global_position = global_position
+	
+	# Auto-destroy when finished
+	player.finished.connect(player.queue_free)
 
 func _spawn_break_fx() -> void:
 	if not is_inside_tree():

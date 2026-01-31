@@ -3,18 +3,17 @@
 [ext_resource type="PackedScene" uid="uid://cj3q3keil0jet" path="res://environment/props/tvs_n_items/models/Computer Screen.glb" id="1_sbs0w"]
 [ext_resource type="Material" uid="uid://buirva7llswpm" path="res://environment/props/tvs_n_items/scenes/materials/computer_screen.tres" id="2_6dwcw"]
 [ext_resource type="Script" uid="uid://c8qj0ijkqe4l8" path="res://environment/props/tvs_n_items/scenes/computer_screen.gd" id="2_ooa6p"]
-[ext_resource type="Script" path="res://environment/props/tvs_n_items/scenes/computer_hitbox.gd" id="3_hitbox"]
-[ext_resource type="AudioStream" uid="uid://c48u4prcoll3y" path="res://environment/props/tvs_n_items/scenes/static-noise.mp3" id="5_ck011"]
-[ext_resource type="AudioStream" uid="uid://dhoqljo8xmtlf" path="res://assets/SFX/tv-static.mp3" id="6_imeg0"]
-[ext_resource type="Script" uid="uid://dkb8ltjc6067n" path="res://addons/raytraced_audio/raytraced_audio_player_3d.gd" id="7_3nvn1"]
 [ext_resource type="Script" uid="uid://dq71beffnsjon" path="res://environment/props/tvs_n_items/scenes/computer_hitbox.gd" id="3_hitbox"]
 [ext_resource type="Texture2D" uid="uid://cdq7cqeralkcq" path="res://environment/props/tvs_n_items/scenes/key_image.jpg" id="4_key_img"]
 [ext_resource type="Shader" uid="uid://c14ymroqotv8b" path="res://environment/props/tvs_n_items/scenes/materials/computer_screen_crt.gdshader" id="4_r7kus"]
+[ext_resource type="AudioStream" uid="uid://c48u4prcoll3y" path="res://environment/props/tvs_n_items/scenes/static-noise.mp3" id="5_ck011"]
+[ext_resource type="AudioStream" uid="uid://dhoqljo8xmtlf" path="res://assets/SFX/tv-static.mp3" id="6_imeg0"]
+[ext_resource type="Script" uid="uid://dkb8ltjc6067n" path="res://addons/raytraced_audio/raytraced_audio_player_3d.gd" id="7_3nvn1"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_r7kus"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3nvn1"]
 render_priority = 0
 shader = ExtResource("4_r7kus")
-shader_parameter/static_intensity = 0.3
+shader_parameter/static_intensity = 0.0
 shader_parameter/power = 0.0
 shader_parameter/scanline_count = 400.0
 shader_parameter/flicker_speed = 10.0
@@ -43,8 +42,9 @@ size = Vector2(0.41, 0.27)
 [sub_resource type="BoxShape3D" id="BoxShape3D_sbs0w"]
 size = Vector3(0.379, 0.30773047, 0.182)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_vcu2v"]
-size = Vector3(1, 1, 0.6703491)
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_di66u"]
+radius = 0.7895508
+height = 1.5791016
 
 [node name="Computer Screen" unique_id=1327391678 instance=ExtResource("1_sbs0w")]
 script = ExtResource("2_ooa6p")
@@ -57,10 +57,10 @@ visible = false
 spot_range = 0.43562707
 spot_angle = 64.815254
 
-[node name="computerScreen" parent="." index="1" unique_id=768812830]
+[node name="computerScreen" parent="." index="1" unique_id=1876904394]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18432105, 0, 0)
 surface_material_override/0 = ExtResource("2_6dwcw")
-surface_material_override/1 = SubResource("ShaderMaterial_r7kus")
+surface_material_override/1 = SubResource("ShaderMaterial_3nvn1")
 
 [node name="KeyImagePlane" type="MeshInstance3D" parent="computerScreen" index="0" unique_id=1340179176]
 transform = Transform3D(-0.9945441, -0.00013397541, -0.10431739, -0.016114915, 0.9881923, 0.15236783, 0.10306526, 0.15321758, -0.98280317, -0.20449157, 0.18385656, 0.030386006)
@@ -85,8 +85,8 @@ shape = SubResource("BoxShape3D_sbs0w")
 script = ExtResource("3_hitbox")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ProximityArea" index="0" unique_id=260998996]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.27279663)
-shape = SubResource("BoxShape3D_vcu2v")
+transform = Transform3D(1, 0, 0, 0, -0.04536304, 0.99897057, 0, -0.99897057, -0.04536304, 0, -0.0034470814, -0.64816093)
+shape = SubResource("CapsuleShape3D_di66u")
 
 [node name="StaticNoisePlayer_old" type="AudioStreamPlayer3D" parent="." index="4" unique_id=1234567890]
 visible = false

@@ -1,10 +1,18 @@
 class_name Monster
 extends CharacterBody3D
 
-@export var speed := 7.5
+@export var speed := 6.0
+@export_range(0.0, 2.0, 0.05) var mask_speed_multiplier := 0.15
+@export var mask_slow_requires_line_of_sight := false
 @export var arrival_distance := 0.25
 @export var use_navmesh := true
 @export var nav_avoidance_enabled := false
+@export var separation_radius := 4.0
+@export_range(0.0, 3.0, 0.05) var separation_strength := 0.8
+@export var target_offset_radius := 2.5
+@export_range(0.2, 6.0, 0.1) var target_offset_retarget_min_sec := 1.0
+@export_range(0.2, 6.0, 0.1) var target_offset_retarget_max_sec := 2.2
+@export_range(0.1, 10.0, 0.1) var target_offset_smooth := 4.0
 @export var debug_nav_logs := false
 @export_range(0.05, 5.0, 0.05) var debug_nav_log_interval_sec := 0.5
 @export var footstep_stream: AudioStream
@@ -20,6 +28,8 @@ extends CharacterBody3D
 @export var walk_source_scene: PackedScene
 @export var idle_animation_name: StringName = &""
 @export var walk_animation_name: StringName = &""
+@export var bite_animation_name: StringName = &"Bite"
+@export var death_sequence_marker_path: NodePath = NodePath("death_sequence_position")
 @export var freeze_when_mask_on := true
 @export var freeze_when_seen := true
 @export var eyes_bone_name: StringName = &""
@@ -40,6 +50,10 @@ var _footstep_streams: Array[AudioStream] = []
 var _rng := RandomNumberGenerator.new()
 var _next_debug_log_time_ms := 0
 var _debug_setup_summary := ""
+var _target_offset := Vector3.ZERO
+var _target_offset_target := Vector3.ZERO
+var _target_offset_timer := 0.0
+var _mask_slow_active := false
 
 @onready var _footsteps: AudioStreamPlayer3D = get_node_or_null("Footsteps")
 @onready var _visual: Node = get_node_or_null("Visual")
@@ -61,9 +75,14 @@ var _hunt_target := Vector3.ZERO
 var _next_nav_debug_time_ms := 0
 var _eyes: Node3D
 var _eyes_attachment: BoneAttachment3D
+var _force_visible := false
+
+const MONSTER_GROUP := "monsters"
 
 func _ready() -> void:
 	_rng.seed = int(Time.get_ticks_usec()) ^ int(get_instance_id())
+	add_to_group(MONSTER_GROUP)
+	_reset_target_offset()
 	_load_footstep_streams()
 	_setup_navigation()
 	_setup_animations()
@@ -83,35 +102,34 @@ func reset_patrol() -> void:
 	_step_accum = 0.0
 	_stop_navigation_velocity()
 	_hunt_target = global_position
+	_reset_target_offset()
 
 func _physics_process(delta: float) -> void:
-	var should_freeze_seen := _update_seen_freeze()
-	_set_seen_frozen(should_freeze_seen)
-	_debug_seen_state()
-	if should_freeze_seen:
-		velocity = Vector3.ZERO
-		_stop_navigation_velocity()
-		_step_accum = 0.0
-		_stop_footsteps()
-		return
+	_set_seen_frozen(false)
 
 	var mask_on: bool = _mask_manager != null and _mask_manager.mask_on
-	if freeze_when_mask_on and mask_on and _has_player_mask_line_of_sight():
-		velocity = Vector3.ZERO
-		_stop_navigation_velocity()
-		_sync_animation(false)
-		_stop_footsteps()
-		_debug_log("frozen_by_mask: anim=%s" % [_anim_name()])
-		return
+	var speed_scale := _get_mask_speed_scale(mask_on)
+	var slowed_by_mask := mask_on and speed_scale < 0.999
 
 	var prev_pos := global_position
+
+	if slowed_by_mask and not _mask_slow_active:
+		_face_player_once()
+	_mask_slow_active = slowed_by_mask
 
 	var target := _get_hunt_target(delta)
 	var to_target := target - global_position
 	to_target.y = 0.0
 
 	var dir := _get_nav_direction(target, to_target)
-	var desired_velocity := dir * speed
+	var separation := _compute_separation()
+	if separation.length_squared() > 0.0001:
+		if dir.length_squared() < 0.0001:
+			dir = separation.normalized()
+		else:
+			dir = (dir + separation * separation_strength).normalized()
+
+	var desired_velocity := dir * speed * speed_scale
 	if nav_avoidance_enabled and _nav_agent != null and _nav_agent.has_method("set_velocity"):
 		_nav_safe_velocity_valid = false
 		_nav_agent.set_velocity(desired_velocity)
@@ -119,6 +137,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity = desired_velocity
 	move_and_slide()
+	_apply_move_speed_scale(speed_scale)
 
 	_try_play_footsteps(prev_pos, delta)
 	_sync_animation(true)
@@ -131,15 +150,11 @@ func _physics_process(delta: float) -> void:
 	for i in range(get_slide_collision_count()):
 		var collider := get_slide_collision(i).get_collider()
 		if collider is Player:
-			GameManager.player_caught()
+			GameManager.player_caught(self)
 
 func _on_mask_toggled(mask_on: bool) -> void:
 	_update_visibility()
-	if freeze_when_mask_on and mask_on and _has_player_mask_line_of_sight():
-		velocity = Vector3.ZERO
-		_step_accum = 0.0
-		_sync_animation(false)
-		_stop_footsteps()
+	_apply_move_speed_scale(_get_mask_speed_scale(mask_on))
 	_debug_log_force("mask_toggled: %s anim=%s" % [mask_on, _anim_name()])
 
 func _on_debug_show_monsters_changed(_show: bool) -> void:
@@ -189,12 +204,102 @@ func _get_hunt_target(delta: float) -> Vector3:
 		_debug_log("hunt: no player, holding position")
 		return _hunt_target
 
-	var desired: Vector3 = _project_point_to_navmesh(player.global_position) if use_navmesh else player.global_position
+	_update_target_offset(delta)
+	var desired := player.global_position
+	var offset_scale := _get_target_offset_scale(desired)
+	if offset_scale > 0.0:
+		desired += _target_offset * offset_scale
+	desired = _project_point_to_navmesh(desired) if use_navmesh else desired
 	_hunt_target = desired
 	if _nav_agent != null:
 		_nav_agent.target_position = desired
 
 	return _hunt_target
+
+func _get_mask_speed_scale(mask_on: bool) -> float:
+	if not freeze_when_mask_on:
+		return 1.0
+	if not mask_on:
+		return 1.0
+	if mask_slow_requires_line_of_sight and not _has_player_mask_line_of_sight():
+		return 1.0
+	return maxf(mask_speed_multiplier, 0.0)
+
+func _apply_move_speed_scale(scale: float) -> void:
+	if _anim_player == null:
+		return
+	if _frozen_by_seen:
+		return
+	_anim_player.speed_scale = maxf(scale, 0.0)
+
+func _face_player_once() -> void:
+	var player: Player = null
+	if GameManager != null:
+		player = GameManager.player
+	if player == null:
+		return
+	var target := player.global_position
+	target.y = global_position.y
+	if global_position.distance_to(target) <= 0.001:
+		return
+	look_at(target, Vector3.UP)
+
+func _update_target_offset(delta: float) -> void:
+	_target_offset_timer -= delta
+	if _target_offset_timer <= 0.0:
+		_target_offset_target = _random_target_offset()
+		_target_offset_timer = _next_target_offset_time()
+	var t := clampf(delta * maxf(target_offset_smooth, 0.1), 0.0, 1.0)
+	_target_offset = _target_offset.lerp(_target_offset_target, t)
+
+func _get_target_offset_scale(base_target: Vector3) -> float:
+	if target_offset_radius <= 0.0:
+		return 0.0
+	var dist := base_target.distance_to(global_position)
+	return clampf(dist / maxf(target_offset_radius, 0.1), 0.0, 1.0)
+
+func _random_target_offset() -> Vector3:
+	if target_offset_radius <= 0.0:
+		return Vector3.ZERO
+	var angle := _rng.randf_range(0.0, TAU)
+	var radius := _rng.randf_range(0.0, target_offset_radius)
+	return Vector3(cos(angle), 0.0, sin(angle)) * radius
+
+func _next_target_offset_time() -> float:
+	var min_time := minf(target_offset_retarget_min_sec, target_offset_retarget_max_sec)
+	var max_time := maxf(target_offset_retarget_min_sec, target_offset_retarget_max_sec)
+	return _rng.randf_range(maxf(min_time, 0.1), maxf(max_time, 0.1))
+
+func _reset_target_offset() -> void:
+	_target_offset = Vector3.ZERO
+	_target_offset_target = _random_target_offset()
+	_target_offset_timer = _next_target_offset_time()
+
+func _compute_separation() -> Vector3:
+	if separation_radius <= 0.0 or separation_strength <= 0.0:
+		return Vector3.ZERO
+	var nodes := get_tree().get_nodes_in_group(MONSTER_GROUP)
+	if nodes.is_empty():
+		return Vector3.ZERO
+	var radius_sq := separation_radius * separation_radius
+	var away := Vector3.ZERO
+	var count := 0
+	for node in nodes:
+		var other := node as Monster
+		if other == null or other == self:
+			continue
+		var delta := global_position - other.global_position
+		delta.y = 0.0
+		var d2 := delta.length_squared()
+		if d2 < 0.0001 or d2 > radius_sq:
+			continue
+		var dist := sqrt(d2)
+		var strength := 1.0 - (dist / separation_radius)
+		away += (delta / dist) * strength
+		count += 1
+	if count == 0:
+		return Vector3.ZERO
+	return away / float(count)
 
 func _debug_nav_state(delta: float, target: Vector3) -> void:
 	if not (debug_nav_logs or (_debug_manager != null and _debug_manager.show_monsters)):
@@ -388,21 +493,29 @@ func _update_visibility() -> void:
 	var debug_show := false
 	if _debug_manager != null:
 		debug_show = _debug_manager.show_monsters
+	var forced := _force_visible
 
-	visible = mask_on or debug_show
+	visible = mask_on or debug_show or forced
 
 	# Update eyes visibility (only show when mask is on)
 	if _eyes == null:
 		_eyes = _find_eyes_node()
 	if _eyes != null:
-		_eyes.visible = mask_on
+		_eyes.visible = mask_on or forced
 
 	if not visible:
+		return
+	if forced:
+		_set_geometry_transparency(0.0)
 		return
 	if mask_on:
 		_set_geometry_transparency(0.0)
 	else:
 		_set_geometry_transparency(0.55 if debug_show else 0.0)
+
+func set_force_visible(value: bool) -> void:
+	_force_visible = value
+	_update_visibility()
 
 func _set_geometry_transparency(amount: float) -> void:
 	var stack: Array[Node] = [self]
@@ -599,6 +712,25 @@ func _find_eyes_node() -> Node3D:
 	if eyes == null:
 		eyes = find_child("Eyes", true, false) as Node3D
 	return eyes
+
+func get_death_sequence_marker() -> Node3D:
+	var marker := get_node_or_null(death_sequence_marker_path) as Node3D
+	if marker == null:
+		marker = find_child("death_sequence_position", true, false) as Node3D
+	return marker
+
+func get_death_sequence_transform() -> Transform3D:
+	var marker := get_death_sequence_marker()
+	if marker != null:
+		return marker.global_transform
+	return Transform3D(Basis(), get_death_focus_position())
+
+func get_death_focus_position() -> Vector3:
+	if _eyes_attachment != null:
+		return _eyes_attachment.global_position
+	if _eyes != null:
+		return _eyes.global_position
+	return global_position + Vector3.UP * 1.5
 
 func _find_eyes_skeleton() -> Skeleton3D:
 	var skeleton: Skeleton3D = null
@@ -837,6 +969,18 @@ func _desired_anim_name(moving: bool) -> StringName:
 func _reduce_material_shininess() -> void:
 	# Recursively find all MeshInstance3D nodes and reduce material shininess
 	_reduce_shininess_recursive(self)
+
+func play_bite() -> void:
+	if _anim_player == null:
+		return
+	var anim := bite_animation_name
+	if anim == &"" or not _anim_player.has_animation(anim):
+		anim = _pick_animation_name(_anim_player, "bite")
+	if anim == &"" or not _anim_player.has_animation(anim):
+		anim = _pick_animation_name(_anim_player, "attack")
+	if anim == &"" or not _anim_player.has_animation(anim):
+		return
+	_anim_player.play(anim)
 
 func _reduce_shininess_recursive(node: Node) -> void:
 	if node is MeshInstance3D:
