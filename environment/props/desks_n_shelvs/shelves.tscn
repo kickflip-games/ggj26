@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://dcglvmt8ahg8g"]
+
+[ext_resource type="PackedScene" uid="uid://cvujchl0f3obe" path="res://environment/props/desks_n_shelvs/Shelves.glb" id="1_lfqwo"]
+
+[node name="Shelves" unique_id=1327076537 instance=ExtResource("1_lfqwo")]
