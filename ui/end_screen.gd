@@ -4,14 +4,13 @@ extends CanvasLayer
 signal primary_action
 signal secondary_action
 
-@export var title_text := "GAME OVER"
+@export var title_text := "You Died."
 @export var subtitle_text := ""
-@export var primary_text := "Retry"
-@export var secondary_text := "Quit"
+@export var primary_text := "RETRY"
+@export var secondary_text := "QUIT"
 @export var show_secondary := true
 
 @onready var _title: Label = $Root/Panel/Content/Title
-@onready var _subtitle: Label = $Root/Panel/Content/Subtitle
 @onready var _primary: Button = $Root/Panel/Content/Buttons/Primary
 @onready var _secondary: Button = $Root/Panel/Content/Buttons/Secondary
 
@@ -40,8 +39,6 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _update_ui() -> void:
 	_title.text = title_text
-	_subtitle.text = subtitle_text
-	_subtitle.visible = not subtitle_text.is_empty()
 	_primary.text = primary_text
 	_secondary.text = secondary_text
 	_secondary.visible = show_secondary
@@ -49,4 +46,3 @@ func _update_ui() -> void:
 func _focus_primary() -> void:
 	if is_instance_valid(_primary):
 		_primary.grab_focus()
-

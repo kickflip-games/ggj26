@@ -1,9 +1,8 @@
 shader_type spatial;
 render_mode unshaded, depth_draw_opaque, cull_back;
 
-// Per-instance control without breaking batching.
-instance uniform float static_intensity : hint_range(0.0, 1.0) = 0.3;
-instance uniform float power : hint_range(0.0, 5.0) = 0.0;
+uniform float static_intensity : hint_range(0.0, 1.0) = 0.3;
+uniform float power : hint_range(0.0, 5.0) = 0.0;
 
 uniform float scanline_count : hint_range(0.0, 1000.0) = 400.0;
 uniform float flicker_speed : hint_range(0.0, 20.0) = 10.0;

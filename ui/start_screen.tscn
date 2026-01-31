@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://c4j8k5mam3n2p"]
 
-[ext_resource type="Script" path="res://ui/start_screen.gd" id="1_start"]
+[ext_resource type="Script" uid="uid://cnsn24iuoeaf5" path="res://ui/start_screen.gd" id="1_start"]
+[ext_resource type="FontFile" uid="uid://dj373vte4ucmp" path="res://assets/Ghastly Panic.ttf" id="2_50anp"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 bg_color = Color(0.06, 0.06, 0.075, 0.95)
@@ -13,22 +14,22 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
-shadow_color = Color(0, 0, 0, 0.6)
 shadow_size = 18
 
-[node name="StartScreen" type="CanvasLayer"]
+[node name="StartScreen" type="CanvasLayer" unique_id=1889291340]
 layer = 100
 script = ExtResource("1_start")
 
-[node name="Root" type="Control" parent="."]
+[node name="Root" type="Control" parent="." unique_id=1212691801]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Background" type="ColorRect" parent="Root"]
-anchors_preset = 15
+[node name="Background" type="ColorRect" parent="Root" unique_id=1608956433]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -36,7 +37,8 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.05, 0.05, 0.08, 1)
 
-[node name="Panel" type="PanelContainer" parent="Root"]
+[node name="Panel" type="PanelContainer" parent="Root" unique_id=972779116]
+layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -45,64 +47,47 @@ anchor_bottom = 0.5
 offset_left = -300.0
 offset_top = -200.0
 offset_right = 300.0
-offset_bottom = 200.0
+offset_bottom = 168.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
-[node name="Content" type="VBoxContainer" parent="Root/Panel"]
+[node name="Content" type="VBoxContainer" parent="Root/Panel" unique_id=823345905]
 layout_mode = 2
-offset_left = 24.0
-offset_top = 24.0
-offset_right = 576.0
-offset_bottom = 376.0
 theme_override_constants/separation = 40
 
+[node name="Spacer1" type="Control" parent="Root/Panel/Content" unique_id=204160040]
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
-[node name="Title" type="Label" parent="Root/Panel/Content"]
-offset_right = 552.0
-offset_bottom = 52.0
+
+[node name="Title" type="Label" parent="Root/Panel/Content" unique_id=776559612]
+layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.9, 0.95, 1)
-theme_override_font_sizes/font_size = 48
-text = "HORROR PROTOTYPE"
+theme_override_fonts/font = ExtResource("2_50anp")
+theme_override_font_sizes/font_size = 80
+text = "The Viewing Floor"
 horizontal_alignment = 1
+vertical_alignment = 1
 
+[node name="Buttons" type="VBoxContainer" parent="Root/Panel/Content" unique_id=2007364260]
 layout_mode = 2
-[node name="Spacer" type="Control" parent="Root/Panel/Content"]
-custom_minimum_size = Vector2(0, 40)
-offset_top = 92.0
-offset_right = 552.0
-offset_bottom = 132.0
-layout_mode = 2
-
-[node name="Buttons" type="VBoxContainer" parent="Root/Panel/Content"]
-offset_top = 172.0
-offset_right = 552.0
-offset_bottom = 352.0
 theme_override_constants/separation = 20
-layout_mode = 2
 alignment = 1
 
-[node name="StartButton" type="Button" parent="Root/Panel/Content/Buttons"]
+[node name="StartButton" type="Button" parent="Root/Panel/Content/Buttons" unique_id=369392057]
 custom_minimum_size = Vector2(300, 60)
-offset_left = 126.0
-offset_right = 426.0
-offset_bottom = 60.0
+layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.9, 0.9, 0.95, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 24
-layout_mode = 2
-text = "Start Game"
+text = "START"
 
-[node name="QuitButton" type="Button" parent="Root/Panel/Content/Buttons"]
+[node name="QuitButton" type="Button" parent="Root/Panel/Content/Buttons" unique_id=1338403233]
 custom_minimum_size = Vector2(300, 60)
-offset_left = 126.0
-offset_top = 80.0
-offset_right = 426.0
-offset_bottom = 140.0
+layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.7, 0.7, 0.75, 1)
 theme_override_colors/font_hover_color = Color(0.9, 0.9, 0.95, 1)
 theme_override_font_sizes/font_size = 24
-text = "Quit"
+text = "QUIT"
