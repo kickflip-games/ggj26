@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dmld6pe6vspcb"
-path="res://.godot/imported/not_alone.png-eba9ecc2faea6808863244913276fcdf.ctex"
+uid="uid://yyxcy514shmb"
+path="res://.godot/imported/arrow.png-1a35a9e1d14a8640527d916c7c78b050.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://environment/decals/imgs/not_alone.png"
-dest_files=["res://.godot/imported/not_alone.png-eba9ecc2faea6808863244913276fcdf.ctex"]
+source_file="res://environment/decals/imgs/arrow.png"
+dest_files=["res://.godot/imported/arrow.png-1a35a9e1d14a8640527d916c7c78b050.ctex"]
 
 [params]
 
