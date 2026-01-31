@@ -31,6 +31,15 @@ extends CharacterBody3D
 @export_range(-15.0, 15.0, 0.1) var death_jolt_pitch_deg := -4.0
 @export_range(0.1, 2.0, 0.05) var death_pull_forward_fallback := 0.8
 @export var death_marker_offset_local := Vector3(0.0, 0.4, 0.0)
+@export var mask_equip_scene: PackedScene = preload("res://player/Clown Mask.glb")
+@export var mask_equip_start_local := Vector3(0.0, -0.6, -0.2)
+@export var mask_equip_end_local := Vector3(0.0, -0.07, -0.12)
+@export var mask_equip_rotation_deg := Vector3(0.0, 90.0, 0.0)
+@export var mask_equip_scale := Vector3(0.68, 0.68, 0.68)
+@export_range(0.05, 2.0, 0.01) var mask_equip_slide_duration := 0.4
+@export_range(0.0, 1.0, 0.01) var mask_shader_lead_time := 0.2
+@export var mask_equip_pull_offset := Vector3(0.0, 0.0, 0.2)
+@export_range(0.05, 0.6, 0.01) var mask_equip_pull_duration := 0.12
 
 var gravity := 9.8
 
@@ -54,6 +63,8 @@ var _death_fade_rect: ColorRect = null
 var _death_fade_alpha := 0.0
 var _death_base_fov := 70.0
 var _death_wobble_base_cam_rot := Vector3.ZERO
+var _mask_initialized := false
+var _mask_equip_active := false
 
 func _ready():
 	_ensure_input_map()
@@ -67,6 +78,7 @@ func _ready():
 	if mask_manager != null:
 		mask_manager.mask_toggled.connect(_on_mask_toggled)
 		_on_mask_toggled(mask_manager.mask_on)
+	_mask_initialized = true
 
 func _process(delta: float) -> void:
 	if _death_sequence_active:
@@ -98,7 +110,10 @@ func _input(event):
 	if event.is_action_pressed("mask_toggle"):
 		var mask_manager := get_node_or_null("/root/MaskManager")
 		if mask_manager != null:
-			mask_manager.toggle()
+			if mask_manager.mask_on:
+				_request_mask_unequip(mask_manager)
+			else:
+				_request_mask_equip(mask_manager)
 
 	if event.is_action_pressed("debug_toggle_monsters"):
 		var debug_manager := get_node_or_null("/root/DebugManager")
@@ -346,6 +361,132 @@ func _set_death_fade_alpha(value: float) -> void:
 	var col := _death_fade_rect.color
 	col.a = _death_fade_alpha
 	_death_fade_rect.color = col
+
+func _request_mask_equip(mask_manager: Node) -> void:
+	if _mask_equip_active:
+		return
+	if mask_manager == null:
+		return
+	if mask_manager.mask_energy <= 0.001:
+		return
+	_play_mask_equip_sequence(mask_manager)
+
+func _request_mask_unequip(mask_manager: Node) -> void:
+	if _mask_equip_active:
+		return
+	if mask_manager == null:
+		return
+	_play_mask_unequip_sequence(mask_manager)
+
+func _play_mask_equip_sequence(mask_manager: Node) -> void:
+	if _mask_equip_active:
+		return
+	if _camera == null or mask_equip_scene == null:
+		return
+	_mask_equip_active = true
+	var instance := mask_equip_scene.instantiate()
+	var mask_node := instance as Node3D
+	if mask_node == null:
+		instance.free()
+		_mask_equip_active = false
+		return
+	_camera.add_child(mask_node)
+	mask_node.position = mask_equip_start_local
+	mask_node.rotation_degrees = mask_equip_rotation_deg
+	mask_node.scale = mask_equip_scale
+	_apply_mask_black_material(mask_node)
+
+	var slide_tween := create_tween()
+	slide_tween.tween_property(
+		mask_node,
+		"position",
+		mask_equip_end_local,
+		maxf(mask_equip_slide_duration, 0.05)
+	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+	if mask_manager != null:
+		var shader_delay := maxf(mask_equip_slide_duration - mask_shader_lead_time, 0.0)
+		if shader_delay > 0.0 and get_tree() != null:
+			await get_tree().create_timer(shader_delay).timeout
+		mask_manager.mask_on = true
+
+	await slide_tween.finished
+
+	var pull_tween := create_tween()
+	pull_tween.tween_property(
+		mask_node,
+		"position",
+		mask_equip_end_local + mask_equip_pull_offset,
+		maxf(mask_equip_pull_duration, 0.05)
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	await pull_tween.finished
+
+	if mask_node != null and is_instance_valid(mask_node):
+		mask_node.queue_free()
+
+	_mask_equip_active = false
+
+func _play_mask_unequip_sequence(mask_manager: Node) -> void:
+	if _mask_equip_active:
+		return
+	if _camera == null or mask_equip_scene == null:
+		return
+	_mask_equip_active = true
+	var instance := mask_equip_scene.instantiate()
+	var mask_node := instance as Node3D
+	if mask_node == null:
+		instance.free()
+		_mask_equip_active = false
+		return
+	_camera.add_child(mask_node)
+	mask_node.position = mask_equip_end_local + mask_equip_pull_offset
+	mask_node.rotation_degrees = mask_equip_rotation_deg
+	mask_node.scale = mask_equip_scale
+	_apply_mask_black_material(mask_node)
+
+	var pull_back := create_tween()
+	pull_back.tween_property(
+		mask_node,
+		"position",
+		mask_equip_end_local,
+		maxf(mask_equip_pull_duration, 0.05)
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	await pull_back.finished
+
+	var slide_down := create_tween()
+	slide_down.tween_property(
+		mask_node,
+		"position",
+		mask_equip_start_local,
+		maxf(mask_equip_slide_duration, 0.05)
+	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+
+	if mask_manager != null:
+		var shader_delay := maxf(mask_equip_slide_duration - mask_shader_lead_time, 0.0)
+		if shader_delay > 0.0 and get_tree() != null:
+			await get_tree().create_timer(shader_delay).timeout
+		mask_manager.mask_on = false
+
+	await slide_down.finished
+
+	if mask_node != null and is_instance_valid(mask_node):
+		mask_node.queue_free()
+
+	_mask_equip_active = false
+
+func _apply_mask_black_material(root: Node) -> void:
+	if root == null:
+		return
+	if root is MeshInstance3D:
+		var mesh_instance := root as MeshInstance3D
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = Color(0.0, 0.0, 0.0, 1.0)
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		mat.albedo_texture = null
+		mat.roughness = 0.85
+		mesh_instance.material_override = mat
+	for child in root.get_children():
+		_apply_mask_black_material(child)
 
 func _clear_death_fade() -> void:
 	if _death_fade_layer != null:
