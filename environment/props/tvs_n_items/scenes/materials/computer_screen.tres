@@ -1,0 +1,6 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://buirva7llswpm"]
+
+[ext_resource type="Shader" uid="uid://c8t2b6i5e0wjm" path="res://environment/props/tvs_n_items/scenes/materials/computer_screen_crt.gdshader" id="1_2hftj"]
+
+[resource]
+shader = ExtResource("1_2hftj")

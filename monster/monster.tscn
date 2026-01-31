@@ -21,11 +21,12 @@ height = 2.6533203
 script = ExtResource("1_okp8s")
 speed = 4.0
 nav_avoidance_enabled = true
-movement_mode = 2
 debug_nav_logs = true
 footstep_stream = null
 idle_source_scene = SubResource("Resource_gsx7y")
 walk_source_scene = SubResource("Resource_2k2s0")
+debug_seen_logs = true
+debug_animation_logs = true
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="." unique_id=366045026]
 path_desired_distance = 0.25

@@ -1,22 +1,23 @@
 [gd_scene format=3 uid="uid://b5ys74eft8no6"]
 
 [ext_resource type="Script" uid="uid://bkanrc3uv12yv" path="res://environment/exit_door/exit_door.gd" id="1_hwm1v"]
-[ext_resource type="PackedScene" uid="uid://7emkvi30lc3p" path="res://environment/exit_door/Doorway.glb" id="2_ylxw3"]
 [ext_resource type="AudioStream" uid="uid://c3yimb0p287vg" path="res://environment/exit_door/opening-door.mp3" id="3_cfp06"]
+[ext_resource type="PackedScene" uid="uid://d0p5iqb3wc037" path="res://environment/Interiors/Scenes/Doors/door_a_grp.tscn" id="3_o4lm1"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
-size = Vector3(1.6, 2.4, 1.2)
+size = Vector3(8.956091, 9.292994, 2.5949829)
 
 [node name="ExitDoor" type="Node3D" unique_id=1395333710]
 script = ExtResource("1_hwm1v")
 open_stream = ExtResource("3_cfp06")
 
-[node name="Model" parent="." unique_id=1415715116 instance=ExtResource("2_ylxw3")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.81890106, -1.201833, 0)
+[node name="Door_A_Grp" parent="." unique_id=1269177842 instance=ExtResource("3_o4lm1")]
+transform = Transform3D(4.3, 0, 0, 0, 4.3, 0, 0, 0, 4.3, -0.012727976, -1.0357764, 0.16604495)
 
 [node name="TriggerArea" type="Area3D" parent="." unique_id=1053532157]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TriggerArea" unique_id=809646614]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.18031585, 3.446497, 0.6974914)
 shape = SubResource("BoxShape3D_1")
 debug_color = Color(0.97756916, 0, 0.40678036, 0.41960785)
 

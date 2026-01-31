@@ -88,7 +88,7 @@ environment = SubResource("Environment_pntf4")
 
 [node name="AmbientCreak" type="AudioStreamPlayer" parent="." unique_id=1593693403]
 stream = ExtResource("8_creak")
-volume_db = -20.0
+volume_db = 10.657
 autoplay = true
 parameters/looping = true
 
@@ -103,15 +103,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 2.1, -9)
 
 [node name="Monster" parent="." unique_id=1566011579 instance=ExtResource("2_6p0mx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 2.1, -2)
-roam_radius = 18.0
-hunt_start_distance = 14.0
-hunt_stop_distance = 22.0
 
 [node name="Monster2" parent="." unique_id=1033080376 instance=ExtResource("2_6p0mx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 2.1, 6)
-roam_radius = 18.0
-hunt_start_distance = 14.0
-hunt_stop_distance = 22.0
 
 [node name="Key" parent="." unique_id=1076477365 instance=ExtResource("3_4ejh5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.957222, 2.7840524, 20.95288)

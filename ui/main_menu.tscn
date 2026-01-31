@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://b8m7k2p1q4r5s"]
+[gd_scene format=3 uid="uid://bexqstsoovuso"]
 
-[ext_resource type="Script" path="res://ui/main_menu.gd" id="1_menu"]
+[ext_resource type="Script" uid="uid://djxd7a7m77rcx" path="res://ui/main_menu.gd" id="1_menu"]
 
-[node name="MainMenu" type="Node"]
+[node name="MainMenu" type="Node" unique_id=1477545356]
 script = ExtResource("1_menu")
-game_scene_path = "res://tests/demo.tscn"
+game_scene_path = "res://main/main.tscn"

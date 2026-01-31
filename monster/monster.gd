@@ -3,18 +3,8 @@ extends CharacterBody3D
 
 @export var speed := 7.5
 @export var arrival_distance := 0.25
-@export var wait_time := 0.0
-@export var patrol_points: Array[NodePath] = []
 @export var use_navmesh := true
 @export var nav_avoidance_enabled := false
-@export_enum("Patrol", "Roam", "Hunt") var movement_mode := 0
-@export var roam_radius := 12.0
-@export var roam_min_distance := 3.0
-@export var roam_target_timeout := 8.0
-@export var roam_unreachable_retry_delay := 0.75
-@export var hunt_start_distance := 12.0
-@export var hunt_stop_distance := 18.0
-@export var hunt_repath_interval_sec := 0.25
 @export var debug_nav_logs := false
 @export_range(0.05, 5.0, 0.05) var debug_nav_log_interval_sec := 0.5
 @export var footstep_stream: AudioStream
@@ -44,10 +34,6 @@ extends CharacterBody3D
 @export var debug_animation_logs := false
 @export_range(0.05, 10.0, 0.05) var debug_log_interval_sec := 1.0
 
-var _spawn_transform: Transform3D
-var _resolved_points: Array[Node3D] = []
-var _patrol_index := 0
-var _wait_remaining := 0.0
 var _step_accum := 0.0
 var _footstep_time_left := 0.0
 var _footstep_streams: Array[AudioStream] = []
@@ -71,23 +57,12 @@ var _anim_speed_scale_before_freeze := 1.0
 var _seen_last_dot := 0.0
 var _seen_last_los := false
 var _next_seen_debug_time_ms := 0
-var _roam_target := Vector3.ZERO
-var _roam_has_target := false
-var _roam_time_left := 0.0
-var _roam_unreachable_elapsed := 0.0
-var _hunt_active := false
-var _hunt_repath_left := 0.0
 var _hunt_target := Vector3.ZERO
-var _rng := RandomNumberGenerator.new()
 var _next_nav_debug_time_ms := 0
 var _eyes: Node3D
 var _eyes_attachment: BoneAttachment3D
 
 func _ready() -> void:
-	_spawn_transform = global_transform
-	_rng.seed = int(Time.get_ticks_usec()) ^ int(get_instance_id())
-	_load_footstep_streams()
-	_resolve_patrol_points()
 	_setup_navigation()
 	_setup_animations()
 	_setup_eyes_attachment()
@@ -104,16 +79,10 @@ func _ready() -> void:
 		print("[Monster:%s] debug disabled (set debug_animation_logs=true or press '=' to toggle DebugManager.show_monsters)" % [str(get_instance_id())])
 
 func reset_patrol() -> void:
-	_patrol_index = 0
-	_wait_remaining = 0.0
 	velocity = Vector3.ZERO
 	_step_accum = 0.0
 	_stop_navigation_velocity()
-	_roam_has_target = false
-	_roam_time_left = 0.0
-	_roam_unreachable_elapsed = 0.0
-	_hunt_active = false
-	_hunt_repath_left = 0.0
+	_hunt_target = global_position
 
 func _physics_process(delta: float) -> void:
 	var should_freeze_seen := _update_seen_freeze()
@@ -246,24 +215,7 @@ func _get_nav_direction(target: Vector3, to_target_flat: Vector3) -> Vector3:
 	return to_target_flat.normalized()
 
 func _get_current_target(delta: float) -> Vector3:
-	if movement_mode == 0:
-		return _resolved_points[_patrol_index].global_position
-
-	if movement_mode == 2:
-		return _get_hunt_target(delta)
-
-	return _get_roam_target(delta)
-
-func _get_roam_target(delta: float) -> Vector3:
-	_pick_roam_target_if_needed(false)
-	_track_roam_reachability(delta)
-
-	_roam_time_left -= delta
-	if _roam_time_left <= 0.0:
-		_roam_has_target = false
-		_pick_roam_target_if_needed(false)
-
-	return _roam_target
+	return _get_hunt_target(delta)
 
 func _get_hunt_target(delta: float) -> Vector3:
 	var player: Player = null
@@ -271,76 +223,16 @@ func _get_hunt_target(delta: float) -> Vector3:
 		player = GameManager.player
 
 	if player == null:
-		_hunt_active = false
-		return _get_roam_target(delta)
+		_hunt_target = global_position
+		_debug_log("hunt: no player, holding position")
+		return _hunt_target
 
-	var to_player := player.global_position - global_position
-	to_player.y = 0.0
-	var dist := to_player.length()
-
-	var start_dist := maxf(hunt_start_distance, 0.0)
-	var stop_dist := maxf(hunt_stop_distance, start_dist)
-
-	if _hunt_active:
-		if dist > stop_dist:
-			_hunt_active = false
-	else:
-		if dist <= start_dist:
-			_hunt_active = true
-
-	if not _hunt_active:
-		return _get_roam_target(delta)
-
-	_hunt_repath_left -= delta
-	if _hunt_repath_left <= 0.0:
-		_hunt_repath_left = maxf(hunt_repath_interval_sec, 0.05)
-		var desired: Vector3 = _project_point_to_navmesh(player.global_position) if use_navmesh else player.global_position
-		_hunt_target = desired
-		if _nav_agent != null:
-			_nav_agent.target_position = desired
+	var desired: Vector3 = _project_point_to_navmesh(player.global_position) if use_navmesh else player.global_position
+	_hunt_target = desired
+	if _nav_agent != null:
+		_nav_agent.target_position = desired
 
 	return _hunt_target
-
-func _track_roam_reachability(delta: float) -> void:
-	if not use_navmesh or _nav_agent == null:
-		return
-	if not _nav_agent.has_method("is_target_reachable"):
-		return
-	if not _roam_has_target:
-		return
-
-	if _nav_agent.is_target_reachable():
-		_roam_unreachable_elapsed = 0.0
-		return
-
-	_roam_unreachable_elapsed += delta
-	if _roam_unreachable_elapsed < roam_unreachable_retry_delay:
-		return
-
-	_roam_has_target = false
-	_roam_unreachable_elapsed = 0.0
-	_pick_roam_target_if_needed(false)
-
-func _pick_roam_target_if_needed(force: bool) -> void:
-	if not force and _roam_has_target:
-		return
-	if movement_mode == 0:
-		return
-
-	var origin := global_position
-	var target := _pick_random_nav_point(origin, roam_radius)
-	for _i in range(8):
-		if (target - origin).length() >= roam_min_distance:
-			break
-		target = _pick_random_nav_point(origin, roam_radius)
-
-	_roam_target = target
-	_roam_has_target = true
-	_roam_time_left = maxf(roam_target_timeout, 0.1)
-	_roam_unreachable_elapsed = 0.0
-
-	if use_navmesh and _nav_agent != null:
-		_nav_agent.target_position = _roam_target
 
 func _debug_nav_state(delta: float, target: Vector3) -> void:
 	if not (debug_nav_logs or (_debug_manager != null and _debug_manager.show_monsters)):
@@ -350,7 +242,7 @@ func _debug_nav_state(delta: float, target: Vector3) -> void:
 		return
 	_next_nav_debug_time_ms = now + int(debug_nav_log_interval_sec * 1000.0)
 
-	var mode := "Patrol" if movement_mode == 0 else ("Roam" if movement_mode == 1 else "Hunt")
+	var mode := "Hunt"
 	var to_target := target - global_position
 	to_target.y = 0.0
 	var dist_target := to_target.length()
@@ -377,12 +269,9 @@ func _debug_nav_state(delta: float, target: Vector3) -> void:
 		if _nav_agent.has_method("get_current_navigation_path_index"):
 			path_idx = int(_nav_agent.get_current_navigation_path_index())
 
-	var hunt_txt := "Y" if _hunt_active else "N"
-	print("[Monster:%s] nav mode=%s hunt=%s repath=%.2f vel=%.2f dist_target=%.2f dist_next=%s reachable=%s finished=%s path=%s idx=%s roam_t=%.2f unreach=%.2f target=%s next=%s" % [
+	print("[Monster:%s] nav mode=%s vel=%.2f dist_target=%.2f dist_next=%s reachable=%s finished=%s path=%s idx=%s target=%s next=%s" % [
 		str(get_instance_id()),
 		mode,
-		hunt_txt,
-		_hunt_repath_left,
 		Vector2(velocity.x, velocity.z).length(),
 		dist_target,
 		"?" if dist_next < 0.0 else "%.2f" % dist_next,
@@ -390,18 +279,9 @@ func _debug_nav_state(delta: float, target: Vector3) -> void:
 		finished_txt,
 		"?" if path_len < 0 else str(path_len),
 		"?" if path_idx < 0 else str(path_idx),
-		_roam_time_left,
-		_roam_unreachable_elapsed,
 		str(target),
 		str(next_pos)
 	])
-
-func _pick_random_nav_point(origin: Vector3, radius: float) -> Vector3:
-	var r := maxf(radius, 0.1)
-	var angle := _rng.randf() * TAU
-	var dist := sqrt(_rng.randf()) * r
-	var candidate := origin + Vector3(cos(angle) * dist, 0.0, sin(angle) * dist)
-	return _project_point_to_navmesh(candidate)
 
 func _get_navigation_map_rid() -> RID:
 	var map_rid := RID()
@@ -559,15 +439,7 @@ func _set_geometry_transparency(amount: float) -> void:
 		for child: Node in node.get_children():
 			stack.append(child)
 
-func _resolve_patrol_points() -> void:
-	_resolved_points.clear()
-	for path in patrol_points:
-		var node := get_node_or_null(path)
-		if node is Node3D:
-			_resolved_points.append(node)
-
-func _stop_footsteps() -> void:
-	_footstep_time_left = 0.0
+func _try_play_footsteps(prev_pos: Vector3) -> void:
 	if _footsteps == null:
 		return
 	if _footsteps.playing:
