@@ -28,6 +28,16 @@ func _ready() -> void:
 	_base_camera_rot = camera.rotation
 	camera.make_current()
 
+func reset_pose() -> void:
+	_bob_t = 0.0
+	_bob_offset = Vector3.ZERO
+	_bob_pitch = 0.0
+	_sway_roll = 0.0
+	_sway_pitch = 0.0
+	camera.position = _base_camera_pos
+	camera.rotation = _base_camera_rot
+	rotation = Vector3.ZERO
+
 func update_motion(delta: float, look_pitch: float, input_dir: Vector2, current_speed: float, player_velocity: Vector3, is_grounded: bool) -> void:
 	var horiz_speed := Vector3(player_velocity.x, 0.0, player_velocity.z).length()
 	var moving := is_grounded and horiz_speed > 0.05

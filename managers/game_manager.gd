@@ -33,13 +33,14 @@ var _player_spawn: Transform3D
 var _monster_spawns_by_id: Dictionary = {}
 var _keys_by_id: Dictionary = {}
 
-enum GameState { PLAYING, GAME_OVER, WON }
+enum GameState { PLAYING, DEATH_SEQUENCE, GAME_OVER, WON }
 var state: GameState = GameState.PLAYING
 
 var _end_screen_scene: PackedScene = preload("res://ui/end_screen.tscn")
 var _end_screen: CanvasLayer = null
 var _pending_next_scene_path := ""
 var _pending_use_level_manager := false
+var _frozen_monsters: Dictionary = {}
 
 func register_room(room: Node) -> void:
 	current_room = room
@@ -57,8 +58,10 @@ func register_room(room: Node) -> void:
 func reset_room() -> void:
 	if current_room == null:
 		return
-	if state != GameState.PLAYING:
+	if get_tree().paused or state != GameState.PLAYING:
 		_resume_playing()
+	else:
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 	var mask_manager := get_node_or_null("/root/MaskManager")
 	if mask_manager != null:
@@ -72,6 +75,10 @@ func reset_room() -> void:
 	if player != null:
 		player.global_transform = _player_spawn
 		player.velocity = Vector3.ZERO
+		player.process_mode = Node.PROCESS_MODE_INHERIT
+		player.set_process(true)
+		player.set_physics_process(true)
+		player.set_process_input(true)
 		if player.has_method("unequip_hammer"):
 			player.unequip_hammer()
 
@@ -99,15 +106,26 @@ func reset_room() -> void:
 
 	room_reset.emit()
 
-func player_caught() -> void:
+func player_caught(captor: Node3D = null) -> void:
 	if state != GameState.PLAYING:
 		return
-	_show_game_over()
+	if player != null and player.has_method("start_death_sequence"):
+		state = GameState.DEATH_SEQUENCE
+		_freeze_monsters()
+		player.start_death_sequence(captor)
+	else:
+		_show_game_over()
 
 func player_won(next_scene_path: String = "") -> void:
 	if state != GameState.PLAYING:
 		return
 	_show_win(next_scene_path)
+
+func finish_death_sequence() -> void:
+	if state != GameState.DEATH_SEQUENCE:
+		return
+	_thaw_monsters()
+	_show_game_over()
 
 func _show_game_over() -> void:
 	state = GameState.GAME_OVER
@@ -162,6 +180,33 @@ func _clear_end_screen() -> void:
 	if _end_screen != null:
 		_end_screen.queue_free()
 		_end_screen = null
+
+func _freeze_monsters() -> void:
+	_frozen_monsters.clear()
+	var monsters := get_tree().get_nodes_in_group("monsters")
+	for monster in monsters:
+		if monster == null:
+			continue
+		if monster.has_method("set_force_visible"):
+			monster.call("set_force_visible", true)
+		if monster is CharacterBody3D:
+			(monster as CharacterBody3D).velocity = Vector3.ZERO
+		var was_processing := (monster as Node).is_physics_processing()
+		_frozen_monsters[monster.get_instance_id()] = was_processing
+		(monster as Node).set_physics_process(false)
+
+func _thaw_monsters() -> void:
+	if _frozen_monsters.is_empty():
+		return
+	for instance_id in _frozen_monsters.keys():
+		var monster := instance_from_id(instance_id)
+		if monster == null:
+			continue
+		if monster.has_method("set_force_visible"):
+			monster.call("set_force_visible", false)
+		if monster is Node:
+			(monster as Node).set_physics_process(_frozen_monsters[instance_id])
+	_frozen_monsters.clear()
 
 func _resume_playing() -> void:
 	get_tree().paused = false

@@ -1,10 +1,12 @@
 [gd_scene format=3 uid="uid://vp0opn6w4uy3"]
 
 [ext_resource type="PackedScene" uid="uid://bnxasjpcxcpk7" path="res://monster/mixamo_slender.glb" id="1_hpy72"]
+[ext_resource type="AnimationLibrary" uid="uid://k2a41u26lnro" path="res://monster/anim/MonsterBite.res" id="2_rpg0i"]
+[ext_resource type="AnimationLibrary" uid="uid://caosheee2ky02" path="res://monster/anim/monster_anim.res" id="3_o5ua3"]
 
 [node name="mixamo_slender" unique_id=909947585 instance=ExtResource("1_hpy72")]
 
-[node name="Skeleton3D" parent="Armature" parent_id_path=PackedInt32Array(1408480872) index="0" unique_id=556644089]
+[node name="Skeleton3D" parent="Armature" parent_id_path=PackedInt32Array(715651033) index="0" unique_id=1809329231]
 bones/0/position = Vector3(-0.1336008, 0.11255914, -9.767829)
 bones/0/rotation = Quaternion(-0.02103895, 0.05443807, -0.006954577, 0.9982713)
 bones/1/rotation = Quaternion(-0.007816162, 0.013703745, 0.010123042, 0.99982435)
@@ -59,7 +61,7 @@ bones/61/rotation = Quaternion(-0.6727254, 0.17871977, -0.023204077, 0.71760815)
 bones/62/rotation = Quaternion(0.73384124, 0.1153605, 0.20502235, 0.6372871)
 bones/63/rotation = Quaternion(0.55107236, 0.0053362674, 0.0009341849, 0.8344399)
 
-[node name="AnimationPlayer" parent="." index="1" unique_id=1450361103]
+[node name="AnimationPlayer" parent="." index="1" unique_id=1780400297]
+libraries/MonsterBite = ExtResource("2_rpg0i")
+libraries/monster_anim = ExtResource("3_o5ua3")
 autoplay = &"Armature|mixamo_com|Layer0"
-playback_default_blend_time = 0.0
-play_mode = 1

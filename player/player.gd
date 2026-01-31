@@ -4,7 +4,7 @@ extends CharacterBody3D
 @export var speed := 5.0
 @export var jump_velocity := 4.5
 @export var mouse_sensitivity := 0.002
-@export_range(0.0, 1.0, 0.01) var mask_speed_multiplier := 0.15
+@export_range(0.1, 1.0, 0.01) var mask_speed_multiplier := 0.9
 @export var acceleration := 24.0
 @export var deceleration := 28.0
 @export var air_acceleration := 10.0
@@ -17,6 +17,20 @@ extends CharacterBody3D
 @export var hammer_held_scene: PackedScene = preload("res://environment/hammer/hammer_held.tscn")
 @export var hammer_swing_range := 2.0
 @export var hammer_swing_cooldown_sec := 0.35
+@export var death_impact_sound: AudioStream = preload("res://player/player_caught.mp3")
+@export var death_bite_sound: AudioStream
+@export_range(0.05, 0.4, 0.01) var death_impact_duration := 0.1
+@export_range(0.1, 1.0, 0.01) var death_pull_duration := 0.4
+@export_range(0.05, 0.6, 0.01) var death_bite_duration := 0.2
+@export_range(0.1, 0.6, 0.01) var death_fade_duration := 0.3
+@export_range(0.05, 0.3, 0.01) var death_fade_out_duration := 0.12
+@export_range(-30.0, 0.0, 0.1) var death_pull_fov_delta := -6.0
+@export_range(0.0, 1.5, 0.01) var death_pull_stop_distance := 0.85
+@export_range(0.0, 10.0, 0.1) var death_wobble_deg := 2.0
+@export_range(0.0, 6.0, 0.1) var death_wobble_cycles := 2.0
+@export_range(-15.0, 15.0, 0.1) var death_jolt_pitch_deg := -4.0
+@export_range(0.1, 2.0, 0.05) var death_pull_forward_fallback := 0.8
+@export var death_marker_offset_local := Vector3(0.0, 0.4, 0.0)
 
 var gravity := 9.8
 
@@ -34,10 +48,19 @@ var _cam_grounded := false
 var _rng := RandomNumberGenerator.new()
 var _held_hammer: Node3D = null
 var _hammer_cooldown := 0.0
+var _death_sequence_active := false
+var _death_fade_layer: CanvasLayer = null
+var _death_fade_rect: ColorRect = null
+var _death_fade_alpha := 0.0
+var _death_base_fov := 70.0
+var _death_wobble_base_cam_rot := Vector3.ZERO
 
 func _ready():
+	_ensure_input_map()
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	_rng.seed = int(Time.get_ticks_usec()) ^ int(get_instance_id())
+	if _camera != null:
+		_death_base_fov = _camera.fov
 	if GameManager != null and GameManager.player == null:
 		GameManager.player = self
 	var mask_manager := get_node_or_null("/root/MaskManager")
@@ -46,10 +69,14 @@ func _ready():
 		_on_mask_toggled(mask_manager.mask_on)
 
 func _process(delta: float) -> void:
+	if _death_sequence_active:
+		return
 	if camera_rig != null:
 		camera_rig.update_motion(delta, pitch, _cam_input_dir, _cam_current_speed, _cam_velocity, _cam_grounded)
 
 func _input(event):
+	if _death_sequence_active:
+		return
 	if event.is_action_pressed("interact"):
 		if GameManager != null and GameManager.has_hammer:
 			_use_hammer()
@@ -80,6 +107,9 @@ func _input(event):
 			flash_message("DEBUG: Monsters %s" % ("visible" if debug_manager.show_monsters else "hidden"))
 
 func _physics_process(delta):
+	if _death_sequence_active:
+		velocity = Vector3.ZERO
+		return
 	var prev_pos := global_position
 	_hammer_cooldown = maxf(0.0, _hammer_cooldown - delta)
 
@@ -88,7 +118,7 @@ func _physics_process(delta):
 		velocity.y -= gravity * delta
 
 	# Jump
-	if is_on_floor() and not _mask_on and Input.is_action_just_pressed("ui_accept"):
+	if is_on_floor() and Input.is_action_just_pressed("ui_accept"):
 		velocity.y = jump_velocity
 
 	# Movement input
@@ -100,7 +130,10 @@ func _physics_process(delta):
 	)
 
 	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	var current_speed := speed if not _mask_on else (speed * mask_speed_multiplier)
+	var speed_scale := 1.0
+	if _mask_on:
+		speed_scale = maxf(mask_speed_multiplier, 0.1)
+	var current_speed := speed * speed_scale
 
 	var target_velocity := Vector3(direction.x * current_speed, velocity.y, direction.z * current_speed)
 	var accel := acceleration if is_on_floor() else air_acceleration
@@ -118,10 +151,240 @@ func _physics_process(delta):
 	for i in get_slide_collision_count():
 		var collider := get_slide_collision(i).get_collider()
 		if collider is Monster:
-			GameManager.player_caught()
+			GameManager.player_caught(collider)
 
 func _on_mask_toggled(mask_on: bool) -> void:
 	_mask_on = mask_on
+
+func start_death_sequence(captor: Node3D) -> void:
+	if _death_sequence_active:
+		return
+	_death_sequence_active = true
+	_cam_input_dir = Vector2.ZERO
+	_cam_current_speed = 0.0
+	_cam_velocity = Vector3.ZERO
+	_cam_grounded = true
+	if _footsteps != null:
+		_footsteps.stop()
+
+	if _camera == null or camera_rig == null:
+		_play_death_sound(death_impact_sound)
+		var fallback_fade := _ensure_death_fade()
+		_set_death_fade_alpha(1.0)
+		if GameManager != null:
+			GameManager.finish_death_sequence()
+		if fallback_fade != null:
+			_clear_death_fade()
+		_death_sequence_active = false
+		return
+
+	var base_fov := _camera.fov if _camera != null else _death_base_fov
+	_play_death_sound(death_impact_sound)
+	var impact_half := maxf(death_impact_duration * 0.5, 0.01)
+	var impact_tween := create_tween()
+	impact_tween.tween_property(
+		_camera,
+		"rotation:x",
+		_camera.rotation.x + deg_to_rad(death_jolt_pitch_deg),
+		impact_half
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	impact_tween.tween_property(
+		_camera,
+		"rotation:x",
+		_camera.rotation.x,
+		impact_half
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	await impact_tween.finished
+	var marker := _get_death_marker(captor)
+	if marker != null:
+		if camera_rig != null:
+			camera_rig.reset_pose()
+		_apply_death_target_rotation(marker.global_rotation)
+	else:
+		_face_captor(captor)
+	_death_wobble_base_cam_rot = _camera.rotation
+
+	var target_pos := _compute_death_pull_target(captor)
+	if marker != null:
+		target_pos = marker.global_position + (marker.global_transform.basis * death_marker_offset_local)
+	var pull_tween := create_tween()
+	pull_tween.set_parallel(true)
+	pull_tween.tween_property(
+		_camera,
+		"global_position",
+		target_pos,
+		maxf(death_pull_duration, 0.05)
+	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	var target_fov := clampf(base_fov + death_pull_fov_delta, 10.0, 160.0)
+	pull_tween.tween_property(
+		_camera,
+		"fov",
+		target_fov,
+		maxf(death_pull_duration, 0.05)
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	pull_tween.tween_method(_set_death_wobble, 0.0, 1.0, maxf(death_pull_duration, 0.05))
+	await pull_tween.finished
+
+	if captor != null and captor.has_method("play_bite"):
+		captor.call("play_bite")
+	_play_death_sound(death_bite_sound)
+	if death_bite_duration > 0.0 and get_tree() != null:
+		await get_tree().create_timer(death_bite_duration).timeout
+
+	var fade_rect := _ensure_death_fade()
+	if fade_rect != null:
+		var fade_tween := create_tween()
+		fade_tween.tween_method(_set_death_fade_alpha, _death_fade_alpha, 1.0, maxf(death_fade_duration, 0.05)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		await fade_tween.finished
+
+	if camera_rig != null:
+		camera_rig.reset_pose()
+	if _camera != null:
+		_camera.fov = base_fov
+
+	if GameManager != null:
+		GameManager.finish_death_sequence()
+
+	if fade_rect != null:
+		_set_death_fade_alpha(0.0)
+		_clear_death_fade()
+
+	_death_sequence_active = false
+
+func _compute_death_pull_target(captor: Node3D) -> Vector3:
+	if _camera == null:
+		return global_position
+	var start := _camera.global_position
+	if captor != null:
+		var focus := _get_captor_focus_position(captor)
+		var from_focus := start - focus
+		if from_focus.length_squared() > 0.0001:
+			return focus + from_focus.normalized() * maxf(death_pull_stop_distance, 0.05)
+		return focus
+	var forward := -_camera.global_transform.basis.z
+	if forward.length_squared() < 0.0001:
+		forward = -global_transform.basis.z
+	return start + forward.normalized() * maxf(death_pull_forward_fallback, 0.1)
+
+func _get_captor_focus_position(captor: Node3D) -> Vector3:
+	if captor == null:
+		if _camera == null:
+			return global_position
+		return _camera.global_position + (-_camera.global_transform.basis.z).normalized() * maxf(death_pull_forward_fallback, 0.1)
+	if captor.has_method("get_death_focus_position"):
+		return captor.call("get_death_focus_position")
+	return captor.global_position
+
+func _get_death_marker(captor: Node3D) -> Node3D:
+	if captor == null:
+		return null
+	if captor.has_method("get_death_sequence_marker"):
+		return captor.call("get_death_sequence_marker") as Node3D
+	var direct := captor.get_node_or_null(^"death_sequence_position") as Node3D
+	if direct == null:
+		direct = captor.find_child("death_sequence_position", true, false) as Node3D
+	return direct
+
+func _apply_death_target_rotation(target_rotation: Vector3) -> void:
+	if _camera == null:
+		return
+	_camera.global_rotation = target_rotation
+	pitch = clampf(_camera.rotation.x, -PI / 2.0, PI / 2.0)
+
+
+func _face_captor(captor: Node3D) -> void:
+	if _camera == null:
+		return
+	var focus := _get_captor_focus_position(captor)
+	var from := _camera.global_position
+	var to_focus := focus - from
+	if to_focus.length_squared() < 0.0001:
+		return
+	var dir := to_focus.normalized()
+	var horiz := Vector3(dir.x, 0.0, dir.z)
+	if horiz.length_squared() > 0.0001:
+		var yaw := atan2(-horiz.x, -horiz.z)
+		rotation.y = yaw
+	var horiz_len := maxf(horiz.length(), 0.001)
+	var target_pitch := -atan2(dir.y, horiz_len)
+	pitch = clampf(target_pitch, -PI / 2.0, PI / 2.0)
+	var cam_rot := _camera.rotation
+	cam_rot.x = pitch
+	_camera.rotation = cam_rot
+
+func _set_death_wobble(t: float) -> void:
+	if _camera == null:
+		return
+	var wobble := deg_to_rad(death_wobble_deg)
+	var phase := t * maxf(death_wobble_cycles, 0.0) * TAU
+	var rot := _death_wobble_base_cam_rot
+	rot.z += sin(phase) * wobble
+	_camera.rotation = rot
+
+func _ensure_death_fade() -> ColorRect:
+	if _death_fade_rect != null and is_instance_valid(_death_fade_rect):
+		return _death_fade_rect
+	if get_tree() == null or get_tree().root == null:
+		return null
+	var layer := CanvasLayer.new()
+	layer.layer = 200
+	var rect := ColorRect.new()
+	rect.color = Color(0, 0, 0, 0)
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	layer.add_child(rect)
+	get_tree().root.add_child(layer)
+	_death_fade_layer = layer
+	_death_fade_rect = rect
+	_set_death_fade_alpha(0.0)
+	return rect
+
+func _set_death_fade_alpha(value: float) -> void:
+	_death_fade_alpha = clampf(value, 0.0, 1.0)
+	if _death_fade_rect == null:
+		return
+	var col := _death_fade_rect.color
+	col.a = _death_fade_alpha
+	_death_fade_rect.color = col
+
+func _clear_death_fade() -> void:
+	if _death_fade_layer != null:
+		_death_fade_layer.queue_free()
+	_death_fade_layer = null
+	_death_fade_rect = null
+	_death_fade_alpha = 0.0
+
+func _play_death_sound(stream: AudioStream) -> void:
+	if stream == null:
+		return
+	var player := AudioStreamPlayer.new()
+	player.stream = stream
+	add_child(player)
+	player.finished.connect(player.queue_free)
+	player.play()
+
+func _ensure_input_map() -> void:
+	_ensure_key(&"ui_left", KEY_A)
+	_ensure_key(&"ui_right", KEY_D)
+	_ensure_key(&"ui_up", KEY_W)
+	_ensure_key(&"ui_down", KEY_S)
+	_ensure_key(&"ui_accept", KEY_SPACE)
+	_ensure_key(&"mask_toggle", KEY_F)
+	_ensure_key(&"interact", KEY_E)
+	_ensure_key(&"debug_toggle_monsters", KEY_F1)
+	_ensure_key(&"debug_toggle_monsters", KEY_EQUAL)
+
+func _ensure_key(action: StringName, keycode: Key) -> void:
+	if not InputMap.has_action(action):
+		InputMap.add_action(action)
+
+	for event in InputMap.action_get_events(action):
+		if event is InputEventKey and (event as InputEventKey).keycode == keycode:
+			return
+
+	var new_event := InputEventKey.new()
+	new_event.keycode = keycode
+	InputMap.action_add_event(action, new_event)
 
 func equip_hammer() -> void:
 	if _held_hammer != null:
