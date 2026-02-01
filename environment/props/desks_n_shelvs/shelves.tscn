@@ -45,4 +45,3 @@ prompt_without_hammer = "Need a hammer"
 radius = 1.75
 height = 2.2
 affect_navigation_mesh = true
-carve_navigation_mesh = true
