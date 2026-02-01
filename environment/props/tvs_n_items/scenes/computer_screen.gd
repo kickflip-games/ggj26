@@ -28,7 +28,7 @@ const USE_IMAGE_PARAM := "use_image_texture"
 @export var break_sfx_cooldown := 0.1
 @export var interaction_action := "interact"
 @export var prompt_with_hammer := "Smash monitor"
-@export var prompt_without_hammer := "Need a hammer"
+@export var prompt_without_hammer := ""
 @export var key_plane_path: NodePath = NodePath("computerScreen/KeyImagePlane")
 
 var screen_mat: StandardMaterial3D
@@ -237,7 +237,10 @@ func _update_prompt() -> void:
 		_player.clear_interact_prompt()
 		return
 	if not GameManager.has_hammer:
-		_player.set_interact_prompt("%s (E)" % prompt_without_hammer)
+		if prompt_without_hammer.is_empty():
+			_player.clear_interact_prompt()
+		else:
+			_player.set_interact_prompt("%s (E)" % prompt_without_hammer)
 	else:
 		_player.set_interact_prompt("%s (E)" % prompt_with_hammer)
 
