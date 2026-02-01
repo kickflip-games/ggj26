@@ -5,56 +5,29 @@
 
 [node name="Shelves" unique_id=1327076537 instance=ExtResource("1_lfqwo")]
 
-[node name="Computer Screen" parent="." index="1" unique_id=1327391678 instance=ExtResource("2_jmny0")]
-transform = Transform3D(0.13850258, 0, -1.6893319, 0, 1.695, 0, 1.6893319, 0, 0.13850258, 0.3804383, 0.3554601, 0.5913244)
-
-[node name="Computer Screen2" parent="." index="2" unique_id=1622563778 instance=ExtResource("2_jmny0")]
+[node name="Computer Screen2" parent="." index="1" unique_id=1622563778 instance=ExtResource("2_jmny0")]
 transform = Transform3D(-0.2968388, 0, -1.6688058, 0, 1.695, 0, 1.6688058, 0, -0.2968388, 0.3691961, 0.34740385, 0.013413176)
 
-[node name="Computer Screen3" parent="." index="3" unique_id=1424294930 instance=ExtResource("2_jmny0")]
+[node name="Computer Screen3" parent="." index="2" unique_id=1424294930 instance=ExtResource("2_jmny0")]
 transform = Transform3D(-0.2968388, 0, -1.6688058, 0, 1.695, 0, 1.6688058, 0, -0.2968388, 0.29898742, 0.34740385, -0.6427442)
 
-[node name="Computer Screen4" parent="." index="4" unique_id=1764317954 instance=ExtResource("2_jmny0")]
-transform = Transform3D(-0.13287051, 0, 1.6897844, 0, 1.695, 0, -1.6897844, 0, -0.13287051, -0.38706702, 0.35622817, -0.67041516)
-
-[node name="Computer Screen5" parent="." index="5" unique_id=1573436946 instance=ExtResource("2_jmny0")]
+[node name="Computer Screen5" parent="." index="3" unique_id=1573436946 instance=ExtResource("2_jmny0")]
 transform = Transform3D(0.30240008, 0, 1.667807, 0, 1.695, 0, -1.667807, 0, 0.30240008, -0.37775132, 0.34817192, -0.09246966)
 
-[node name="Computer Screen6" parent="." index="6" unique_id=1513179631 instance=ExtResource("2_jmny0")]
-transform = Transform3D(0.30240008, 0, 1.667807, 0, 1.695, 0, -1.667807, 0, 0.30240008, -0.30973035, 0.34817192, 0.5639181)
-
-[node name="Computer Screen7" parent="." index="7" unique_id=158074499 instance=ExtResource("2_jmny0")]
+[node name="Computer Screen7" parent="." index="4" unique_id=158074499 instance=ExtResource("2_jmny0")]
 transform = Transform3D(0.0007988663, 0, -1.6950003, -0.11637796, 1.6910002, -5.4849803e-05, 1.6910002, 0.11637796, 0.0007969811, 0.3279169, 0.9934244, 0.5876709)
 
-[node name="Computer Screen8" parent="." index="8" unique_id=717316991 instance=ExtResource("2_jmny0")]
+[node name="Computer Screen8" parent="." index="5" unique_id=717316991 instance=ExtResource("2_jmny0")]
 transform = Transform3D(0.008313, 0, -1.6949798, 0, 1.695, 0, 1.6949798, 0, 0.008313, 0.3636629, 0.98536813, 0.010756746)
 
-[node name="Computer Screen9" parent="." index="9" unique_id=1128988310 instance=ExtResource("2_jmny0")]
-transform = Transform3D(-0.4281591, -0.20850635, -1.6267239, -0.05307204, 1.6821268, -0.20163895, 1.6391732, 0, -0.4314358, 0.34699434, 0.98536813, -0.64893544)
-
-[node name="Computer Screen10" parent="." index="10" unique_id=1762238545 instance=ExtResource("2_jmny0")]
+[node name="Computer Screen10" parent="." index="6" unique_id=1762238545 instance=ExtResource("2_jmny0")]
 transform = Transform3D(0.004851386, 0, 1.6949931, 0, 1.695, 0, -1.6949931, 0, 0.004851386, -0.33454418, 0.9941925, -0.7322519)
 
-[node name="Computer Screen11" parent="." index="11" unique_id=1918126287 instance=ExtResource("2_jmny0")]
-transform = Transform3D(0.4368976, 0, 1.637726, 0, 1.6950003, 0, -1.637726, 0, 0.4368976, -0.37221313, 0.9861362, -0.1554601)
-
-[node name="Computer Screen12" parent="." index="12" unique_id=1379944571 instance=ExtResource("2_jmny0")]
+[node name="Computer Screen12" parent="." index="7" unique_id=1379944571 instance=ExtResource("2_jmny0")]
 transform = Transform3D(0.4368976, 0, 1.637726, 0, 1.6950003, 0, -1.637726, 0, 0.4368976, -0.35774374, 0.9861362, 0.50428414)
 
-[node name="Computer Screen13" parent="." index="13" unique_id=1206321853 instance=ExtResource("2_jmny0")]
+[node name="Computer Screen13" parent="." index="8" unique_id=1206321853 instance=ExtResource("2_jmny0")]
 transform = Transform3D(0.00079886615, 0, -1.695, 0, 1.695, 0, 1.695, 0, 0.00079886615, 0.3279169, 1.7260721, 0.6028079)
 
-[node name="Computer Screen14" parent="." index="14" unique_id=1978290699 instance=ExtResource("2_jmny0")]
-transform = Transform3D(-0.039785802, 0, -1.6945331, 0, 1.695, 0, 1.6945331, 0, -0.039785802, 0.3636629, 1.7180158, 0.025893703)
-
-[node name="Computer Screen15" parent="." index="15" unique_id=1709813497 instance=ExtResource("2_jmny0")]
-transform = Transform3D(-0.5912454, 0, -1.5885384, 0, 1.695, 0, 1.5885384, 0, -0.5912454, 0.34699434, 1.7180158, -0.6337985)
-
-[node name="Computer Screen16" parent="." index="16" unique_id=1119921055 instance=ExtResource("2_jmny0")]
+[node name="Computer Screen16" parent="." index="9" unique_id=1119921055 instance=ExtResource("2_jmny0")]
 transform = Transform3D(0.004851386, 0, 1.6949931, 0, 1.695, 0, -1.6949931, 0, 0.004851386, -0.33454418, 1.7268401, -0.7171149)
-
-[node name="Computer Screen17" parent="." index="17" unique_id=1457025809 instance=ExtResource("2_jmny0")]
-transform = Transform3D(0.4368976, 0, 1.637726, 0, 1.6950003, 0, -1.637726, 0, 0.4368976, -0.37221313, 1.7187839, -0.14032315)
-
-[node name="Computer Screen18" parent="." index="18" unique_id=292612664 instance=ExtResource("2_jmny0")]
-transform = Transform3D(0.4368976, 0, 1.637726, 0, 1.6950003, 0, -1.637726, 0, 0.4368976, -0.35774374, 1.7187839, 0.5194211)
