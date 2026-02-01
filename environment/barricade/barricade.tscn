@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://d2oi8tow8amt4" path="res://environment/barricade/barricade.gd" id="1_bar"]
 [ext_resource type="PackedScene" uid="uid://bk8o48ggtf5sf" path="res://environment/barricade/Barricade.glb" id="2_model"]
-[ext_resource type="AudioStream" path="res://environment/barricade/barricade_break.mp3" id="3_break"]
+[ext_resource type="AudioStream" path="res://environment/barricade/barricade_break.wav" id="3_break"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_fon1e"]
 size = Vector3(1, 4.9683228, 5.335083)
@@ -32,3 +32,4 @@ shape = SubResource("BoxShape3D_block")
 [node name="SfxBreak" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("3_break")
 volume_db = -8.0
+
