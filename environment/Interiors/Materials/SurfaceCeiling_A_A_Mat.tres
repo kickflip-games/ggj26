@@ -1,9 +1,9 @@
 [gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://cthug73qqhpy8"]
 
-[ext_resource type="Shader" uid="uid://h2l28y3y2r2v" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/ORM_Shader_Cull_Back.gdshader" id="1_ng8lq"]
-[ext_resource type="Texture2D" uid="uid://doubmu37q3j6b" path="res://Assets/LoafbrrAssets/Interiors_A/texture/Surface_Ceiling_A/Surface_Ceiling_A_Diffuse_2K_A.png" id="2_ng8lq"]
-[ext_resource type="Texture2D" uid="uid://g07xhr5hnmlv" path="res://Assets/LoafbrrAssets/Interiors_A/texture/Surface_Ceiling_A/Surface_Ceiling_A_Normal_2K.png" id="3_qo6sm"]
-[ext_resource type="Texture2D" uid="uid://bvg2rxhpsn5mv" path="res://Assets/LoafbrrAssets/Interiors_A/texture/Surface_Ceiling_A/Surface_Ceiling_A_ORM_2K.png" id="4_8pneq"]
+[ext_resource type="Shader" uid="uid://h2l28y3y2r2v" path="res://environment/Interiors/Materials/ORM_Shader_Cull_Back.gdshader" id="1_ng8lq"]
+[ext_resource type="Texture2D" uid="uid://doubmu37q3j6b" path="res://environment/Interiors/texture/Surface_Ceiling_A/Surface_Ceiling_A_Diffuse_2K_A.png" id="2_ng8lq"]
+[ext_resource type="Texture2D" uid="uid://g07xhr5hnmlv" path="res://environment/Interiors/texture/Surface_Ceiling_A/Surface_Ceiling_A_Normal_2K.png" id="3_qo6sm"]
+[ext_resource type="Texture2D" uid="uid://bvg2rxhpsn5mv" path="res://environment/Interiors/texture/Surface_Ceiling_A/Surface_Ceiling_A_ORM_2K.png" id="4_8pneq"]
 
 [resource]
 render_priority = 0

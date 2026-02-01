@@ -1,12 +1,12 @@
 [gd_scene load_steps=16 format=4 uid="uid://dyjgmweb42cw"]
 
-[ext_resource type="Material" uid="uid://b7hge802pa85x" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Wall_A_Mat.tres" id="1_xehtt"]
-[ext_resource type="Material" uid="uid://ckp17uxivi87k" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_A_B_Mat.tres" id="2_nav6k"]
-[ext_resource type="Material" uid="uid://canwefv74vsd6" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Door_A_Mat.tres" id="3_lvxp5"]
-[ext_resource type="Material" uid="uid://dn04f3wubif1c" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Glass_Mat.tres" id="4_kafwr"]
-[ext_resource type="Material" uid="uid://cjg55dhp2epy1" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Misc_Trim_Mat.tres" id="5_3ojmr"]
-[ext_resource type="Material" uid="uid://k107765ilw3v" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_B_Mat.tres" id="6_m5uv5"]
-[ext_resource type="Material" uid="uid://blggib5lan34i" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_A_A_Mat.tres" id="7_1c7uj"]
+[ext_resource type="Material" uid="uid://b7hge802pa85x" path="res://environment/Interiors/Materials/Surface_Wall_A_Mat.tres" id="1_xehtt"]
+[ext_resource type="Material" uid="uid://ckp17uxivi87k" path="res://environment/Interiors/Materials/Surface_Floor_A_B_Mat.tres" id="2_nav6k"]
+[ext_resource type="Material" uid="uid://canwefv74vsd6" path="res://environment/Interiors/Materials/Door_A_Mat.tres" id="3_lvxp5"]
+[ext_resource type="Material" uid="uid://dn04f3wubif1c" path="res://environment/Interiors/Materials/Glass_Mat.tres" id="4_kafwr"]
+[ext_resource type="Material" uid="uid://cjg55dhp2epy1" path="res://environment/Interiors/Materials/Misc_Trim_Mat.tres" id="5_3ojmr"]
+[ext_resource type="Material" uid="uid://k107765ilw3v" path="res://environment/Interiors/Materials/Surface_Floor_B_Mat.tres" id="6_m5uv5"]
+[ext_resource type="Material" uid="uid://blggib5lan34i" path="res://environment/Interiors/Materials/Surface_Floor_A_A_Mat.tres" id="7_1c7uj"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_uiygm"]
 _surfaces = [{

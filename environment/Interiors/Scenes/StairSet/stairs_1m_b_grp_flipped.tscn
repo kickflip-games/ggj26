@@ -1,9 +1,9 @@
 [gd_scene load_steps=19 format=4 uid="uid://dnrr5lbevd2kk"]
 
-[ext_resource type="Material" uid="uid://blggib5lan34i" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_A_A_Mat.tres" id="1_f148s"]
-[ext_resource type="Material" uid="uid://ckp17uxivi87k" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_A_B_Mat.tres" id="2_fhbx5"]
-[ext_resource type="Material" uid="uid://cjg55dhp2epy1" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Misc_Trim_Mat.tres" id="3_vrerh"]
-[ext_resource type="Material" uid="uid://b7hge802pa85x" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Wall_A_Mat.tres" id="4_vmn6r"]
+[ext_resource type="Material" uid="uid://blggib5lan34i" path="res://environment/Interiors/Materials/Surface_Floor_A_A_Mat.tres" id="1_f148s"]
+[ext_resource type="Material" uid="uid://ckp17uxivi87k" path="res://environment/Interiors/Materials/Surface_Floor_A_B_Mat.tres" id="2_fhbx5"]
+[ext_resource type="Material" uid="uid://cjg55dhp2epy1" path="res://environment/Interiors/Materials/Misc_Trim_Mat.tres" id="3_vrerh"]
+[ext_resource type="Material" uid="uid://b7hge802pa85x" path="res://environment/Interiors/Materials/Surface_Wall_A_Mat.tres" id="4_vmn6r"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_wprd8"]
 _surfaces = [{

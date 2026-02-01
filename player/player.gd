@@ -91,6 +91,11 @@ func _process(delta: float) -> void:
 func _input(event):
 	if _death_sequence_active:
 		return
+	if OS.has_feature("web"):
+		if event is InputEventMouseButton and event.pressed:
+			if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
+				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+				get_viewport().gui_release_focus()
 	if event.is_action_pressed("interact"):
 		if GameManager != null and GameManager.has_hammer:
 			_use_hammer()
