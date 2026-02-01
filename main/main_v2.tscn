@@ -3,7 +3,14 @@
 [ext_resource type="AudioStream" uid="uid://b3n6u72q56e7h" path="res://assets/SFX/creaking.mp3" id="1_rfw55"]
 [ext_resource type="AudioStream" uid="uid://dx0slj2xif3d0" path="res://assets/SFX/00 - Jeremy Blake - Listen for their Coming.mp3" id="2_ko87g"]
 [ext_resource type="PackedScene" uid="uid://cwkoljmxnc7d7" path="res://environment/room/room.tscn" id="4_0qjvv"]
+[ext_resource type="PackedScene" path="res://environment/decals/Sticker3D.tscn" id="8_e6q8g"]
 [ext_resource type="PackedScene" uid="uid://b0vg6aynnuu50" path="res://environment/Interiors/Scenes/smaller_model.tscn" id="8_x2nr8"]
+[ext_resource type="Texture2D" uid="uid://bappkvj12yavq" path="res://environment/decals/imgs/out.png" id="9_xvfb0"]
+[ext_resource type="Texture2D" uid="uid://cqjekek1iouvn" path="res://environment/decals/imgs/exit.png" id="10_xvfb0"]
+[ext_resource type="Texture2D" uid="uid://bp3hmql7680mq" path="res://environment/decals/imgs/screen.png" id="11_baupg"]
+[ext_resource type="Texture2D" uid="uid://yyxcy514shmb" path="res://environment/decals/imgs/arrow.png" id="12_fnsok"]
+[ext_resource type="Texture2D" uid="uid://fholut1ljy4x" path="res://environment/decals/imgs/key.png" id="13_xiga6"]
+[ext_resource type="Texture2D" uid="uid://ck22lmpjvjhnd" path="res://environment/decals/imgs/shatter.png" id="14_xiga6"]
 [ext_resource type="PackedScene" uid="uid://cbhmkywwi6kca" path="res://player/player.tscn" id="19_glmte"]
 [ext_resource type="PackedScene" uid="uid://dbeam8duw66fa" path="res://monster/monster.tscn" id="20_m168m"]
 [ext_resource type="PackedScene" uid="uid://bptm0ymljxvyv" path="res://environment/speakers/speaker.tscn" id="21_8lk8g"]
@@ -56,7 +63,75 @@ transform = Transform3D(0.4750001, 0, 0, 0, 0.4750001, 0, 0, 0, 0.4750001, -1.25
 transform = Transform3D(-0.09575564, 0, 0.07232489, 0, 0.12000015, 0, -0.07232489, 0, -0.09575564, -10.138639, -0.014667021, 12.818658)
 
 [node name="SmallerModel" parent="environment/Room" unique_id=168607823 groups=["Room"] instance=ExtResource("8_x2nr8")]
-transform = Transform3D(0.925, 0, 0, 0, 0.925, 0, 0, 0, 0.925, 0, 0, 0)
+transform = Transform3D(0.92500013, 0, 0, 0, 0.92500013, 0, 0, 0, 0.92500013, 0, 0, 0)
+
+[node name="Node3D" type="Node3D" parent="environment/Room" unique_id=687662616]
+
+[node name="GetOutSticker3D" parent="environment/Room/Node3D" unique_id=440670058 instance=ExtResource("8_e6q8g")]
+transform = Transform3D(-4.3711502e-08, 0, -1.0000017, -0.2245265, 0.9744709, 9.8143556e-09, 0.97447073, 0.22452651, -4.259543e-08, 26.478348, 0.22319324, -3.4017053)
+texture = ExtResource("9_xvfb0")
+size_meters = Vector2(1.5, 1.5)
+mode = "CUSTOM"
+emissive = true
+emission_energy = 10.0
+
+[node name="ExitSticker3D" parent="environment/Room/Node3D" unique_id=265330828 instance=ExtResource("8_e6q8g")]
+transform = Transform3D(-4.808253e-08, 0, -1.1000001, -0.29828885, 1.0587842, 1.303862e-08, 1.0587842, 0.29828885, -4.6280928e-08, 26.584875, 1.6179156, -5.925231)
+texture = ExtResource("10_xvfb0")
+size_meters = Vector2(2, 2)
+mode = "CUSTOM"
+emissive = true
+emission_energy = 10.0
+
+[node name="ScreenSticker3D" parent="environment/Room/Node3D" unique_id=805313717 instance=ExtResource("8_e6q8g")]
+transform = Transform3D(0.4816161, -0.8763836, -3.830794e-08, -2.0612013e-15, -4.3711434e-08, 1.0000012, -0.8763836, -0.4816161, -2.1052118e-08, 20.44032, -0.75888157, -5.2078)
+texture = ExtResource("11_baupg")
+size_meters = Vector2(3, 3)
+mode = "CUSTOM"
+emissive = true
+emission_energy = 10.0
+
+[node name="ArrowSticker3D2" parent="environment/Room/Node3D" unique_id=1212173838 instance=ExtResource("8_e6q8g")]
+transform = Transform3D(-0.52946144, -0.84833634, -3.7081964e-08, 8.3780214e-17, -4.3711488e-08, 1.0000017, -0.8483365, 0.5294614, 2.3143496e-08, 21.676558, -0.8998326, -10.538394)
+texture = ExtResource("12_fnsok")
+size_meters = Vector2(3, 3)
+mode = "CUSTOM"
+emissive = true
+emission_color = Color(0.5921569, 1, 1, 0.49411765)
+
+[node name="ArrowSticker3D" parent="environment/Room/Node3D" unique_id=653109194 instance=ExtResource("8_e6q8g")]
+transform = Transform3D(0.28811356, 0.9575976, 4.1857923e-08, -1.9104085e-15, -4.3711427e-08, 1.0000012, 0.9575976, -0.28811356, -1.2593847e-08, 24.582083, -0.8770602, 0.6338971)
+texture = ExtResource("12_fnsok")
+size_meters = Vector2(3, 3)
+mode = "CUSTOM"
+emissive = true
+emission_color = Color(0.5921569, 1, 1, 0.49411765)
+
+[node name="KeySticker3D2" parent="environment/Room/Node3D" unique_id=191806968 instance=ExtResource("8_e6q8g")]
+transform = Transform3D(-0.7816111, 0.6237736, 2.7266003e-08, -1.0979017e-15, -4.3711594e-08, 1.0000039, 0.6237735, 0.78161126, 3.4165303e-08, -11.248926, -0.91992897, 17.368195)
+texture = ExtResource("13_xiga6")
+mode = "CUSTOM"
+emissive = true
+
+[node name="KeySticker3D" parent="environment/Room/Node3D" unique_id=41883264 instance=ExtResource("8_e6q8g")]
+transform = Transform3D(-0.19551858, -0.9807014, -4.28678e-08, 1.558186e-15, -4.3711434e-08, 1.0000013, -0.9807014, 0.19551858, 8.546382e-09, -5.924213, -0.921256, -13.624357)
+texture = ExtResource("13_xiga6")
+mode = "CUSTOM"
+emissive = true
+
+[node name="ShatterSticker3D2" parent="environment/Room/Node3D" unique_id=1906792031 instance=ExtResource("8_e6q8g")]
+transform = Transform3D(0.22950652, -0.9733092, -4.2544702e-08, 0, -4.371148e-08, 1.0000017, -0.9733092, -0.22950652, -1.0032049e-08, 2.808598, -0.89044374, -3.5168905)
+texture = ExtResource("14_xiga6")
+size_meters = Vector2(4, 4)
+mode = "CUSTOM"
+emissive = true
+emission_energy = 10.0
+
+[node name="ShatterSticker3D" parent="environment/Room/Node3D" unique_id=522765565 instance=ExtResource("8_e6q8g")]
+transform = Transform3D(-0.996244, 0.086599424, -8.7094406e-08, 0.086599424, 0.996244, 7.57076e-09, 8.742283e-08, -2.5698529e-15, -1.0000008, 4.3391066, 2.0970013, 20.914293)
+texture = ExtResource("14_xiga6")
+size_meters = Vector2(4, 4)
+mode = "CUSTOM"
 
 [node name="HammerPickup" parent="environment" unique_id=274329561 instance=ExtResource("22_tk0an")]
 transform = Transform3D(-0.23456348, -0.5101281, -0.09823521, 0, 0.10778456, -0.5597172, 0.51950055, -0.23033163, -0.044354897, -6.512228, -0.020654114, -2.5149472)
