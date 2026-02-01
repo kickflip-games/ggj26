@@ -125,6 +125,18 @@ offset_right = 180.0
 offset_bottom = -68.0
 horizontal_alignment = 1
 
+[node name="MaskPromptLabel" type="Label" parent="MaskUI/HUD" unique_id=853707362]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -180.0
+offset_top = -124.0
+offset_right = 180.0
+offset_bottom = -100.0
+horizontal_alignment = 1
+
 [node name="MaskMeter" type="Control" parent="MaskUI" unique_id=1386476395]
 layout_mode = 3
 anchors_preset = 0

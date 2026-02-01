@@ -4,7 +4,7 @@ extends Node3D
 @export var requires_hammer := true
 @export var interaction_action := "interact"
 @export var prompt_with_hammer := "Press E to break"
-@export var prompt_without_hammer := "Need a hammer"
+@export var prompt_without_hammer := ""
 @export_range(1.0, 179.0, 1.0) var interaction_angle_deg := 45.0
 @export var interaction_max_distance := 2.5
 
@@ -105,7 +105,10 @@ func _update_prompt() -> void:
 		return
 
 	if requires_hammer and not GameManager.has_hammer:
-		_player.set_interact_prompt("%s (E)" % prompt_without_hammer)
+		if prompt_without_hammer.is_empty():
+			_player.clear_interact_prompt()
+		else:
+			_player.set_interact_prompt("%s (E)" % prompt_without_hammer)
 	else:
 		_player.set_interact_prompt(prompt_with_hammer)
 

@@ -41,6 +41,7 @@ var _end_screen: CanvasLayer = null
 var _pending_next_scene_path := ""
 var _pending_use_level_manager := false
 var _frozen_monsters: Dictionary = {}
+var mask_prompt_seen := false
 
 func register_room(room: Node) -> void:
 	current_room = room
