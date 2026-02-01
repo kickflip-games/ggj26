@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://dbeam8duw66fa"]
 
 [ext_resource type="Script" uid="uid://k6mxdei4xyda" path="res://monster/monster.gd" id="1_okp8s"]
-[ext_resource type="AudioStream" path="res://player/footstep.mp3" id="4_j7lgj"]
+[ext_resource type="AudioStream" uid="uid://bclsygg0n13d1" path="res://player/footstep.wav" id="4_j7lgj"]
 [ext_resource type="Script" uid="uid://dkb8ltjc6067n" path="res://addons/raytraced_audio/raytraced_audio_player_3d.gd" id="5_23j4v"]
 [ext_resource type="Material" uid="uid://cqnvgcovv32yc" path="res://monster/glowing_eyes.tres" id="5_rnoo8"]
 [ext_resource type="AudioStream" uid="uid://i6hgrmnpmdyb" path="res://monster/sounds/chittering.wav" id="6_chitter"]

@@ -1,10 +1,10 @@
-[gd_scene format=3 uid="uid://c6pncghwngq0m"]
+[gd_scene format=3 uid="uid://cd6ay8lnwmrjh"]
 
-[ext_resource type="AudioStream" uid="uid://b3n6u72q56e7h" path="res://assets/SFX/creaking.wav" id="1_rfw55"]
-[ext_resource type="AudioStream" uid="uid://dx0slj2xif3d0" path="res://assets/SFX/00 - Jeremy Blake - Listen for their Coming.wav" id="2_ko87g"]
+[ext_resource type="AudioStream" uid="uid://ds5uirgj655r" path="res://assets/SFX/creaking.wav" id="1_x2nr8"]
+[ext_resource type="AudioStream" uid="uid://dl6wq7m825uya" path="res://assets/SFX/00 - Jeremy Blake - Listen for their Coming.wav" id="2_e6q8g"]
 [ext_resource type="LightmapGIData" uid="uid://jrkp2qlvj61b" path="res://environment/Interiors/LightMap/demo_Test.lmbake" id="3_f3xen"]
 [ext_resource type="PackedScene" uid="uid://cwkoljmxnc7d7" path="res://environment/room/room.tscn" id="4_0qjvv"]
-[ext_resource type="PackedScene" uid="uid://b0vg6aynnuu50" path="res://environment/Interiors/Scenes/smaller_model.tscn" id="8_x2nr8"]
+[ext_resource type="PackedScene" path="res://environment/Interiors/Scenes/smaller_model.tscn" id="8_x2nr8"]
 [ext_resource type="PackedScene" uid="uid://cbhmkywwi6kca" path="res://player/player.tscn" id="19_glmte"]
 [ext_resource type="PackedScene" uid="uid://dbeam8duw66fa" path="res://monster/monster.tscn" id="20_m168m"]
 [ext_resource type="PackedScene" uid="uid://bptm0ymljxvyv" path="res://environment/speakers/speaker.tscn" id="21_8lk8g"]
@@ -19,16 +19,14 @@ geometry_source_group_name = &"Room"
 [node name="MapV2" type="Node3D" unique_id=172747565]
 
 [node name="AmbientCreak" type="AudioStreamPlayer" parent="." unique_id=1593693403]
-stream = ExtResource("1_rfw55")
+stream = ExtResource("1_x2nr8")
 volume_db = -20.0
 autoplay = true
-parameters/looping = true
 
 [node name="AmbientListen" type="AudioStreamPlayer" parent="." unique_id=1593693404]
-stream = ExtResource("2_ko87g")
+stream = ExtResource("2_e6q8g")
 volume_db = -25.0
 autoplay = true
-parameters/looping = true
 
 [node name="environment" type="Node3D" parent="." unique_id=694031375]
 transform = Transform3D(2.635, 0, 0, 0, 2.635, 0, 0, 0, 2.635, 0, 0, 0)
@@ -91,4 +89,3 @@ transform = Transform3D(0.925, 0, 0, 0, 0.925, 0, 0, 0, 0.925, 0, 0, 0)
 [node name="HammerPickup" parent="environment" unique_id=274329561 instance=ExtResource("22_tk0an")]
 transform = Transform3D(-0.23456348, -0.5101281, -0.09823521, 0, 0.10778456, -0.5597172, 0.51950055, -0.23033163, -0.044354897, -6.512228, -0.020654114, -2.5149472)
 model_rotation_degrees = Vector3(0, -0.7, 0)
-
