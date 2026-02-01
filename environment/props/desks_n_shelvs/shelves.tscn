@@ -7,27 +7,42 @@
 
 [node name="Computer Screen2" parent="." index="1" unique_id=1622563778 instance=ExtResource("2_jmny0")]
 transform = Transform3D(-0.2968388, 0, -1.6688058, 0, 1.695, 0, 1.6688058, 0, -0.2968388, 0.3691961, 0.34740385, 0.013413176)
+prompt_without_hammer = "Need a hammer"
 
 [node name="Computer Screen3" parent="." index="2" unique_id=1424294930 instance=ExtResource("2_jmny0")]
 transform = Transform3D(-0.2968388, 0, -1.6688058, 0, 1.695, 0, 1.6688058, 0, -0.2968388, 0.29898742, 0.34740385, -0.6427442)
+prompt_without_hammer = "Need a hammer"
 
 [node name="Computer Screen5" parent="." index="3" unique_id=1573436946 instance=ExtResource("2_jmny0")]
 transform = Transform3D(0.30240008, 0, 1.667807, 0, 1.695, 0, -1.667807, 0, 0.30240008, -0.37775132, 0.34817192, -0.09246966)
+prompt_without_hammer = "Need a hammer"
 
 [node name="Computer Screen7" parent="." index="4" unique_id=158074499 instance=ExtResource("2_jmny0")]
 transform = Transform3D(0.0007988663, 0, -1.6950003, -0.11637796, 1.6910002, -5.4849803e-05, 1.6910002, 0.11637796, 0.0007969811, 0.3279169, 0.9934244, 0.5876709)
+prompt_without_hammer = "Need a hammer"
 
 [node name="Computer Screen8" parent="." index="5" unique_id=717316991 instance=ExtResource("2_jmny0")]
 transform = Transform3D(0.008313, 0, -1.6949798, 0, 1.695, 0, 1.6949798, 0, 0.008313, 0.3636629, 0.98536813, 0.010756746)
+prompt_without_hammer = "Need a hammer"
 
 [node name="Computer Screen10" parent="." index="6" unique_id=1762238545 instance=ExtResource("2_jmny0")]
 transform = Transform3D(0.004851386, 0, 1.6949931, 0, 1.695, 0, -1.6949931, 0, 0.004851386, -0.33454418, 0.9941925, -0.7322519)
+prompt_without_hammer = "Need a hammer"
 
 [node name="Computer Screen12" parent="." index="7" unique_id=1379944571 instance=ExtResource("2_jmny0")]
 transform = Transform3D(0.4368976, 0, 1.637726, 0, 1.6950003, 0, -1.637726, 0, 0.4368976, -0.35774374, 0.9861362, 0.50428414)
+prompt_without_hammer = "Need a hammer"
 
 [node name="Computer Screen13" parent="." index="8" unique_id=1206321853 instance=ExtResource("2_jmny0")]
 transform = Transform3D(0.00079886615, 0, -1.695, 0, 1.695, 0, 1.695, 0, 0.00079886615, 0.3279169, 1.7260721, 0.6028079)
+prompt_without_hammer = "Need a hammer"
 
 [node name="Computer Screen16" parent="." index="9" unique_id=1119921055 instance=ExtResource("2_jmny0")]
 transform = Transform3D(0.004851386, 0, 1.6949931, 0, 1.695, 0, -1.6949931, 0, 0.004851386, -0.33454418, 1.7268401, -0.7171149)
+prompt_without_hammer = "Need a hammer"
+
+[node name="NavigationObstacle3D" type="NavigationObstacle3D" parent="." index="10" unique_id=360347191]
+radius = 1.75
+height = 2.2
+affect_navigation_mesh = true
+carve_navigation_mesh = true
