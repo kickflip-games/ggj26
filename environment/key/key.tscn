@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://ctwfuupatgsej" path="res://environment/key/key.gd" id="1_twuu8"]
 [ext_resource type="PackedScene" uid="uid://cg34q74eugkl6" path="res://environment/key/Key.glb" id="2_u3koc"]
-[ext_resource type="AudioStream" path="res://environment/key/key_pickup.mp3" id="3_w6vsn"]
 [ext_resource type="AudioStream" uid="uid://blwlbwv0xqgd6" path="res://environment/key/key_pickup.wav" id="4_eliik"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_1"]
@@ -13,7 +12,7 @@ script = ExtResource("1_twuu8")
 model_offset = null
 model_rotation_degrees = null
 model_scale = null
-pickup_stream = ExtResource("3_w6vsn")
+pickup_stream = ExtResource("4_eliik")
 pickup_volume_db = null
 
 [node name="Model" parent="." unique_id=829977327 instance=ExtResource("2_u3koc")]
