@@ -14,8 +14,8 @@ metadata/__load_path__ = "res://monster/anim/Idle.fbx"
 metadata/__load_path__ = "res://monster/anim/Walk.fbx"
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_0g571"]
-radius = 0.58251953
-height = 3.0336914
+radius = 0.34716797
+height = 2.402588
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w5cqc"]
 resource_name = "material_0"
@@ -1780,12 +1780,11 @@ death_sequence_marker_path = NodePath("Slender/Node/Skeleton3D/mixamorigHead/dea
 path_desired_distance = 0.25
 target_desired_distance = 0.25
 avoidance_enabled = true
-radius = 6.0
-neighbor_distance = 300.0
+radius = 2.0
 debug_enabled = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2021433740]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.115, 0.192, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.115, 0.5075518, 0)
 shape = SubResource("CapsuleShape3D_0g571")
 
 [node name="Footsteps" type="AudioStreamPlayer3D" parent="." unique_id=1371398713]
@@ -2716,7 +2715,7 @@ bones/56/bone_meta/extras = {
 "elements": [-0.8661042036643448, 0.3908310052119325, -0.31163215465737754, 0.0, -0.4267312503001363, -0.9027778924963464, 0.05378180200102921, 0.0, -0.26031502927924033, 0.17956382590662817, 0.9486795649868438, 0.0, -0.0804868, -0.05744052, 0.00333353132009506, 1.0]
 },
 "preRotation": [1.256473442647647, -9.039566424834808e-09, 2.750487585808072],
-"translation": [-5.429803551226791e-10, 0.7563635899577168, 3.823182381790247e-09]
+"translation": [-5.42980355122679e-10, 0.7563635899577168, 3.8231823817902474e-09]
 }
 }
 bones/57/name = "mixamorigRightFoot"
@@ -2730,7 +2729,7 @@ bones/57/bone_meta/extras = {
 "transformData": {
 "eulerOrder": "ZYX",
 "parentMatrixWorld": {
-"elements": [0.9827352279698623, -0.16964211927656606, -0.07384458397410938, 0.0, 0.09812657900489684, 0.8162575792268462, -0.5692931877430367, 0.0, 0.15685230539507447, 0.5522183539915964, 0.8188114793058018, 0.0, -5.429803551226791e-10, 0.7563635899577168, 3.823182381790247e-09, 1.0]
+"elements": [0.9827352279698623, -0.16964211927656606, -0.07384458397410938, 0.0, 0.09812657900489684, 0.8162575792268462, -0.5692931877430367, 0.0, 0.15685230539507447, 0.5522183539915964, 0.8188114793058018, 0.0, -5.42980355122679e-10, 0.7563635899577168, 3.8231823817902474e-09, 1.0]
 },
 "preRotation": [64.20747372353853, -0.6633736136412517, 4.0732265281843916e-09],
 "translation": [-2.5243694634635716e-10, 0.7298967348172531, -3.483857521913158e-09]

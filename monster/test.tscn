@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://3jouiom1au18"]
+
+[ext_resource type="PackedScene" uid="uid://dbeam8duw66fa" path="res://monster/monster.tscn" id="1_fmhxl"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_8lise"]
+vertices = PackedVector3Array(-4.114873, 1, -4.1648273, -4.114873, 1, 4.3351727, 5.635127, 1, 4.3351727, 5.635127, 1, -4.1648273)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jqd6o"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_e7kqo"]
+
+[node name="Test" type="Node3D" unique_id=449416426]
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=587891064]
+navigation_mesh = SubResource("NavigationMesh_8lise")
+
+[node name="Node3D" type="Node3D" parent="NavigationRegion3D" unique_id=172957015]
+transform = Transform3D(10.753952, 0, 0, 0, 1, 0, 0, 0, 9.446497, 0.7621032, 0, 0.058421373)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/Node3D" unique_id=1706594691]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Node3D/StaticBody3D" unique_id=865963788]
+shape = SubResource("BoxShape3D_jqd6o")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D/Node3D" unique_id=422653621]
+mesh = SubResource("BoxMesh_e7kqo")
+
+[node name="Monster" parent="." unique_id=1989861381 instance=ExtResource("1_fmhxl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.607039, 1.3849005, 0.37731552)
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=773753169]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.607039, 2.2366776, 5.175803)
+fov = 109.68749
+
+[node name="SpotLight3D" type="SpotLight3D" parent="." unique_id=743751630]
+transform = Transform3D(1, 0, 0, 0, 0.24022803, 0.9707165, 0, -0.9707165, 0.24022803, 0, 8.488633, 0)
+spot_range = 11.549989
