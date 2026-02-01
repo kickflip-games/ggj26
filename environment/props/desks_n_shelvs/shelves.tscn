@@ -42,6 +42,7 @@ transform = Transform3D(0.004851386, 0, 1.6949931, 0, 1.695, 0, -1.6949931, 0, 0
 prompt_without_hammer = "Need a hammer"
 
 [node name="NavigationObstacle3D" type="NavigationObstacle3D" parent="." index="10" unique_id=360347191]
-radius = 1.75
-height = 2.2
+radius = 1.19
+height = 8.72
+vertices = PackedVector3Array(-0.43910187, 0, -1.0247293, -0.4460073, 0, -0.8611256, -0.6422081, 0, 1.2062857, 1.1158571, 0, 1.8326902, 0.895669, 0, -1.2714086, -0.3105908, 0, -1.0230371)
 affect_navigation_mesh = true

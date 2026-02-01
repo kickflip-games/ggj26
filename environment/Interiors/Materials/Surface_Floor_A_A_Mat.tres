@@ -1,4 +1,4 @@
-[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://blggib5lan34i"]
+[gd_resource type="ShaderMaterial" format=3 uid="uid://blggib5lan34i"]
 
 [ext_resource type="Shader" uid="uid://h2l28y3y2r2v" path="res://environment/Interiors/Materials/ORM_Shader_Cull_Back.gdshader" id="1_p8xht"]
 [ext_resource type="Texture2D" uid="uid://bbf2i67i54abb" path="res://environment/Interiors/texture/Surface_Floor_A/Surface_Floor_A_Diffuse_2K.png" id="2_q8y3c"]
