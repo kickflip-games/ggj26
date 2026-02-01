@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://cwqtcohkvymjr"]
+
+[ext_resource type="Environment" uid="uid://cfrh2gprxyk8o" path="res://postproc/MainEnvironment.tres" id="1_q1l6s"]
+[ext_resource type="Script" path="res://environment/WorldEnvironmentController.gd" id="2_wenvc"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" unique_id=387303318]
+environment = ExtResource("1_q1l6s")
+script = ExtResource("2_wenvc")
