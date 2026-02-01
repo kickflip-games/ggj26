@@ -16,9 +16,6 @@ func _ready() -> void:
 func _on_start_game() -> void:
 	print("MainMenu: Start game signal received")
 	print("MainMenu: Attempting to load scene: ", game_scene_path)
-	if OS.has_feature("web"):
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-		get_viewport().gui_release_focus()
 	if _start_screen:
 		_start_screen.queue_free()
 		_start_screen = null

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://b5ys74eft8no6"]
 
 [ext_resource type="Script" uid="uid://bkanrc3uv12yv" path="res://environment/exit_door/exit_door.gd" id="1_hwm1v"]
-[ext_resource type="AudioStream" uid="uid://c3yimb0p287vg" path="res://environment/exit_door/opening-door.wav" id="3_cfp06"]
+[ext_resource type="AudioStream" uid="uid://dxa046gqrb55a" path="res://environment/exit_door/opening-door.wav" id="3_cfp06"]
 [ext_resource type="PackedScene" uid="uid://d0p5iqb3wc037" path="res://environment/Interiors/Scenes/Doors/door_a_grp.tscn" id="3_o4lm1"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1"]
