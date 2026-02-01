@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://kvxvsiqy1tee" path="res://ui/end_screen.gd" id="1_4p6y6"]
 [ext_resource type="FontFile" uid="uid://dj373vte4ucmp" path="res://assets/Ghastly Panic.ttf" id="2_s243q"]
+[ext_resource type="FontFile" uid="uid://cxj8vle2gou8y" path="res://assets/Mrs Eaves All Small Caps OT.ttf" id="3_ayll7"]
 [ext_resource type="Shader" uid="uid://b3ymesv0uanxp" path="res://ui/mask_effect.gdshader" id="3_maskfx"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0q3xq"]
@@ -120,8 +121,9 @@ size_flags_vertical = 3
 custom_minimum_size = Vector2(140, 40)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 20
-text = "RETRY"
+theme_override_fonts/font = ExtResource("3_ayll7")
+theme_override_font_sizes/font_size = 30
+text = "retry"
 
 [node name="Spacer3" type="Control" parent="Root/Panel/Content/Buttons" unique_id=1959371696]
 custom_minimum_size = Vector2(20, 20)
@@ -132,8 +134,9 @@ size_flags_vertical = 3
 custom_minimum_size = Vector2(140, 40)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 20
-text = "QUIT
+theme_override_fonts/font = ExtResource("3_ayll7")
+theme_override_font_sizes/font_size = 30
+text = "quit
 "
 
 [node name="Spacer" type="Control" parent="Root/Panel/Content/Buttons" unique_id=12873200]

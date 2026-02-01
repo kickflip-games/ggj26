@@ -79,6 +79,8 @@ func _ready():
 		mask_manager.mask_toggled.connect(_on_mask_toggled)
 		_on_mask_toggled(mask_manager.mask_on)
 	_mask_initialized = true
+	if hud != null and hud.has_method("show_mask_prompt") and GameManager != null and not GameManager.mask_prompt_seen:
+		hud.show_mask_prompt()
 
 func _process(delta: float) -> void:
 	if _death_sequence_active:
@@ -109,6 +111,10 @@ func _input(event):
 
 	if event.is_action_pressed("mask_toggle"):
 		var mask_manager := get_node_or_null("/root/MaskManager")
+		if GameManager != null and not GameManager.mask_prompt_seen:
+			GameManager.mask_prompt_seen = true
+			if hud != null and hud.has_method("hide_mask_prompt"):
+				hud.hide_mask_prompt()
 		if mask_manager != null:
 			if mask_manager.mask_on:
 				_request_mask_unequip(mask_manager)
