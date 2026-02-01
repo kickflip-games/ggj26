@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://dq71beffnsjon" path="res://environment/props/tvs_n_items/scenes/computer_hitbox.gd" id="3_hitbox"]
 [ext_resource type="Texture2D" uid="uid://cdq7cqeralkcq" path="res://environment/props/tvs_n_items/scenes/key_image.jpg" id="4_key_img"]
 [ext_resource type="Shader" uid="uid://c14ymroqotv8b" path="res://environment/props/tvs_n_items/scenes/materials/computer_screen_crt.gdshader" id="4_r7kus"]
-[ext_resource type="AudioStream" uid="uid://c48u4prcoll3y" path="res://environment/props/tvs_n_items/scenes/static-noise.mp3" id="5_ck011"]
+[ext_resource type="AudioStream" uid="uid://bl66np0ev3ul3" path="res://environment/props/tvs_n_items/scenes/static-noise.wav" id="5_ck011"]
 [ext_resource type="AudioStream" uid="uid://c1o8asirbdccc" path="res://assets/SFX/tv-static.wav" id="6_imeg0"]
 [ext_resource type="Script" uid="uid://dkb8ltjc6067n" path="res://addons/raytraced_audio/raytraced_audio_player_3d.gd" id="7_3nvn1"]
 
@@ -54,7 +54,7 @@ key_spawn_path = NodePath("KeySpawn")
 [node name="ScreenLight" type="SpotLight3D" parent="." index="0" unique_id=564516568]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1480416, -0.008789659)
 visible = false
-spot_range = 4.189
+spot_range = 4.387
 spot_angle = 64.815254
 
 [node name="computerScreen" parent="." index="1" unique_id=1822763368]

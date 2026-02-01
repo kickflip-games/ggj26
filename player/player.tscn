@@ -2,12 +2,13 @@
 
 [ext_resource type="Script" uid="uid://b6suav25os447" path="res://player/player.gd" id="1_oul6g"]
 [ext_resource type="Script" uid="uid://cnnro745aa5g1" path="res://player/camera_rig.gd" id="1_w4b2p"]
+[ext_resource type="AudioStream" uid="uid://bclsygg0n13d1" path="res://player/footstep.wav" id="2_8t03j"]
 [ext_resource type="Script" uid="uid://ceyxb5guhuacj" path="res://ui/mask_meter.gd" id="2_8vgyb"]
 [ext_resource type="Script" uid="uid://dfox5aak4tnpu" path="res://ui/mask_overlay.gd" id="3_0k6v2"]
 [ext_resource type="Script" uid="uid://duocm2fldhbwn" path="res://ui/hud.gd" id="4_r0rve"]
 [ext_resource type="Shader" uid="uid://b3ymesv0uanxp" path="res://ui/mask_effect.gdshader" id="5_yi6qj"]
 [ext_resource type="FontFile" uid="uid://cxj8vle2gou8y" path="res://assets/Mrs Eaves All Small Caps OT.ttf" id="6_hg6s5"]
-[ext_resource type="AudioStream" uid="uid://cbwjdhunw81ag" path="res://player/footstep.wav" id="8_hg6s5"]
+[ext_resource type="AudioStream" uid="uid://bclsygg0n13d1" path="res://player/footstep.wav" id="8_hg6s5"]
 [ext_resource type="Script" uid="uid://dkb8ltjc6067n" path="res://addons/raytraced_audio/raytraced_audio_player_3d.gd" id="9_8t03j"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_oul6g"]
@@ -49,6 +50,7 @@ shader_parameter/glow_threshold = 0.65
 [node name="Player" type="CharacterBody3D" unique_id=1197631855]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.052408814, 0.2758888, 0)
 script = ExtResource("1_oul6g")
+footstep_stream = ExtResource("2_8t03j")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=656022287]
 shape = SubResource("CapsuleShape3D_oul6g")
@@ -164,4 +166,3 @@ max_db = -15.643
 pitch_scale = 1.76
 script = ExtResource("9_8t03j")
 metadata/_custom_type_script = "uid://dkb8ltjc6067n"
-

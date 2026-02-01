@@ -1,4 +1,4 @@
-[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://canwefv74vsd6"]
+[gd_resource type="ShaderMaterial" format=3 uid="uid://canwefv74vsd6"]
 
 [ext_resource type="Shader" uid="uid://h2l28y3y2r2v" path="res://environment/Interiors/Materials/ORM_Shader_Cull_Back.gdshader" id="1_n7fck"]
 [ext_resource type="Texture2D" uid="uid://dgcqqe1hnhwur" path="res://environment/Interiors/texture/Door/Door_Diffuse_2K_A.png" id="2_sl1fr"]

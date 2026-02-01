@@ -8,12 +8,11 @@
 
 [node name="RaytracedAudioPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=524387071]
 stream = ExtResource("1_6nvv8")
-volume_db = -23.062
-unit_size = 22.87
+volume_db = -25.643
+unit_size = 20.18
 max_db = 0.376
-pitch_scale = 0.69
 autoplay = true
-max_distance = 32.05
+max_distance = 98.11
 max_polyphony = 2
 script = ExtResource("3_qe1gg")
 audibility_threshold_db = -29.915
