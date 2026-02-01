@@ -2,7 +2,6 @@
 
 [ext_resource type="AudioStream" uid="uid://b3n6u72q56e7h" path="res://assets/SFX/creaking.mp3" id="1_rfw55"]
 [ext_resource type="AudioStream" uid="uid://dx0slj2xif3d0" path="res://assets/SFX/00 - Jeremy Blake - Listen for their Coming.mp3" id="2_ko87g"]
-[ext_resource type="LightmapGIData" uid="uid://jrkp2qlvj61b" path="res://environment/Interiors/LightMap/demo_Test.lmbake" id="3_f3xen"]
 [ext_resource type="PackedScene" uid="uid://cwkoljmxnc7d7" path="res://environment/room/room.tscn" id="4_0qjvv"]
 [ext_resource type="PackedScene" uid="uid://b0vg6aynnuu50" path="res://environment/Interiors/Scenes/smaller_model.tscn" id="8_x2nr8"]
 [ext_resource type="PackedScene" uid="uid://cbhmkywwi6kca" path="res://player/player.tscn" id="19_glmte"]
@@ -32,35 +31,6 @@ parameters/looping = true
 
 [node name="environment" type="Node3D" parent="." unique_id=694031375]
 transform = Transform3D(2.635, 0, 0, 0, 2.635, 0, 0, 0, 2.635, 0, 0, 0)
-
-[node name="LightmapGI" type="LightmapGI" parent="environment" unique_id=829416111]
-quality = 2
-bounces = 5
-interior = true
-environment_mode = 3
-generate_probes_subdiv = 4
-light_data = ExtResource("3_f3xen")
-
-[node name="ReflectionProbe" type="ReflectionProbe" parent="environment" unique_id=1913031753]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.75, 4.5, 3.75)
-size = Vector3(22.5, 12, 30)
-interior = true
-enable_shadows = true
-ambient_color = Color(0.929715, 0.929715, 0.929715, 1)
-
-[node name="ReflectionProbe2" type="ReflectionProbe" parent="environment" unique_id=643773941]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.5, 4.5, 3.75)
-size = Vector3(21, 12, 30)
-interior = true
-enable_shadows = true
-ambient_color = Color(0.929715, 0.929715, 0.929715, 1)
-
-[node name="ReflectionProbe3" type="ReflectionProbe" parent="environment" unique_id=2014195255]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 4.5, 0.5)
-size = Vector3(14.5, 12, 11.5)
-interior = true
-enable_shadows = true
-ambient_color = Color(0.929715, 0.929715, 0.929715, 1)
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="environment" unique_id=1851469675]
 transform = Transform3D(0.37950668, 0, 0, 0, 0.37950668, 0, 0, 0, 0.37950668, 0, 0, 0)
