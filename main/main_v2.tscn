@@ -1,7 +1,8 @@
-[gd_scene format=3 uid="uid://c6pncghwngq0m"]
+[gd_scene format=3 uid="uid://cd6ay8lnwmrjh"]
 
-[ext_resource type="AudioStream" uid="uid://b3n6u72q56e7h" path="res://assets/SFX/creaking.wav" id="1_rfw55"]
-[ext_resource type="AudioStream" uid="uid://dx0slj2xif3d0" path="res://assets/SFX/00 - Jeremy Blake - Listen for their Coming.wav" id="2_ko87g"]
+[ext_resource type="PackedScene" uid="uid://b7e4d4q6l3u3o" path="res://postproc/MainWorldEnvironment.tscn" id="1_ywl6q"]
+[ext_resource type="AudioStream" uid="uid://ds5uirgj655r" path="res://assets/SFX/creaking.wav" id="1_x2nr8"]
+[ext_resource type="AudioStream" uid="uid://dl6wq7m825uya" path="res://assets/SFX/00 - Jeremy Blake - Listen for their Coming.wav" id="2_e6q8g"]
 [ext_resource type="LightmapGIData" uid="uid://jrkp2qlvj61b" path="res://environment/Interiors/LightMap/demo_Test.lmbake" id="3_f3xen"]
 [ext_resource type="PackedScene" uid="uid://cwkoljmxnc7d7" path="res://environment/room/room.tscn" id="4_0qjvv"]
 [ext_resource type="PackedScene" path="res://environment/decals/Sticker3D.tscn" id="8_e6q8g"]
@@ -32,16 +33,14 @@ geometry_source_group_name = &"Room"
 mask_background_energy_boost = 0.08999999999999986
 
 [node name="AmbientCreak" type="AudioStreamPlayer" parent="." unique_id=1593693403]
-stream = ExtResource("1_rfw55")
+stream = ExtResource("1_x2nr8")
 volume_db = -20.0
 autoplay = true
-parameters/looping = true
 
 [node name="AmbientListen" type="AudioStreamPlayer" parent="." unique_id=1593693404]
-stream = ExtResource("2_ko87g")
+stream = ExtResource("2_e6q8g")
 volume_db = -25.0
 autoplay = true
-parameters/looping = true
 
 [node name="environment" type="Node3D" parent="." unique_id=694031375]
 transform = Transform3D(2.635, 0, 0, 0, 2.635, 0, 0, 0, 2.635, 0, 0, 0)
