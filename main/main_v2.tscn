@@ -64,10 +64,16 @@ transform = Transform3D(0.4750001, 0, 0, 0, 0.4750001, 0, 0, 0, 0.4750001, -4.60
 transform = Transform3D(0.4750001, 0, 0, 0, 0.4750001, 0, 0, 0, 0.4750001, -1.2576602, 0.8443019, -0.2862598)
 
 [node name="Speaker" parent="environment/Room" unique_id=150167892 instance=ExtResource("21_8lk8g")]
-transform = Transform3D(-0.09575564, 0, 0.07232489, 0, 0.12000015, 0, -0.07232489, 0, -0.09575564, -10.138639, -0.014667021, 12.818658)
+transform = Transform3D(0.21820484, 0, 0.08724475, 0, 0.235, 0, -0.08724475, 0, 0.21820484, -13.549181, -0.8186489, 16.02167)
 
 [node name="SmallerModel" parent="environment/Room" unique_id=168607823 groups=["Room"] instance=ExtResource("8_x2nr8")]
 transform = Transform3D(0.92500013, 0, 0, 0, 0.92500013, 0, 0, 0, 0.92500013, 0, 0, 0)
+
+[node name="Computer Screen8" parent="environment/Room/SmallerModel/Shelves/Shelves70" parent_id_path=PackedInt32Array(168607823, 421580682) index="5" unique_id=717316991]
+has_key = true
+
+[node name="Computer Screen12" parent="environment/Room/SmallerModel/Shelves/Shelves55" parent_id_path=PackedInt32Array(168607823, 1586350716) index="7" unique_id=1379944571]
+has_key = true
 
 [node name="Node3D" type="Node3D" parent="environment/Room" unique_id=687662616]
 
@@ -138,5 +144,9 @@ size_meters = Vector2(4, 4)
 mode = "CUSTOM"
 
 [node name="HammerPickup" parent="environment" unique_id=274329561 instance=ExtResource("22_tk0an")]
-transform = Transform3D(-0.23456348, -0.5101281, -0.09823521, 0, 0.10778456, -0.5597172, 0.51950055, -0.23033163, -0.044354897, -6.512228, -0.020654114, -2.5149472)
+transform = Transform3D(0.5229861, 0.22603121, -0.017231835, -0.22291142, 0.5206624, 0.06420805, 0.04120163, -0.052173074, 0.5661112, 21.599058, -0.52768123, -3.9436126)
 model_rotation_degrees = Vector3(0, -0.7, 0)
+
+[editable path="environment/Room/SmallerModel"]
+[editable path="environment/Room/SmallerModel/Shelves/Shelves70"]
+[editable path="environment/Room/SmallerModel/Shelves/Shelves55"]
