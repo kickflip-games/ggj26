@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://cbhmkywwi6kca" path="res://player/player.tscn" id="1_xys38"]
 [ext_resource type="PackedScene" uid="uid://dbeam8duw66fa" path="res://monster/monster.tscn" id="2_6p0mx"]
+[ext_resource type="PackedScene" uid="uid://cwqtcohkvymjr" path="res://postproc/world_environment.tscn" id="2_54pqk"]
 [ext_resource type="PackedScene" uid="uid://b6m0gpkke23gb" path="res://environment/key/key.tscn" id="3_4ejh5"]
 [ext_resource type="PackedScene" uid="uid://b5ys74eft8no6" path="res://environment/exit_door/exit_door.tscn" id="4_s0uxu"]
 [ext_resource type="Script" uid="uid://0bhok2vqbms0" path="res://environment/room/room.gd" id="5_xyn1g"]
@@ -9,36 +10,6 @@
 [ext_resource type="PackedScene" uid="uid://8sb6hkh0h5gf" path="res://environment/barricade/barricade.tscn" id="7_bar"]
 [ext_resource type="AudioStream" uid="uid://b3n6u72q56e7h" path="res://assets/SFX/creaking.mp3" id="8_creak"]
 [ext_resource type="AudioStream" uid="uid://dx0slj2xif3d0" path="res://assets/SFX/00 - Jeremy Blake - Listen for their Coming.mp3" id="9_ambient"]
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xys38"]
-sky_horizon_color = Color(0.03, 0.03, 0.04, 1)
-ground_horizon_color = Color(0.01, 0.01, 0.015, 1)
-
-[sub_resource type="Sky" id="Sky_qvmrs"]
-sky_material = SubResource("ProceduralSkyMaterial_xys38")
-
-[sub_resource type="Environment" id="Environment_pntf4"]
-background_mode = 2
-sky = SubResource("Sky_qvmrs")
-ambient_light_color = Color(0.07, 0.08, 0.1, 1)
-ambient_light_sky_contribution = 0.06
-ambient_light_energy = 0.35
-tonemap_mode = 2
-glow_enabled = true
-glow_intensity = 0.4
-glow_strength = 0.5
-glow_blend_mode = 0
-glow_hdr_threshold = 0.8
-fog_enabled = true
-fog_light_color = Color(0.07, 0.075, 0.09, 1)
-fog_light_energy = 0.42
-fog_sun_scatter = 0.02
-fog_density = 0.03
-fog_height_density = -0.1
-adjustment_enabled = true
-adjustment_brightness = 0.92
-adjustment_contrast = 1.18
-adjustment_saturation = 0.86
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_w2qn0"]
 vertices = PackedVector3Array(-32.539997, 11.71, -32.539997, -32.539997, 11.71, 32.460003, 32.460003, 11.71, 32.460003, 32.460003, 11.71, -32.539997, -30.539997, 1.46, -29.039997, -30.539997, 1.46, 27.460003, -29.789997, 1.46, 27.460003, -29.789997, 1.46, -29.039997, -8.039997, 1.46, -8.789997, -6.789997, 1.46, -9.039997, -6.789997, 1.46, -29.039997, -28.539997, 1.46, -29.039997, -28.539997, 1.46, -6.789997, -8.039997, 1.46, -6.789997, 28.710003, 1.46, -5.289997, 28.960003, 1.46, -4.039997, 29.210003, 1.46, -4.039997, 29.210003, 1.46, -29.039997, -5.289997, 1.46, -4.039997, 1.7100029, 1.46, -4.039997, 1.9600029, 1.46, -5.289997, -5.289997, 1.46, -8.789997, -28.539997, 1.46, 5.460003, -8.039997, 1.46, 5.460003, -5.289997, 1.46, 6.210003, 1.7100029, 1.46, 6.210003, 1.9600029, 1.46, 4.710003, 1.9600029, 1.46, -2.539997, 3.710003, 1.46, 4.710003, 3.710003, 1.46, -2.539997, 28.710003, 1.46, -2.539997, 28.710003, 1.46, 4.710003, 28.960003, 1.46, 6.210003, 29.210003, 1.46, 6.210003, -6.789997, 1.46, 27.460003, -6.789997, 1.46, 7.710003, -8.039997, 1.46, 7.460003, -28.539997, 1.46, 27.460003, 1.9600029, 1.46, 7.460003, -5.539997, 1.46, 7.710003, 3.960003, 1.46, 7.460003, 3.960003, 1.46, 27.460003, 28.710003, 1.46, 7.460003, 29.210003, 1.46, 27.460003, -28.539997, 1.46, 28.710003, -28.539997, 1.46, 29.710003, 29.210003, 1.46, 29.710003, 29.210003, 1.46, 28.710003)
@@ -83,8 +54,7 @@ script = ExtResource("5_xyn1g")
 [node name="PlayerSpawn" type="Marker3D" parent="." unique_id=1464159042]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 2.1, -9)
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=272683890]
-environment = SubResource("Environment_pntf4")
+[node name="WorldEnvironment" parent="." unique_id=387303318 instance=ExtResource("2_54pqk")]
 
 [node name="AmbientCreak" type="AudioStreamPlayer" parent="." unique_id=1593693403]
 stream = ExtResource("8_creak")
