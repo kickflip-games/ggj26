@@ -18,7 +18,7 @@ func _ready() -> void:
 
 	_key_label.visible = GameManager.has_key
 	GameManager.key_changed.connect(_on_key_changed)
-	_mask_prompt_label.text = "'F' to wear mask"
+	_mask_prompt_label.text = "'f' to wear mask"
 	_mask_prompt_label.visible = false
 
 func set_interact_prompt(text: String) -> void:

@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cnsn24iuoeaf5" path="res://ui/start_screen.gd" id="1_start"]
 [ext_resource type="FontFile" uid="uid://dj373vte4ucmp" path="res://assets/Ghastly Panic.ttf" id="2_50anp"]
+[ext_resource type="FontFile" uid="uid://cxj8vle2gou8y" path="res://assets/Mrs Eaves All Small Caps OT.ttf" id="3_nledq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 bg_color = Color(0.06, 0.06, 0.075, 0.95)
@@ -80,8 +81,9 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.9, 0.9, 0.95, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 24
-text = "START"
+theme_override_fonts/font = ExtResource("3_nledq")
+theme_override_font_sizes/font_size = 30
+text = "start"
 
 [node name="QuitButton" type="Button" parent="Root/Panel/Content/Buttons" unique_id=1338403233]
 custom_minimum_size = Vector2(300, 60)
@@ -89,5 +91,6 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.7, 0.7, 0.75, 1)
 theme_override_colors/font_hover_color = Color(0.9, 0.9, 0.95, 1)
-theme_override_font_sizes/font_size = 24
-text = "QUIT"
+theme_override_fonts/font = ExtResource("3_nledq")
+theme_override_font_sizes/font_size = 30
+text = "quit"
