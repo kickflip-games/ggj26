@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://c6pncghwngq0m"]
 
-[ext_resource type="AudioStream" uid="uid://b3n6u72q56e7h" path="res://assets/SFX/creaking.mp3" id="1_rfw55"]
-[ext_resource type="PackedScene" uid="uid://b7e4d4q6l3u3o" path="res://postproc/MainWorldEnvironment.tscn" id="1_ywl6q"]
-[ext_resource type="AudioStream" uid="uid://dx0slj2xif3d0" path="res://assets/SFX/00 - Jeremy Blake - Listen for their Coming.mp3" id="2_ko87g"]
+[ext_resource type="AudioStream" uid="uid://b3n6u72q56e7h" path="res://assets/SFX/creaking.wav" id="1_rfw55"]
+[ext_resource type="AudioStream" uid="uid://dx0slj2xif3d0" path="res://assets/SFX/00 - Jeremy Blake - Listen for their Coming.wav" id="2_ko87g"]
+[ext_resource type="LightmapGIData" uid="uid://jrkp2qlvj61b" path="res://environment/Interiors/LightMap/demo_Test.lmbake" id="3_f3xen"]
 [ext_resource type="PackedScene" uid="uid://cwkoljmxnc7d7" path="res://environment/room/room.tscn" id="4_0qjvv"]
 [ext_resource type="PackedScene" path="res://environment/decals/Sticker3D.tscn" id="8_e6q8g"]
 [ext_resource type="MeshLibrary" uid="uid://0765diq8uuj5" path="res://environment/Interiors/interiors_lib.tres" id="9_mva7w"]

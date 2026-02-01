@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cdq7cqeralkcq" path="res://environment/props/tvs_n_items/scenes/key_image.jpg" id="4_key_img"]
 [ext_resource type="Shader" uid="uid://c14ymroqotv8b" path="res://environment/props/tvs_n_items/scenes/materials/computer_screen_crt.gdshader" id="4_r7kus"]
 [ext_resource type="AudioStream" uid="uid://c48u4prcoll3y" path="res://environment/props/tvs_n_items/scenes/static-noise.mp3" id="5_ck011"]
-[ext_resource type="AudioStream" uid="uid://dhoqljo8xmtlf" path="res://assets/SFX/tv-static.mp3" id="6_imeg0"]
+[ext_resource type="AudioStream" uid="uid://c1o8asirbdccc" path="res://assets/SFX/tv-static.wav" id="6_imeg0"]
 [ext_resource type="Script" uid="uid://dkb8ltjc6067n" path="res://addons/raytraced_audio/raytraced_audio_player_3d.gd" id="7_3nvn1"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3nvn1"]
@@ -103,3 +103,4 @@ max_db = -12.624
 max_distance = 7.0
 script = ExtResource("7_3nvn1")
 metadata/_custom_type_script = "uid://dkb8ltjc6067n"
+

@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dl6wq7m825uya"
+path="res://.godot/imported/00 - Jeremy Blake - Listen for their Coming.wav-9bcb66f249ddba2861d5510a5e3a32c5.sample"
+
+[deps]
+
+source_file="res://assets/SFX/00 - Jeremy Blake - Listen for their Coming.wav"
+dest_files=["res://.godot/imported/00 - Jeremy Blake - Listen for their Coming.wav-9bcb66f249ddba2861d5510a5e3a32c5.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

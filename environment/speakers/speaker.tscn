@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bptm0ymljxvyv"]
 
-[ext_resource type="AudioStream" uid="uid://bwcpwtydm8gvn" path="res://assets/SFX/Skibidi Bop Yes Yes Yes x Bloody Mary  Wednesday Dance.mp3" id="1_6nvv8"]
+[ext_resource type="AudioStream" uid="uid://jyfp8pk7876w" path="res://assets/SFX/Skibidi Bop Yes Yes Yes x Bloody Mary  Wednesday Dance.wav" id="1_6nvv8"]
 [ext_resource type="PackedScene" uid="uid://bpsm4ietnod7g" path="res://environment/speakers/Hifi stereo.glb" id="2_2gfjl"]
 [ext_resource type="Script" uid="uid://dkb8ltjc6067n" path="res://addons/raytraced_audio/raytraced_audio_player_3d.gd" id="3_qe1gg"]
 
@@ -20,3 +20,4 @@ metadata/_custom_type_script = "uid://dkb8ltjc6067n"
 
 [node name="Hifi stereo" parent="." unique_id=246461237 instance=ExtResource("2_2gfjl")]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
+
