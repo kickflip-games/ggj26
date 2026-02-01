@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://duocm2fldhbwn" path="res://ui/hud.gd" id="4_r0rve"]
 [ext_resource type="Shader" uid="uid://b3ymesv0uanxp" path="res://ui/mask_effect.gdshader" id="5_yi6qj"]
 [ext_resource type="FontFile" uid="uid://cxj8vle2gou8y" path="res://assets/Mrs Eaves All Small Caps OT.ttf" id="6_hg6s5"]
-[ext_resource type="AudioStream" uid="uid://cbwjdhunw81ag" path="res://player/footstep.mp3" id="8_hg6s5"]
+[ext_resource type="AudioStream" uid="uid://cbwjdhunw81ag" path="res://player/footstep.wav" id="8_hg6s5"]
 [ext_resource type="Script" uid="uid://dkb8ltjc6067n" path="res://addons/raytraced_audio/raytraced_audio_player_3d.gd" id="9_8t03j"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_oul6g"]
@@ -164,3 +164,4 @@ max_db = -15.643
 pitch_scale = 1.76
 script = ExtResource("9_8t03j")
 metadata/_custom_type_script = "uid://dkb8ltjc6067n"
+

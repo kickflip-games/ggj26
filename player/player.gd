@@ -17,7 +17,7 @@ extends CharacterBody3D
 @export var hammer_held_scene: PackedScene = preload("res://environment/hammer/hammer_held.tscn")
 @export var hammer_swing_range := 2.0
 @export var hammer_swing_cooldown_sec := 0.35
-@export var death_impact_sound: AudioStream = preload("res://player/player_caught.mp3")
+@export var death_impact_sound: AudioStream = preload("res://player/player_caught.wav")
 @export var death_bite_sound: AudioStream
 @export_range(0.05, 0.4, 0.01) var death_impact_duration := 0.1
 @export_range(0.1, 1.0, 0.01) var death_pull_duration := 0.4

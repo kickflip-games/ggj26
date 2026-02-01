@@ -538,7 +538,7 @@ func _stop_footsteps() -> void:
 func _load_footstep_streams() -> void:
 	_footstep_streams.clear()
 	for i in range(1, footstep_count + 1):
-		var path := "%s/%d.mp3" % [footstep_dir, i]
+		var path := "%s/%d.wav" % [footstep_dir, i]
 		var stream := load(path)
 		if stream is AudioStream:
 			_footstep_streams.append(stream)
