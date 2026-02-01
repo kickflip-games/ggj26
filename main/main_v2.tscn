@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://c6pncghwngq0m"]
 
 [ext_resource type="AudioStream" uid="uid://b3n6u72q56e7h" path="res://assets/SFX/creaking.mp3" id="1_rfw55"]
+[ext_resource type="PackedScene" uid="uid://b7e4d4q6l3u3o" path="res://postproc/MainWorldEnvironment.tscn" id="1_ywl6q"]
 [ext_resource type="AudioStream" uid="uid://dx0slj2xif3d0" path="res://assets/SFX/00 - Jeremy Blake - Listen for their Coming.mp3" id="2_ko87g"]
 [ext_resource type="PackedScene" uid="uid://cwkoljmxnc7d7" path="res://environment/room/room.tscn" id="4_0qjvv"]
 [ext_resource type="PackedScene" path="res://environment/decals/Sticker3D.tscn" id="8_e6q8g"]
@@ -23,6 +24,9 @@ geometry_source_geometry_mode = 1
 geometry_source_group_name = &"Room"
 
 [node name="MapV2" type="Node3D" unique_id=172747565]
+
+[node name="WorldEnvironment" parent="." unique_id=271834660 instance=ExtResource("1_ywl6q")]
+mask_background_energy_boost = 0.040000000000000036
 
 [node name="AmbientCreak" type="AudioStreamPlayer" parent="." unique_id=1593693403]
 stream = ExtResource("1_rfw55")

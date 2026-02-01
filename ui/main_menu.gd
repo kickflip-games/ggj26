@@ -1,7 +1,7 @@
 extends Node
 
 var _start_screen: StartScreen = null
-@export var game_scene_path := "res://tests/demo.tscn"
+@export var game_scene_path := "res://main/main_v2.tscn"
 
 func _ready() -> void:
 	print("MainMenu: Initializing main menu")
