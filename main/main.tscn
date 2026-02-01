@@ -18,8 +18,8 @@
 [ext_resource type="PackedScene" uid="uid://cwkoljmxnc7d7" path="res://environment/room/room.tscn" id="13_room"]
 [ext_resource type="PackedScene" uid="uid://dcglvmt8ahg8g" path="res://environment/props/desks_n_shelvs/shelves.tscn" id="16_q0sk7"]
 [ext_resource type="PackedScene" uid="uid://bv8v2l6ooal6o" path="res://environment/props/desks_n_shelvs/desk.tscn" id="17_piupu"]
-[ext_resource type="AudioStream" uid="uid://b3n6u72q56e7h" path="res://assets/SFX/creaking.mp3" id="18_creak"]
-[ext_resource type="AudioStream" uid="uid://dx0slj2xif3d0" path="res://assets/SFX/00 - Jeremy Blake - Listen for their Coming.mp3" id="19_ambient"]
+[ext_resource type="AudioStream" uid="uid://b3n6u72q56e7h" path="res://assets/SFX/creaking.wav" id="18_creak"]
+[ext_resource type="AudioStream" uid="uid://dx0slj2xif3d0" path="res://assets/SFX/00 - Jeremy Blake - Listen for their Coming.wav" id="19_ambient"]
 [ext_resource type="PackedScene" uid="uid://c6dbu5v4q1g6u" path="res://environment/hammer/hammer_pickup.tscn" id="19_q0sk7"]
 [ext_resource type="PackedScene" uid="uid://bptm0ymljxvyv" path="res://environment/speakers/speaker.tscn" id="21_jofbb"]
 [ext_resource type="PackedScene" path="res://environment/decals/Sticker3D.tscn" id="22_oagth"]
@@ -695,3 +695,4 @@ model_rotation_degrees = Vector3(0, -0.7, 0)
 
 [node name="environment_Room_props#Shelves2" parent="." unique_id=1323257728 instance=ExtResource("12_5sehf")]
 transform = Transform3D(-3.212788e-08, 0, 0.73500013, 0, 0.73500013, 0, -0.73500013, 0, -3.212788e-08, -15.121211, 0, -1.5180271)
+

@@ -7,8 +7,8 @@
 [ext_resource type="Script" uid="uid://0bhok2vqbms0" path="res://environment/room/room.gd" id="5_xyn1g"]
 [ext_resource type="PackedScene" uid="uid://c6dbu5v4q1g6u" path="res://environment/hammer/hammer_pickup.tscn" id="6_9s2p0"]
 [ext_resource type="PackedScene" uid="uid://8sb6hkh0h5gf" path="res://environment/barricade/barricade.tscn" id="7_bar"]
-[ext_resource type="AudioStream" uid="uid://b3n6u72q56e7h" path="res://assets/SFX/creaking.mp3" id="8_creak"]
-[ext_resource type="AudioStream" uid="uid://dx0slj2xif3d0" path="res://assets/SFX/00 - Jeremy Blake - Listen for their Coming.mp3" id="9_ambient"]
+[ext_resource type="AudioStream" uid="uid://b3n6u72q56e7h" path="res://assets/SFX/creaking.wav" id="8_creak"]
+[ext_resource type="AudioStream" uid="uid://dx0slj2xif3d0" path="res://assets/SFX/00 - Jeremy Blake - Listen for their Coming.wav" id="9_ambient"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xys38"]
 sky_horizon_color = Color(0.03, 0.03, 0.04, 1)
@@ -239,3 +239,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2, 0)
 light_color = Color(0.55, 0.65, 0.8, 1)
 light_energy = 0.25
 omni_range = 18.0
+

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://ctwfuupatgsej" path="res://environment/key/key.gd" id="1_twuu8"]
 [ext_resource type="PackedScene" uid="uid://cg34q74eugkl6" path="res://environment/key/Key.glb" id="2_u3koc"]
-[ext_resource type="AudioStream" uid="uid://dx2fhlcoajfas" path="res://environment/key/key_pickup.mp3" id="3_w6vsn"]
+[ext_resource type="AudioStream" uid="uid://dx2fhlcoajfas" path="res://environment/key/key_pickup.wav" id="3_w6vsn"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_1"]
 radius = 0.35
@@ -26,3 +26,4 @@ shape = SubResource("SphereShape3D_1")
 [node name="SfxPickup" type="AudioStreamPlayer3D" parent="." unique_id=1651757895]
 stream = ExtResource("3_w6vsn")
 volume_db = -6.0
+

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://c6pncghwngq0m"]
 
-[ext_resource type="AudioStream" uid="uid://b3n6u72q56e7h" path="res://assets/SFX/creaking.mp3" id="1_rfw55"]
-[ext_resource type="AudioStream" uid="uid://dx0slj2xif3d0" path="res://assets/SFX/00 - Jeremy Blake - Listen for their Coming.mp3" id="2_ko87g"]
+[ext_resource type="AudioStream" uid="uid://b3n6u72q56e7h" path="res://assets/SFX/creaking.wav" id="1_rfw55"]
+[ext_resource type="AudioStream" uid="uid://dx0slj2xif3d0" path="res://assets/SFX/00 - Jeremy Blake - Listen for their Coming.wav" id="2_ko87g"]
 [ext_resource type="LightmapGIData" uid="uid://jrkp2qlvj61b" path="res://environment/Interiors/LightMap/demo_Test.lmbake" id="3_f3xen"]
 [ext_resource type="PackedScene" uid="uid://cwkoljmxnc7d7" path="res://environment/room/room.tscn" id="4_0qjvv"]
 [ext_resource type="PackedScene" uid="uid://b0vg6aynnuu50" path="res://environment/Interiors/Scenes/smaller_model.tscn" id="8_x2nr8"]
@@ -91,3 +91,4 @@ transform = Transform3D(0.925, 0, 0, 0, 0.925, 0, 0, 0, 0.925, 0, 0, 0)
 [node name="HammerPickup" parent="environment" unique_id=274329561 instance=ExtResource("22_tk0an")]
 transform = Transform3D(-0.23456348, -0.5101281, -0.09823521, 0, 0.10778456, -0.5597172, 0.51950055, -0.23033163, -0.044354897, -6.512228, -0.020654114, -2.5149472)
 model_rotation_degrees = Vector3(0, -0.7, 0)
+
