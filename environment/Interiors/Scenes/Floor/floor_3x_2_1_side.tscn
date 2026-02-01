@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=4 uid="uid://80rc43wnwkaa"]
 
-[ext_resource type="Material" uid="uid://blggib5lan34i" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_A_A_Mat.tres" id="1_tyb1j"]
+[ext_resource type="Material" uid="uid://blggib5lan34i" path="res://environment/Interiors/Materials/Surface_Floor_A_A_Mat.tres" id="1_tyb1j"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_053vp"]
 _surfaces = [{

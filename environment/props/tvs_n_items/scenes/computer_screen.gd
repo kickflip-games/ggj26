@@ -162,6 +162,8 @@ func reset_pickup() -> void:
 	if _spawned_key != null:
 		_spawned_key.queue_free()
 		_spawned_key = null
+	if screen_mesh != null:
+		screen_mesh.visible = true
 	_player_in_trigger = false
 	if _player != null:
 		_player.clear_interact_prompt()
@@ -180,6 +182,8 @@ func _try_break() -> void:
 		return
 	_broken = true
 	turn_off()
+	if screen_mesh != null:
+		screen_mesh.visible = false
 	if uses_shader:
 		if screen_shader != null:
 			play_break_sound()

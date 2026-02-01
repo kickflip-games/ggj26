@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=4 uid="uid://c6ct1r0tl8uok"]
 
-[ext_resource type="Material" uid="uid://blggib5lan34i" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_A_A_Mat.tres" id="1_2d8l0"]
-[ext_resource type="Material" uid="uid://k107765ilw3v" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Surface_Floor_B_Mat.tres" id="2_f7fcg"]
+[ext_resource type="Material" uid="uid://blggib5lan34i" path="res://environment/Interiors/Materials/Surface_Floor_A_A_Mat.tres" id="1_2d8l0"]
+[ext_resource type="Material" uid="uid://k107765ilw3v" path="res://environment/Interiors/Materials/Surface_Floor_B_Mat.tres" id="2_f7fcg"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_rtcox"]
 _surfaces = [{

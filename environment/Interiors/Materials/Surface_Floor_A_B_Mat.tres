@@ -1,9 +1,9 @@
 [gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://ckp17uxivi87k"]
 
-[ext_resource type="Shader" uid="uid://h2l28y3y2r2v" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/ORM_Shader_Cull_Back.gdshader" id="1_yg65y"]
-[ext_resource type="Texture2D" uid="uid://bbf2i67i54abb" path="res://Assets/LoafbrrAssets/Interiors_A/texture/Surface_Floor_A/Surface_Floor_A_Diffuse_2K.png" id="2_ibknt"]
-[ext_resource type="Texture2D" uid="uid://c5d1uxmoww47h" path="res://Assets/LoafbrrAssets/Interiors_A/texture/Surface_Floor_A/Surface_Floor_A_Normal_2K.png" id="3_ssgpk"]
-[ext_resource type="Texture2D" uid="uid://tfe40dq42cxi" path="res://Assets/LoafbrrAssets/Interiors_A/texture/Surface_Floor_A/Surface_Floor_A_ORM_2K.png" id="4_46sye"]
+[ext_resource type="Shader" uid="uid://h2l28y3y2r2v" path="res://environment/Interiors/Materials/ORM_Shader_Cull_Back.gdshader" id="1_yg65y"]
+[ext_resource type="Texture2D" uid="uid://bbf2i67i54abb" path="res://environment/Interiors/texture/Surface_Floor_A/Surface_Floor_A_Diffuse_2K.png" id="2_ibknt"]
+[ext_resource type="Texture2D" uid="uid://c5d1uxmoww47h" path="res://environment/Interiors/texture/Surface_Floor_A/Surface_Floor_A_Normal_2K.png" id="3_ssgpk"]
+[ext_resource type="Texture2D" uid="uid://tfe40dq42cxi" path="res://environment/Interiors/texture/Surface_Floor_A/Surface_Floor_A_ORM_2K.png" id="4_46sye"]
 
 [resource]
 render_priority = 0

@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=4 uid="uid://bo026pgxq8nr3"]
 
-[ext_resource type="Material" uid="uid://canwefv74vsd6" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Door_A_Mat.tres" id="1_bjemi"]
-[ext_resource type="Material" uid="uid://dn04f3wubif1c" path="res://Assets/LoafbrrAssets/Interiors_A/Materials/Glass_Mat.tres" id="2_mgcnm"]
+[ext_resource type="Material" uid="uid://canwefv74vsd6" path="res://environment/Interiors/Materials/Door_A_Mat.tres" id="1_bjemi"]
+[ext_resource type="Material" uid="uid://dn04f3wubif1c" path="res://environment/Interiors/Materials/Glass_Mat.tres" id="2_mgcnm"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_8fwtx"]
 _surfaces = [{
